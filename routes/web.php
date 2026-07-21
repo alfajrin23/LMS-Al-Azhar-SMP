@@ -6,7 +6,6 @@ use App\Http\Controllers\GuruNilaiController;
 use App\Http\Controllers\GuruAbsensiController;
 use App\Http\Controllers\GuruCatatanController;
 use App\Http\Controllers\SiswaKondisiKelasController;
-use App\Http\Controllers\SiswaTahsinController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
@@ -88,10 +87,6 @@ Route::middleware('auth')->group(function () {
             Route::post('/{cbtExam}/submit', [\App\Http\Controllers\SiswaCbtController::class, 'submit'])->name('submit');
             Route::get('/{cbtExam}/hasil', [\App\Http\Controllers\SiswaCbtController::class, 'hasil'])->name('hasil');
         });
-    });
-
-    Route::middleware('role:siswa_sd')->group(function () {
-        Route::get('/siswa/tahsin', [SiswaTahsinController::class, 'index'])->name('siswa.tahsin.index');
     });
 
     Route::middleware('role:admin')->group(function () {

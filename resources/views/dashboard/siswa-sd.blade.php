@@ -15,9 +15,6 @@
     <li :class="{'active': tab === 'tahfidz'}" @click="tab = 'tahfidz'">
         <label><i class="fas fa-quran"></i> Tahfidz</label>
     </li>
-    <li :class="{'active': tab === 'tahsin'}" @click="tab = 'tahsin'">
-        <label><i class="fas fa-book-open"></i> Tahsin</label>
-    </li>
     <li :class="{'active': tab === 'ulangan'}" @click="tab = 'ulangan'">
         <label><i class="fas fa-pencil-alt"></i> Ulangan</label>
     </li>
@@ -59,9 +56,6 @@
     </div>
     <div x-show="tab === 'tahfidz'">
         @include('dashboard.sd-sections.tahfidz')
-    </div>
-    <div x-show="tab === 'tahsin'">
-        @include('dashboard.sd-sections.tahsin')
     </div>
     <div x-show="tab === 'ulangan'">
         @include('dashboard.sd-sections.ulangan')

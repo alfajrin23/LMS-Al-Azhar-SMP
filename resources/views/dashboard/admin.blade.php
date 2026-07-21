@@ -30,8 +30,8 @@
                     <p style="font-size:14px;color:var(--gray-400);margin-top:2px">Selamat datang, Admin Sekolah</p>
                 </div>
                 <div class="header-right">
-                    <span class="badge teal" style="font-size:12px;padding:6px 16px"><i class="fas fa-school"></i> SDIT
-                        &amp; SMPIT</span>
+                    <span class="badge teal" style="font-size:12px;padding:6px 16px"><i class="fas fa-school"></i>
+                        SMPIT</span>
                     <div class="avatar teal">AD</div>
                 </div>
             </div>
@@ -530,7 +530,7 @@
                     <div class="card-header">
                         <h3><i class="fas fa-cog" style="color:var(--teal)"></i> Pengaturan Umum</h3>
                     </div>
-                    <p style="font-size:13px;color:var(--gray-500);margin-bottom:12px">Nama Sekolah: SDIT &amp; SMPIT Al
+                    <p style="font-size:13px;color:var(--gray-500);margin-bottom:12px">Nama Sekolah: SMPIT Al
                         Azhar Jaya Indonesia</p>
                     <div class="form-group"><label>Nama Lengkap</label>
                         <div class="input-wrap"><input type="text" placeholder="Ahmad Rizky"

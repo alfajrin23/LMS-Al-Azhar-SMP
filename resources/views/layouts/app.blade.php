@@ -49,7 +49,7 @@
                 </div>
                 <div class="brand">
                     <h2><i class="fas fa-graduation-cap"></i>LMS Al Azhar Jaya</h2>
-                    <p>{{ auth()->user()->role === 'siswa_sd' ? 'SDIT' : (auth()->user()->role === 'siswa_smp' ? 'SMPIT' : 'SDIT & SMPIT') }} Al Azhar Jaya Indonesia</p>
+                    <p>SMPIT Al Azhar Jaya Indonesia</p>
                 </div>
                 <div style="padding:0 16px 10px">
                     <form class="d-flex" style="position:relative" onsubmit="return false">

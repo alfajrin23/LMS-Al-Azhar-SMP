@@ -13,6 +13,7 @@ class Siswa extends Model
         'nis',
         'nama',
         'kelas_id',
+        'kelas_quran_id',
         'jenis_kelamin',
         'tempat_lahir',
         'tanggal_lahir',
@@ -45,11 +46,6 @@ class Siswa extends Model
     public function tahfidzProgress()
     {
         return $this->hasOne(TahfidzProgress::class);
-    }
-
-    public function tahsinSetoran()
-    {
-        return $this->hasMany(TahsinSetoran::class);
     }
 
     public function nilai()

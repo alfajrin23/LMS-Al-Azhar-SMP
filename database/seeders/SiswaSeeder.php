@@ -2,12 +2,11 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Illuminate\Database\Seeder;
-use App\Models\User;
-use App\Models\Siswa;
 use App\Models\Kelas;
 use App\Models\KelasQuran;
+use App\Models\Siswa;
+use App\Models\User;
+use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
 class SiswaSeeder extends Seeder
@@ -17,82 +16,95 @@ class SiswaSeeder extends Seeder
      */
     public function run(): void
     {
-        // 1. Data Kelas Biasa (Reguler) untuk mapping
-        $kelasBiasaMap = [
-            'Alviandra Chesta Radityatama' => 'Abu Bakar Ar Razi',
-            'Aqilah Naurah' => 'Abu Bakar Ar Razi',
-            'Argia Raya Adz Dzikra' => 'Abu Bakar Ar Razi',
-            'Hanna Mufidah' => 'Abu Bakar Ar Razi',
-            'Khanza Izzatunnisa' => 'Abu Bakar Ar Razi',
-            'Muhammad Hafidz Alfahrezi' => 'Abu Bakar Ar Razi',
-            'Muhammad Al Farizy Setyanto' => 'Abu Bakar Ar Razi',
-            'Muhammad Al Fatih' => 'Abu Bakar Ar Razi',
-            'Muhammad Fadlan Adelmar' => 'Abu Bakar Ar Razi',
-            'Reval Rama Sulistiyo' => 'Abu Bakar Ar Razi',
-            'Sahla Azka Hafizah' => 'Abu Bakar Ar Razi',
-            'Ziya Zivana Zubi' => 'Abu Bakar Ar Razi',
-            'Abdul Latif' => 'Ibnu Al Haytam',
-            'Abid Abyan Tsany Solihansyah' => 'Ibnu Al Haytam',
-            'Aldeen Hadwan Shirazi' => 'Ibnu Al Haytam',
-            'Chaidar Rafisqy Hermawan' => 'Ibnu Al Haytam',
-            'Muhammad Azzam Nufail' => 'Ibnu Al Haytam',
-            'Muhammad Falah Pratama Mulya' => 'Ibnu Al Haytam',
-            'Muhammad Maher' => 'Ibnu Al Haytam',
-            'Muhammad Quincy Satyamulya' => 'Ibnu Al Haytam',
-            'Muhammad Wafi Alkiram' => 'Ibnu Al Haytam',
-            'Rizky Maulana As Shidiq' => 'Ibnu Al Haytam',
-            'Tsabit Wafi Musyaffa' => 'Ibnu Al Haytam',
-            'Zahran Farid Firdaus' => 'Ibnu Al Haytam',
-            'Aila Zahwa Aqilah' => 'Maryam Al Ijliyah',
-            'Aisyah Rahma Haniya' => 'Maryam Al Ijliyah',
-            'Jillan Azra Hakimah' => 'Maryam Al Ijliyah',
-            'Kalula Ayesha Alkanza' => 'Maryam Al Ijliyah',
-            'Muhdatus Sa\'idah' => 'Maryam Al Ijliyah',
-            'Ribkha Pramesti Wijaya' => 'Maryam Al Ijliyah',
-            'Syaila Unatsa Putri' => 'Maryam Al Ijliyah',
-            'Violine Atha Al-Husna' => 'Maryam Al Ijliyah',
-            'Daffa Zaidan Pratama' => 'Al Khawarizmi',
-            'Fauzi Abdu Rohman' => 'Al Khawarizmi',
-            'Galang Hernandes' => 'Al Khawarizmi',
-            'Hamzah Irfan Fadillah' => 'Al Khawarizmi',
-            'Kelvin Adel Pratama' => 'Al Khawarizmi',
-            'Muhammad Daffa Al Ghifari' => 'Al Khawarizmi',
-            'Maherdes Attaufiq Riziqlillah' => 'Al Khawarizmi',
-            'Muhammad Albyan' => 'Al Khawarizmi',
-            'Muhammad Alhafidz' => 'Al Khawarizmi',
-            'Muhammad Aslam Zayyan' => 'Al Khawarizmi',
-            'Muhammad Eldafi Satya Irawan' => 'Al Khawarizmi',
-            'Muhammad Rakha Solihansyah' => 'Al Khawarizmi',
-            'Naufal Djaky Ardani' => 'Al Khawarizmi',
-            'Pandu Bagus Damar Wiyono' => 'Al Khawarizmi',
-            'Zein Maulana Muaffin' => 'Al Khawarizmi',
-            'Anindita Valencia Aurora' => 'Fatimah Al Fihri',
-            'Atsilah Azka Ramadhani' => 'Fatimah Al Fihri',
-            'Dara Medina Putri' => 'Fatimah Al Fihri',
-            'Elsa Sri Isyana' => 'Fatimah Al Fihri',
-            'Fadhilah Ramadhani' => 'Fatimah Al Fihri',
-            'Fakhirah Khansa Anditasyah' => 'Fatimah Al Fihri',
-            'Fauziah Adawiyah' => 'Fatimah Al Fihri',
-            'Gadis Bening Arsandi' => 'Fatimah Al Fihri',
-            'Gian Naifa Shofa' => 'Fatimah Al Fihri',
-            'Jihan Makaila Fakhirah' => 'Fatimah Al Fihri',
-            'Kayyasah Sholiha' => 'Fatimah Al Fihri',
-            'Khayla Almira Maritza H' => 'Fatimah Al Fihri',
-            'Nadia Aqila Shanum' => 'Fatimah Al Fihri',
-            'Naila Syahira Mumtazah' => 'Fatimah Al Fihri',
-            'Nasywa Maulida' => 'Fatimah Al Fihri',
-            'Nurul Hanis Nahilah' => 'Fatimah Al Fihri',
-            'Nurul Kasyfatul Mahjubiyyah' => 'Fatimah Al Fihri',
-            'Putri Yara' => 'Fatimah Al Fihri',
-            'Syakira Sausan Khairunnisa' => 'Fatimah Al Fihri'
+        $kelasRegulerGroups = [
+            'Abu Bakar Ar Razi' => [
+                'Alviandra Chesta Radityatama',
+                'Aqilah Naurah',
+                'Argia Raya Adz Dzikra',
+                'Hanna Mufidah',
+                'Khanza Izzatunnisa',
+                'Muhammad Hafidz Alfahrezi',
+                'Muhammad Al Farizy Setyanto',
+                'Muhammad Al Fatih',
+                'Muhammad Fadlan Adelmar',
+                'Reval Rama Sulistiyo',
+                'Sahla Azka Hafizah',
+                'Ziya Zivana Zubi',
+            ],
+            'Ibnu Al Haytam' => [
+                'Abdul Latif',
+                'Abid Abyan Tsany Solihansyah',
+                'Aldeen Hadwan Shirazi',
+                'Chaidar Rafisqy Hermawan',
+                'Muhammad Azzam Nufail',
+                'Muhammad Falah Pratama Mulya',
+                'Muhammad Maher',
+                'Muhammad Quincy Satyamulya',
+                'Muhammad Wafi Alkiram',
+                'Rizky Maulana As Shidiq',
+                'Tsabit Wafi Musyaffa',
+                'Zahran Farid Firdaus',
+            ],
+            'Maryam Al Ijliyah' => [
+                'Aila Zahwa Aqilah',
+                'Aisyah Rahma Haniya',
+                'Jillan Azra Hakimah',
+                'Kalula Ayesha Alkanza',
+                'Muhdatus Sa\'idah',
+                'Ribkha Pramesti Wijaya',
+                'Syaila Unatsa Putri',
+                'Violine Atha Al-Husna',
+            ],
+            'Al Khawarizmi' => [
+                'Daffa Zaidan Pratama',
+                'Fauzi Abdu Rohman',
+                'Galang Hernandes',
+                'Hamzah Irfan Fadillah',
+                'Kelvin Adel Pratama',
+                'Muhammad Daffa Al Ghifari',
+                'Maherdes Attaufiq Riziqlillah',
+                'Muhammad Albyan',
+                'Muhammad Alhafidz',
+                'Muhammad Aslam Zayyan',
+                'Muhammad Eldafi Satya Irawan',
+                'Muhammad Rakha Solihansyah',
+                'Naufal Djaky Ardani',
+                'Pandu Bagus Damar Wiyono',
+                'Zein Maulana Muaffin',
+            ],
+            'Fatimah Al Fihri' => [
+                'Anindita Valencia Aurora',
+                'Atsilah Azka Ramadhani',
+                'Dara Medina Putri',
+                'Elsa Sri Isyana',
+                'Fadhilah Ramadhani',
+                'Fakhirah Khansa Anditasyah',
+                'Fauziah Adawiyah',
+                'Gadis Bening Arsandi',
+                'Gian Naifa Shofa',
+                'Jihan Makaila Fakhirah',
+                'Kayyasah Sholiha',
+                'Khayla Almira Maritza H',
+                'Nadia Aqila Shanum',
+                'Naila Syahira Mumtazah',
+                'Nasywa Maulida',
+                'Nurul Hanis Nahilah',
+                'Nurul Kasyfatul Mahjubiyyah',
+                'Putri Yara',
+                'Syakira Sausan Khairunnisa',
+            ],
         ];
 
-        // 2. Data Kelas Quran untuk pengelompokan utama (SD & SMP digabung)
+        $kelasBiasaMap = [];
+        foreach ($kelasRegulerGroups as $namaKelas => $siswas) {
+            foreach ($siswas as $namaSiswa) {
+                $kelasBiasaMap[$namaSiswa] = $namaKelas;
+            }
+        }
+
         $dataSiswaQuran = [
-            // --- SMP ---
-            'Imam Nafi bin Abdurrahman' => [
+            'Imam Nafi’ bin Abdurrahman' => [
                 'jk' => 'L',
-                'role' => 'siswa_smp',
                 'siswa' => [
                     'Abdul Latif',
                     'Abid Abyan Tsany Solihansyah',
@@ -103,18 +115,18 @@ class SiswaSeeder extends Seeder
                     'Galang Hernandes',
                     'Hamzah Irfan Fadillah',
                     'Kelvin Adel Pratama',
-                    'Muhammad Daffa Al Ghifari',
                     'Maherdes Attaufiq Riziqlillah',
                     'Muhammad Albyan',
                     'Muhammad Alhafidz',
-                    'Muhammad Aslam Zayyan'
-                ]
+                    'Muhammad Aslam Zayyan',
+                    'Rizky Maulana As Shidiq',
+                ],
             ],
             'Imam Abdullah bin Katsir' => [
                 'jk' => 'L',
-                'role' => 'siswa_smp',
                 'siswa' => [
                     'Muhammad Azzam Nufail',
+                    'Muhammad Daffa Al Ghifari',
                     'Muhammad Eldafi Satya Irawan',
                     'Muhammad Falah Pratama Mulya',
                     'Muhammad Maher',
@@ -123,15 +135,13 @@ class SiswaSeeder extends Seeder
                     'Muhammad Wafi Alkiram',
                     'Naufal Djaky Ardani',
                     'Pandu Bagus Damar Wiyono',
-                    'Rizky Maulana As Shidiq',
                     'Tsabit Wafi Musyaffa',
                     'Zahran Farid Firdaus',
-                    'Zein Maulana Muaffin'
-                ]
+                    'Zein Maulana Muaffin',
+                ],
             ],
             'Imam Ashim bin Abi Al-Najud' => [
                 'jk' => 'L',
-                'role' => 'siswa_smp',
                 'siswa' => [
                     'Alviandra Chesta Radityatama',
                     'Argia Raya Adz Dzikra',
@@ -139,12 +149,11 @@ class SiswaSeeder extends Seeder
                     'Muhammad Al Farizy Setyanto',
                     'Muhammad Al Fatih',
                     'Muhammad Fadlan Adelmar',
-                    'Reval Rama Sulistiyo'
-                ]
+                    'Reval Rama Sulistiyo',
+                ],
             ],
-            'Sutayta Al-Mahamali' => [
+            'Sutayta Al Mahamali' => [
                 'jk' => 'P',
-                'role' => 'siswa_smp',
                 'siswa' => [
                     'Aila Zahwa Aqilah',
                     'Aisyah Rahma Haniya',
@@ -158,12 +167,11 @@ class SiswaSeeder extends Seeder
                     'Gadis Bening Arsandi',
                     'Gian Naifa Shofa',
                     'Jihan Makaila Fakhirah',
-                    'Jillan Azra Hakimah'
-                ]
+                    'Jillan Azra Hakimah',
+                ],
             ],
             'Zainab binti Ahmad' => [
                 'jk' => 'P',
-                'role' => 'siswa_smp',
                 'siswa' => [
                     'Kalula Ayesha Alkanza',
                     'Kayyasah Sholiha',
@@ -178,135 +186,90 @@ class SiswaSeeder extends Seeder
                     'Ribkha Pramesti Wijaya',
                     'Syaila Unatsa Putri',
                     'Syakira Sausan Khairunnisa',
-                    'Violine Atha Al-Husna'
-                ]
+                    'Violine Atha Al-Husna',
+                ],
             ],
             'Bina Shaheen Siddiqui' => [
                 'jk' => 'P',
-                'role' => 'siswa_smp',
                 'siswa' => [
                     'Aqilah Naurah',
                     'Sahla Azka Hafizah',
                     'Hanna Mufidah',
                     'Khanza Izzatunnisa',
-                    'Ziya Zivana Zubi'
-                ]
-            ],
-
-            // --- SD Ikhwan ---
-            'Abu Ubaidah bin Al-Jarrah' => [
-                'jk' => 'L',
-                'role' => 'siswa_sd',
-                'siswa' => [
-                    'Abiyan Elsandra Aradea',
-                    'Abizhar Alfarizki',
-                    'Addeen Makaio Anargya Dikromo',
-                    'Arfan Alfarizki Khairan',
-                    'Atthar Rayyan Al Farizqi',
-                    'Faliq Athallah Syaif',
-                    'Fathian Zufar Haufanhazza Alfaqih',
-                    'Harun Putra Al Hakim',
-                    'Hersa Muhammad Ahsan Syauqi',
-                    'Kalandra Bimo Saputro',
-                    'Muhammad Rasya Oktaliano'
-                ]
-            ],
-            "Sa'id bin Zaid" => [
-                'jk' => 'L',
-                'role' => 'siswa_sd',
-                'siswa' => [
-                    'Khairul Anam Ramadhan',
-                    'Muhammad Arda Sharique',
-                    'Muhammad Ghani Adi Putra',
-                    'Muhammad Rasyantoro Harsoyo',
-                    'Nu\'man Muhammad Al Fayyadh',
-                    'Raditya Gunawan',
-                    'Sakti Sulaiman Faruq Pasaribu',
-                    'Shalahuddin Shabir Al Ayyubi',
-                    'Wildan Danadyaksa',
-                    'Yazid Abdurrahman Aufar',
-                    'Abizhar Alfarizal'
-                ]
-            ],
-
-            // --- SD Akhwat ---
-            'Khadijah binti Khuwailid' => [
-                'jk' => 'P',
-                'role' => 'siswa_sd',
-                'siswa' => [
-                    'Almahyra Gatri Khalila',
-                    'Alqisya Humaira Turidi',
-                    'Annasya Qaireen Lashira',
-                    'Aqila Nur Zahra',
-                    'Ashaqueena Mahreen Kurniawan',
-                    'Azalia Ar Rayyah',
-                    'Azani Humairah Hidayat',
-                    'Clemira Arrumaisha Akbar',
-                    'Farzana Azzahra',
-                    'Fathya Adhania Anwar',
-                    'Fatimatuz Zahro',
-                    'Ghania Bilqis Syarique'
-                ]
-            ],
-            'Fatimah binti Muhammad' => [
-                'jk' => 'P',
-                'role' => 'siswa_sd',
-                'siswa' => [
-                    'Hanania Hafidzah',
-                    'Hasna Almira Rahmah',
-                    'Kinandita Shaqueen Al Amin',
-                    'Laila Nataya Pamuji',
-                    'Maulida Laili Fadhliyah',
-                    'Mikasa Salsabila Syawalia',
-                    'Misilana',
-                    'Nadhira Syafara Al Fathunnisa',
-                    'Nadira Khoirunisa Ramadhani',
-                    'Naila Assyifa Zahro',
-                    'Siti Yasmin Mumtazah',
-                    'Tsania Ilya Syabani',
-                    'Virnie Khairunnisa'
-                ]
+                    'Ziya Zivana Zubi',
+                ],
             ],
         ];
+
+        $quranNames = collect($dataSiswaQuran)->flatMap(fn ($group) => $group['siswa']);
+        $regularNames = collect($kelasRegulerGroups)->flatten();
+        $missingFromRegular = $quranNames->diff($regularNames);
+        $missingFromQuran = $regularNames->diff($quranNames);
+
+        if ($quranNames->count() !== 66 || $quranNames->unique()->count() !== 66) {
+            throw new \RuntimeException('Data siswa SMP harus berisi 66 nama unik.');
+        }
+
+        if ($missingFromRegular->isNotEmpty() || $missingFromQuran->isNotEmpty()) {
+            throw new \RuntimeException('Data kelas reguler dan kelas Quran SMP tidak sinkron.');
+        }
+
+        $sdSiswaIds = Siswa::query()
+            ->whereHas('user', fn ($query) => $query->where('role', 'siswa_sd'))
+            ->pluck('id');
+
+        if ($sdSiswaIds->isNotEmpty()) {
+            \App\Models\PengumpulanTugas::query()->whereIn('siswa_id', $sdSiswaIds)->delete();
+            \App\Models\WorkbookJawaban::query()->whereIn('siswa_id', $sdSiswaIds)->delete();
+            \App\Models\CbtJawaban::query()->whereIn('siswa_id', $sdSiswaIds)->delete();
+            \App\Models\OlympiadJawaban::query()->whereIn('siswa_id', $sdSiswaIds)->delete();
+
+            $sppIds = \App\Models\Spp::query()->whereIn('siswa_id', $sdSiswaIds)->pluck('id');
+            if ($sppIds->isNotEmpty()) {
+                \App\Models\Pembayaran::query()->whereIn('spp_id', $sppIds)->delete();
+                \App\Models\Spp::query()->whereIn('id', $sppIds)->delete();
+            }
+        }
+
+        User::query()->where('role', 'siswa_sd')->delete();
+
+        Siswa::query()
+            ->whereIn('nama', $quranNames->unique()->values())
+            ->get()
+            ->each(function (Siswa $siswa): void {
+                $siswa->forceFill(['nis' => 'TMP-' . $siswa->id])->save();
+            });
 
         $nisCounter = 26001;
 
         foreach ($dataSiswaQuran as $namaKelasQuran => $grup) {
-            $kelasQuran = KelasQuran::where('nama_kelas', $namaKelasQuran)->first();
-            $kelasQuranId = $kelasQuran ? $kelasQuran->id : null;
+            $kelasQuranId = KelasQuran::query()->where('nama_kelas', $namaKelasQuran)->value('id');
 
             foreach ($grup['siswa'] as $namaSiswa) {
-                // 1. Buat atau Update User agar tidak double
-                $email = strtolower(str_replace([' ', '\''], ['.', ''], $namaSiswa)) . '@alazharjayaindonesia.sch.id';
+                $email = strtolower(str_replace([' ', '\'', '’'], ['.', '', ''], $namaSiswa)) . '@alazharjayaindonesia.sch.id';
 
                 $user = User::updateOrCreate(
                     ['email' => $email],
                     [
                         'name' => $namaSiswa,
                         'password' => Hash::make('password123'),
-                        'role' => $grup['role'] // Dinamis berdasarkan grup (SD/SMP)
+                        'role' => 'siswa_smp',
                     ]
                 );
 
-                // 2. Cek Kelas Biasa (jika ada)
-                $kelasRegulerId = null;
-                if (isset($kelasBiasaMap[$namaSiswa])) {
-                    $kelasReguler = Kelas::where('nama_kelas', $kelasBiasaMap[$namaSiswa])->first();
-                    if ($kelasReguler) {
-                        $kelasRegulerId = $kelasReguler->id;
-                    }
-                }
+                $kelasRegulerId = Kelas::query()
+                    ->where('nama_kelas', $kelasBiasaMap[$namaSiswa])
+                    ->value('id');
 
-                // 3. Masukkan ke tabel Siswa menggunakan updateOrCreate berdasarkan user_id
                 Siswa::updateOrCreate(
                     ['user_id' => $user->id],
                     [
                         'nis' => (string) $nisCounter,
                         'nama' => $namaSiswa,
-                        'kelas_id' => $kelasRegulerId, // Hanya terisi jika ditemukan
+                        'kelas_id' => $kelasRegulerId,
                         'kelas_quran_id' => $kelasQuranId,
                         'jenis_kelamin' => $grup['jk'],
-                        'status' => 'aktif'
+                        'status' => 'aktif',
                     ]
                 );
 

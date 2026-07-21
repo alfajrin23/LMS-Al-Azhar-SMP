@@ -91,8 +91,8 @@
                     <p style="font-size:14px;color:var(--gray-400);margin-top:2px">Selamat datang, Kepala Sekolah</p>
                 </div>
                 <div class="header-right">
-                    <span class="badge teal" style="font-size:12px;padding:6px 16px"><i class="fas fa-school"></i> SDIT
-                        &amp; SMPIT</span>
+                    <span class="badge teal" style="font-size:12px;padding:6px 16px"><i class="fas fa-school"></i>
+                        SMPIT</span>
                     <div class="avatar teal">KS</div>
                 </div>
             </div>
@@ -2178,7 +2178,7 @@
                         style="width:100%; padding:6px; border:1px solid #ccc; border-radius:4px">
                 </div>
                 <div style="margin-bottom: 15px;">
-                    <label style="font-size:12px; font-weight:600">Kompatibilitas AI (1-5)</label>
+                    <label style="font-size:12px; font-weight:600">Kesiapan Digital (1-5)</label>
                     <input type="number" name="skor_ai" min="1" max="5" required
                         style="width:100%; padding:6px; border:1px solid #ccc; border-radius:4px">
                 </div>
@@ -2684,7 +2684,7 @@
                     <div class="card-header">
                         <h3><i class="fas fa-cog" style="color:var(--teal)"></i> Pengaturan Umum</h3>
                     </div>
-                    <p style="font-size:13px;color:var(--gray-500);margin-bottom:12px">Nama Sekolah: SDIT &amp; SMPIT Al
+                    <p style="font-size:13px;color:var(--gray-500);margin-bottom:12px">Nama Sekolah: SMPIT Al
                         Azhar Jaya Indonesia</p>
                     <p style="font-size:13px;color:var(--gray-500);margin-bottom:12px">Tahun Ajaran: 2025/2026</p>
                     <p style="font-size:13px;color:var(--gray-500);margin-bottom:12px">Semester: Genap</p>

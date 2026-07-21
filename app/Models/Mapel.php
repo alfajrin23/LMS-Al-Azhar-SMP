@@ -33,7 +33,8 @@ class Mapel extends Model
     {
         return $query->whereNotIn('kode', [
             'IST', 'DZH', 'ASHR_SMP', 'UPCR_SMP', 'DHUHA', 
-            'UPCR', 'QAIL', 'ISHOMA', 'PLG', 'SNCK', 'TRNS', 'ASHR'
+            'UPCR', 'UPCR_PAS', 'QAIL', 'ISHOMA', 'PLG', 'SNCK',
+            'TRNS', 'ASHR', 'ADM', 'ASHR_DZK', 'EKS'
         ]);
     }
 }

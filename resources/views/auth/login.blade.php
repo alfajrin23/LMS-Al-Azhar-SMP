@@ -16,6 +16,11 @@
             overflow: hidden !important;
         }
 
+        .uni-login-page,
+        .uni-login-page * {
+            box-sizing: border-box;
+        }
+
         /* Desktop input field base styling */
         .uni-input-group {
             position: relative;
@@ -154,8 +159,8 @@
 
         .principal-feature {
             width: 100%;
-            max-width: 640px;
-            margin-left: -35px;
+            max-width: 560px;
+            margin-left: 0;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -164,8 +169,8 @@
         }
 
         .principal-photo-frame {
-            width: min(72%, 390px);
-            aspect-ratio: 521 / 601;
+            width: min(58%, 340px);
+            aspect-ratio: 853 / 1280;
             overflow: hidden;
             border-radius: 18px;
             border: 6px solid rgba(255, 255, 255, 0.34);
@@ -179,7 +184,7 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-            object-position: center;
+            object-position: center center;
         }
 
         .principal-tagline {
@@ -472,6 +477,7 @@
 
             .uni-left .principal-photo-frame {
                 width: 86px !important;
+                aspect-ratio: 1 / 1 !important;
                 border-radius: 50% !important;
                 border-width: 3px !important;
                 box-shadow: 0 8px 22px rgba(0, 66, 55, 0.22) !important;
@@ -484,13 +490,16 @@
                 margin-left: 0 !important;
                 transform: none !important;
                 object-fit: cover !important;
+                object-position: center 38% !important;
             }
 
             .uni-left .principal-tagline {
-                max-width: 360px !important;
-                padding: 0 6px 7px !important;
-                font-size: 9.5px !important;
+                width: min(100%, 300px) !important;
+                max-width: calc(100vw - 72px) !important;
+                padding: 0 10px 7px !important;
+                font-size: 9px !important;
                 line-height: 1.35 !important;
+                overflow: visible !important;
             }
 
             .uni-left .principal-tagline::after {
@@ -507,15 +516,19 @@
                 display: flex !important;
                 flex-direction: column !important;
                 justify-content: flex-start !important;
-                align-items: stretch !important;
+                align-items: center !important;
                 box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.08) !important;
                 z-index: 5 !important;
+                width: 100% !important;
+                max-width: 100vw !important;
+                overflow: hidden !important;
             }
 
             .uni-form-wrapper {
                 margin-top: 0 !important;
-                max-width: 100% !important;
+                max-width: min(350px, calc(100vw - 48px)) !important;
                 width: 100% !important;
+                min-width: 0 !important;
                 flex: 1 !important;
                 display: flex !important;
                 flex-direction: column !important;
@@ -525,6 +538,8 @@
                 flex: 1 !important;
                 display: flex !important;
                 flex-direction: column !important;
+                width: 100% !important;
+                min-width: 0 !important;
             }
 
             .form-view {
@@ -535,6 +550,8 @@
                 display: flex !important;
                 flex: 1 !important;
                 flex-direction: column !important;
+                width: 100% !important;
+                min-width: 0 !important;
             }
 
             .uni-footer-link {
@@ -562,18 +579,21 @@
 
             /* Underline Inputs style for mobile view */
             .uni-input-group {
-                margin-bottom: 8px !important;
+                margin-bottom: 14px !important;
             }
 
             .uni-label {
-                position: static !important;
+                position: absolute !important;
+                left: 0 !important;
+                top: -11px !important;
+                transform: none !important;
                 padding: 0 !important;
                 font-size: 11px !important;
                 color: #94a3b8 !important;
                 font-weight: 500 !important;
                 display: block !important;
-                margin-bottom: 2px !important;
-                transform: none !important;
+                margin-bottom: 0 !important;
+                background: transparent !important;
             }
 
             .uni-input-field {
@@ -600,6 +620,8 @@
 
             .uni-input-icon {
                 right: 0 !important;
+                top: 50% !important;
+                transform: translateY(-50%) !important;
             }
 
             .uni-form-wrapper form button[type="submit"] {
@@ -622,15 +644,38 @@
 
             .uni-remember-row {
                 margin-bottom: 8px !important;
+                gap: 12px !important;
+                min-width: 0 !important;
+            }
+
+            .uni-remember-row a {
+                flex-shrink: 0 !important;
+                font-size: 11px !important;
+                white-space: nowrap !important;
+            }
+
+            .uni-checkbox-container {
+                min-width: 0 !important;
+                white-space: nowrap !important;
             }
 
             .uni-role-selector {
                 margin-bottom: 8px !important;
+                width: 100% !important;
+                min-width: 0 !important;
+            }
+
+            .uni-role-selector>div {
+                grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
             }
 
             .uni-role-btn {
                 padding: 4px !important;
                 font-size: 10px !important;
+                min-width: 0 !important;
+                overflow: hidden !important;
+                text-overflow: ellipsis !important;
+                white-space: nowrap !important;
             }
 
             .uni-google-btn {
@@ -663,10 +708,10 @@
             style="font-family: 'Plus Jakarta Sans', sans-serif; height: 100vh; display: flex; align-items: center;">
             <!-- Left Section: Green area -->
             <div class="uni-left"
-                style="flex: 1.4; display: flex; align-items: center; justify-content: flex-start; padding-left: 10px; height: 100%; z-index: 5;">
+                style="flex: 1.4; display: flex; align-items: center; justify-content: center; padding-left: 0; height: 100%; z-index: 5;">
                 <div class="principal-feature">
                     <div class="principal-photo-frame">
-                        <img src="{{ asset('kepala-sekolah.png.png') }}" alt="Kepala Sekolah"
+                        <img src="{{ asset('kepala-sekolah.png.jpg') }}" alt="Kepala Sekolah"
                             class="principal-photo">
                     </div>
                     <p class="principal-tagline">

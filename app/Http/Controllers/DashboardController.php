@@ -17,7 +17,6 @@ use App\Models\Pesan;
 use App\Models\Siswa;
 use App\Models\TahfidzProgress;
 use App\Models\TahfidzSetoran;
-use App\Models\TahsinSetoran;
 use App\Models\Tugas;
 use Illuminate\Http\Request;
 
@@ -53,7 +52,7 @@ class DashboardController extends Controller
                 ->with('mapel', 'nilai')
                 ->get();
                 
-            $isKelas9 = str_starts_with($kelas->nama_kelas ?? '', '9');
+            $isKelas9 = str_starts_with($kelas->kode_kelas ?? '', '9');
             $nilaiKti = $isKelas9 ? \App\Models\NilaiKti::query()->where('siswa_id', $siswa->id)->first() : null;
             $ktiBimbingans = $isKelas9 ? \App\Models\KtiBimbingan::query()->where('siswa_id', $siswa->id)->orderBy('created_at', 'desc')->get() : collect();
 
@@ -62,7 +61,7 @@ class DashboardController extends Controller
                 'siswa' => $siswa,
                 'kelas' => $kelas,
                 'mapels' => Mapel::query()
-                    ->whereNotIn('nama_mapel', ['Istirahat', 'Dzuhur Time', 'Ashar Time', 'Upacara / Flash', 'Dhuha Time', 'Upacara / Pentas Seni', 'Qailullah', 'Sholat dan Makan', 'Pulang / Penjemputan Orang Tua', 'Snack Time', 'Transisi / Pindah ke Kelas', 'Shalat Ashar', 'Kegiatan Pramuka'])
+                    ->whereNotIn('nama_mapel', ['Istirahat', 'Dzuhur Time', 'Ashar Time', 'Upacara / Flash', 'Upacara / PAS Mantap', 'Dhuha Time', 'Apel, Dhuha & Muroja\'ah', 'Upacara / Pentas Seni', 'Qailullah', 'Sholat dan Makan', 'Pulang / Penjemputan Orang Tua', 'Snack Time', 'Transisi / Pindah ke Kelas', 'Shalat Ashar', 'Shalat Ashar dan Dzikir', 'Kegiatan Pramuka', 'Ekskul'])
                     ->where(function($q) use ($kelas, $siswa) {
                         $jadwalMapels = Jadwal::query()->where('kelas_id', $kelas?->id)->pluck('mapel_id');
                         if ($jadwalMapels->isNotEmpty()) {
@@ -113,12 +112,6 @@ class DashboardController extends Controller
                     ->orderBy('tanggal', 'desc')
                     ->get(),
                 'tahfidzProgress' => TahfidzProgress::query()->where('siswa_id', $siswa->id)->first(),
-                'tahsinSetoran' => $role === 'siswa_sd'
-                    ? TahsinSetoran::query()->where('siswa_id', $siswa->id)
-                        ->with(['guru', 'kelas'])
-                        ->orderBy('tanggal', 'desc')
-                        ->get()
-                    : collect(),
                 'pengumuman' => Pengumuman::where(function ($q) use ($role) {
                         $q->whereNull('target_role')
                             ->orWhere('target_role', $role)
@@ -227,7 +220,7 @@ class DashboardController extends Controller
                 ->get();
 
             // KTI: semua siswa kelas 9 untuk rekap progress
-            $siswaKelas9 = \App\Models\Siswa::whereHas('kelas', fn($q) => $q->where('nama_kelas', 'like', '9%'))
+            $siswaKelas9 = \App\Models\Siswa::whereHas('kelas', fn($q) => $q->where('kode_kelas', 'like', '9%'))
                 ->with('kelas')
                 ->get();
 
@@ -648,14 +641,14 @@ class DashboardController extends Controller
             $logAktivitas = \App\Models\LogAktivitas::latest()->take(6)->get();
 
             $siswaSD13 = \App\Models\Siswa::whereHas('kelas', function($q) {
-                $q->where('nama_kelas', 'like', '1%')->orWhere('nama_kelas', 'like', '2%')->orWhere('nama_kelas', 'like', '3%');
+                $q->whereIn('kode_kelas', ['1', '2', '3']);
             })->count();
             $siswaSD46 = \App\Models\Siswa::whereHas('kelas', function($q) {
-                $q->where('nama_kelas', 'like', '4%')->orWhere('nama_kelas', 'like', '5%')->orWhere('nama_kelas', 'like', '6%');
+                $q->whereIn('kode_kelas', ['4', '5A', '5B', '6A', '6B']);
             })->count();
-            $siswa7 = \App\Models\Siswa::whereHas('kelas', function($q) { $q->where('nama_kelas', 'like', '7%'); })->count();
-            $siswa8 = \App\Models\Siswa::whereHas('kelas', function($q) { $q->where('nama_kelas', 'like', '8%'); })->count();
-            $siswa9 = \App\Models\Siswa::whereHas('kelas', function($q) { $q->where('nama_kelas', 'like', '9%'); })->count();
+            $siswa7 = \App\Models\Siswa::whereHas('kelas', function($q) { $q->where('kode_kelas', '7'); })->count();
+            $siswa8 = \App\Models\Siswa::whereHas('kelas', function($q) { $q->where('kode_kelas', 'like', '8%'); })->count();
+            $siswa9 = \App\Models\Siswa::whereHas('kelas', function($q) { $q->where('kode_kelas', 'like', '9%'); })->count();
 
             $dist = [
                 'sd13' => ['count' => $siswaSD13, 'pct' => $totalSiswa > 0 ? round(($siswaSD13/$totalSiswa)*100) : 0],
@@ -725,7 +718,7 @@ class DashboardController extends Controller
 
             // --- 4. KARYA TULIS & TAHFIDZ ---
             $siswaKelas9 = \App\Models\Siswa::whereHas('kelas', function($q) {
-                $q->whereIn('nama_kelas', ['9A', '9B']);
+                $q->whereIn('kode_kelas', ['9A', '9B']);
             })->with(['kelas'])->get();
 
             $ktiData = \App\Models\NilaiKti::whereIn('siswa_id', $siswaKelas9->pluck('id'))->get()->keyBy('siswa_id');

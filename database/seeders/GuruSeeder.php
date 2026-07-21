@@ -25,29 +25,37 @@ class GuruSeeder extends Seeder
             'Sri Wanti Maulani, S.Pd' => [],
             'Khairunisa' => [],
             'Ai Sunariah, S.Pd' => [],
-
-            // Guru SD Dummy
-            'Guru Pendamping SD' => [
-                'Dhuha Time',
-                'Upacara / Pentas Seni',
-                'Tahfidzul Qur\'an',
-                'Bahasa Indonesia',
-                'Matematika',
-                'Qailullah',
-                'Sholat dan Makan',
-                'Pulang / Penjemputan Orang Tua',
-                'Fiqh',
-                'Kegiatan Pramuka',
-                'Transisi / Pindah ke Kelas',
-                'Bahasa Inggris',
-                'Aqidah/Akhlak',
-                'PJOK',
-                'Bina Pribadi Islam',
-                'Qadhaya Rawa\'i',
-                'IPAS',
-                'Bahasa Arab'
-            ]
         ];
+
+        $sdGuru = Guru::query()->where('nama', 'Guru Pendamping SD')->first();
+        if ($sdGuru) {
+            $fallbackGuruId = Guru::query()
+                ->where('id', '!=', $sdGuru->id)
+                ->value('id');
+
+            \App\Models\Tugas::query()->where('guru_id', $sdGuru->id)->delete();
+            \App\Models\Jadwal::query()->where('guru_id', $sdGuru->id)->delete();
+
+            if ($fallbackGuruId) {
+                \App\Models\CatatanWali::query()
+                    ->where('created_by', $sdGuru->id)
+                    ->update(['created_by' => $fallbackGuruId]);
+                \App\Models\Workbook::query()
+                    ->where('guru_id', $sdGuru->id)
+                    ->update(['guru_id' => $fallbackGuruId]);
+                \App\Models\Materi::query()
+                    ->where('guru_id', $sdGuru->id)
+                    ->update(['guru_id' => $fallbackGuruId]);
+                \App\Models\CbtExam::query()
+                    ->where('guru_id', $sdGuru->id)
+                    ->update(['guru_id' => $fallbackGuruId]);
+                \App\Models\OlympiadExam::query()
+                    ->where('guru_id', $sdGuru->id)
+                    ->update(['guru_id' => $fallbackGuruId]);
+            }
+
+            $sdGuru->user?->delete();
+        }
 
         $nipCounter = 1001;
 

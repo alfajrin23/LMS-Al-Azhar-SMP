@@ -66,7 +66,7 @@ class DatabaseSeeder extends Seeder
 
         // === KUMPULKAN ID UNTUK SEEDING ===
         $siswas = \App\Models\Siswa::all();
-        $mapels = \App\Models\Mapel::whereNotIn('nama_mapel', ['Istirahat', 'Dzuhur Time', 'Ashar Time', 'Upacara / Flash', 'Dhuha Time', 'Upacara / Pentas Seni', 'Qailullah', 'Sholat dan Makan', 'Pulang / Penjemputan Orang Tua', 'Snack Time', 'Transisi / Pindah ke Kelas', 'Shalat Ashar', 'Kegiatan Pramuka'])->get();
+        $mapels = \App\Models\Mapel::whereNotIn('nama_mapel', ['Istirahat', 'Dzuhur Time', 'Ashar Time', 'Upacara / Flash', 'Upacara / PAS Mantap', 'Dhuha Time', 'Apel, Dhuha & Muroja\'ah', 'Upacara / Pentas Seni', 'Qailullah', 'Sholat dan Makan', 'Pulang / Penjemputan Orang Tua', 'Snack Time', 'Transisi / Pindah ke Kelas', 'Shalat Ashar', 'Shalat Ashar dan Dzikir', 'Kegiatan Pramuka', 'Ekskul'])->get();
         $kelas = \App\Models\Kelas::all();
         $gurus = \App\Models\Guru::all();
         $adminUser = User::query()->where('role', 'admin')->first();
@@ -266,7 +266,7 @@ class DatabaseSeeder extends Seeder
 
         // === PENGATURAN ===
         $pengaturanData = [
-            ['key' => 'nama_sekolah', 'value' => 'SDIT/SMPIT Al Azhar Jaya Indonesia'],
+            ['key' => 'nama_sekolah', 'value' => 'SMPIT Al Azhar Jaya Indonesia'],
             ['key' => 'tahun_ajaran', 'value' => '2025/2026'],
             ['key' => 'semester', 'value' => 'Genap'],
             ['key' => 'alamat_sekolah', 'value' => 'Jl. Raya Cendana No. 123, Kota Tangerang Selatan, Banten'],

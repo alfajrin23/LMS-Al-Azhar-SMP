@@ -47,11 +47,6 @@ class Guru extends Model
         return $this->hasMany(TahfidzSetoran::class);
     }
 
-    public function tahsinSetoran()
-    {
-        return $this->hasMany(TahsinSetoran::class);
-    }
-
     public function cbtExams()
     {
         return $this->hasMany(CbtExam::class);

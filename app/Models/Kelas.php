@@ -23,11 +23,6 @@ class Kelas extends Model
         return $this->hasMany(Tugas::class);
     }
 
-    public function tahsinSetoran()
-    {
-        return $this->hasMany(TahsinSetoran::class);
-    }
-
     public function waliKelas()
     {
         return $this->belongsTo(Guru::class, 'guru_id');

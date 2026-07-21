@@ -21,7 +21,7 @@ function force_env(string $key, string $value): void
 force_env('APP_ENV', 'production');
 set_default_env('APP_KEY', 'base64:A0HS5iKNXPcJ73zKN2m00AudKedDw4Zk3mUB0pPHXuQ=');
 force_env('APP_DEBUG', 'false');
-set_default_env('APP_URL', 'https://'.(getenv('VERCEL_URL') ?: 'lms-al-azhar-sd.vercel.app'));
+set_default_env('APP_URL', 'https://'.(getenv('VERCEL_URL') ?: 'lms-al-azhar-smp.vercel.app'));
 force_env('LOG_CHANNEL', 'stderr');
 force_env('CACHE_STORE', 'array');
 force_env('SESSION_DRIVER', 'cookie');

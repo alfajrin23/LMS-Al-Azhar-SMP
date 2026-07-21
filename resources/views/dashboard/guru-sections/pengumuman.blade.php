@@ -18,7 +18,6 @@
             <label style="display:block;font-size:13px;font-weight:600;color:var(--gray-500);margin-bottom:4px">Target</label>
             <select name="target_role" class="form-select" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:13px;font-family:var(--font);background:var(--white)">
                 <option value="">Semua</option>
-                <option value="siswa_sd">Siswa SD</option>
                 <option value="siswa_smp">Siswa SMP</option>
                 <option value="guru">Guru</option>
                 <option value="orang_tua">Orang Tua</option>
