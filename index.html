@@ -1,0 +1,1609 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LMS Al Azhar Jaya Indonesia</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ============================================================ -->
+<!-- HALAMAN LOGIN                                                -->
+<!-- ============================================================ -->
+<div class="login-page">
+  <div class="login-container">
+    <div class="login-left">
+      <div class="login-logo">AJ</div>
+      <h1>LMS Al Azhar Jaya Indonesia</h1>
+      <p class="subtitle">Sekolah Berkarakter — Berbasis Tahfidzul Qur'an</p>
+      <ul class="login-features">
+        <li><span class="check">&#10003;</span> SDIT &amp; SMPIT — Terakreditasi A</li>
+        <li><span class="check">&#10003;</span> Jl. Sirih Prada No. 135, Pabuaran, Mustika Jaya, Bekasi</li>
+        <li><span class="check">&#10003;</span> Program Unggulan Tahfidzul Qur'an</li>
+      </ul>
+    </div>
+    <div class="login-right">
+      <h2>Masuk ke Akun Anda</h2>
+      <p class="login-sub">Masukkan email dan password yang terdaftar</p>
+      <div class="form-group">
+        <label><i class="fas fa-envelope"></i> Email</label>
+        <div class="input-wrap">
+          <i class="fas fa-envelope input-icon"></i>
+          <input type="email" placeholder="contoh@alazharjayaindonesia.sch.id" value="ahmad@alazharjayaindonesia.sch.id">
+        </div>
+      </div>
+      <div class="form-group">
+        <label><i class="fas fa-lock"></i> Password</label>
+        <div class="input-wrap">
+          <i class="fas fa-lock input-icon"></i>
+          <input type="password" placeholder="Password" value="password123">
+          <span class="toggle-pass">Lihat</span>
+        </div>
+      </div>
+      <div class="form-group">
+        <label><i class="fas fa-user-tag"></i> Login sebagai</label>
+        <select class="form-select">
+          <option>Siswa SD</option>
+          <option selected>Siswa SMP</option>
+          <option>Guru</option>
+          <option>Admin</option>
+          <option>Orang Tua</option>
+        </select>
+      </div>
+      <label onclick="doLogin()" class="btn-login"><i class="fas fa-sign-in-alt"></i> Masuk</label>
+      <div class="login-links"><a href="javascript:void(0)" onclick="return false">Lupa password?</a></div>
+      <div class="login-footer">Butuh bantuan? Hubungi admin sekolah.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- GLOBAL HEADER                                                -->
+<!-- ============================================================ -->
+<header class="global-header hidden">
+  <div style="display:flex;align-items:center;gap:8px">
+    <button class="hamburger" onclick="toggleSidebar()" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
+    <div class="logo"><i class="fas fa-graduation-cap"></i> LMS Al Azhar Jaya Indonesia</div>
+  </div>
+  <nav class="tab-nav">
+    <label onclick="switchTab('tab-login')"><i class="fas fa-sign-out-alt"></i> Login</label>
+    <label onclick="switchTab('tab-student-sd')"><i class="fas fa-child"></i> Siswa SD</label>
+    <label onclick="switchTab('tab-student-smp')"><i class="fas fa-user-graduate"></i> Siswa SMP</label>
+    <label onclick="switchTab('tab-teacher')"><i class="fas fa-chalkboard-teacher"></i> Guru</label>
+    <label onclick="switchTab('tab-admin')"><i class="fas fa-user-shield"></i> Admin</label>
+    <label onclick="switchTab('tab-parent')"><i class="fas fa-users"></i> Orang Tua</label>
+  </nav>
+</header>
+
+<div class="sidebar-overlay hidden" onclick="toggleSidebar()"></div>
+
+<!-- ============================================================ -->
+<!-- DASHBOARD SISWA SD                                           -->
+<!-- ============================================================ -->
+<div class="dashboard hidden" id="d-student-sd">
+
+<div class="dashboard-layout">
+
+<aside class="sidebar">
+  <div class="brand">
+    <h2><i class="fas fa-graduation-cap"></i>LMS Al Azhar Jaya</h2>
+    <p>SDIT Al Azhar Jaya Indonesia</p>
+  </div>
+  <ul class="sidebar-menu">
+    <li class="sd-nav-dashboard"><label onclick="showContent('sd','dashboard')"><i class="fas fa-th-large"></i> Dashboard</label></li>
+    <li class="sd-nav-mapel"><label onclick="showContent('sd','mapel')"><i class="fas fa-book"></i> Mata Pelajaran</label></li>
+    <li class="sd-nav-tugas"><label onclick="showContent('sd','tugas')"><i class="fas fa-tasks"></i> Tugas</label></li>
+    <li class="sd-nav-ulangan"><label onclick="showContent('sd','ulangan')"><i class="fas fa-pencil-alt"></i> Ulangan</label></li>
+    <li class="sd-nav-nilai"><label onclick="showContent('sd','nilai')"><i class="fas fa-chart-line"></i> Nilai</label></li>
+    <li class="sd-nav-pengumuman"><label onclick="showContent('sd','pengumuman')"><i class="fas fa-bullhorn"></i> Pengumuman</label></li>
+  </ul>
+  <div class="sidebar-logout"><label onclick="logout()"><i class="fas fa-sign-out-alt"></i> Keluar</label></div>
+</aside>
+
+<main class="main-area">
+
+<!-- === SD: Dashboard === -->
+<div class="sd-content sd-content-dashboard">
+  <div class="content-header">
+    <div class="greeting">Assalamu'alaikum, <strong>Ahmad</strong> &#x1F44B;</div>
+    <div class="header-right">
+      <div class="notif-badge"><i class="fas fa-bell"></i></div>
+      <div class="avatar teal">AH</div>
+      <span style="font-weight:600;font-size:14px">Ahmad</span>
+    </div>
+  </div>
+  <div class="welcome-banner">
+    <div class="welcome-banner-left">
+      <h2>Assalamu'alaikum, Ahmad! &#x1F44B;</h2>
+      <p>Hari ini ada 5 jadwal pelajaran dan 2 tugas yang perlu dikerjakan. Tetap semangat!</p>
+    </div>
+    <div class="welcome-banner-right">&#x1F4DA;</div>
+  </div>
+  <div class="grid-2" style="margin-bottom:20px">
+    <div class="card">
+<div class="card-header"><h3><i class="fas fa-calendar-day" style="color:var(--teal)"></i> Jadwal Hari Ini</h3><label onclick="showContent('sd','jadwal')" style="cursor:pointer;font-size:12px;color:var(--blue);font-weight:600;text-decoration:none">Lihat Semua</label></div>
+      <div class="schedule-item"><div class="schedule-time">06:30</div><div class="schedule-info"><div class="mapel">Tahfidz Qur'an</div><div class="guru">Ustadz Ahmad Fauzi</div></div><span class="badge green light">TAH</span></div>
+      <div class="schedule-item"><div class="schedule-time">07:00</div><div class="schedule-info"><div class="mapel">Pendidikan Agama Islam</div><div class="guru">Ustadz Ahmad Fauzi</div></div><span class="badge teal">PAI</span></div>
+      <div class="schedule-item"><div class="schedule-time">08:30</div><div class="schedule-info"><div class="mapel">Matematika</div><div class="guru">Bu Dewi Sartika</div></div><span class="badge blue">MTK</span></div>
+      <div class="schedule-item"><div class="schedule-time">10:00</div><div class="schedule-info"><div class="mapel">Bahasa Indonesia</div><div class="guru">Ibu Siti Rahmawati</div></div><span class="badge orange light">B.IND</span></div>
+      <div class="schedule-item"><div class="schedule-time">11:30</div><div class="schedule-info"><div class="mapel">Ilmu Pengetahuan Alam</div><div class="guru">Pak Budi Santoso</div></div><span class="badge purple light">IPA</span></div>
+      <div class="schedule-item"><div class="schedule-time">13:00</div><div class="schedule-info"><div class="mapel">Bahasa Inggris</div><div class="guru">Ms. Linda Wijaya</div></div><span class="badge cyan light">ING</span></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><h3><i class="fas fa-exclamation-triangle" style="color:var(--orange)"></i> Tugas &amp; Ulangan Terdekat</h3><label onclick="showContent('sd','tugas')">Lihat Semua</label></div>
+      <div class="task-item"><i class="fas fa-file-alt" style="color:var(--teal);font-size:18px"></i><div class="task-info"><div class="task-title">Tugas Praktek Sholat</div><div class="task-meta">PAI &ndash; Deadline: 2 Apr 2026</div></div><span class="badge status-terlambat">Terlambat</span></div>
+      <div class="task-item"><i class="fas fa-file-alt" style="color:var(--blue);font-size:18px"></i><div class="task-info"><div class="task-title">PR Persamaan Linear</div><div class="task-meta">Matematika &ndash; Deadline: 5 Apr 2026</div></div><span class="badge status-mendekati">Mendekati</span></div>
+      <div class="task-item"><i class="fas fa-file-alt" style="color:var(--purple);font-size:18px"></i><div class="task-info"><div class="task-title">Laporan Pengamatan</div><div class="task-meta">IPA &ndash; Deadline: 10 Apr 2026</div></div><span class="badge status-selesai">Selesai</span></div>
+      <div class="task-item"><i class="fas fa-pencil-alt" style="color:var(--orange);font-size:18px"></i><div class="task-info"><div class="task-title">Ulangan Harian Bab 4</div><div class="task-meta">B. Indonesia &ndash; 8 Apr 2026</div></div><span class="badge status-mendekati">Mendekati</span></div>
+      <div class="task-item"><i class="fas fa-pencil-alt" style="color:var(--cyan);font-size:18px"></i><div class="task-info"><div class="task-title">Quiz Vocabulary</div><div class="task-meta">B. Inggris &ndash; 12 Apr 2026</div></div><span class="badge teal">Akan Datang</span></div>
+    </div>
+  </div>
+  <div class="grid-2" style="margin-bottom:20px">
+    <div class="card">
+      <div class="card-header"><h3><i class="fas fa-chart-bar" style="color:var(--teal)"></i> Progress Belajar</h3><label onclick="showContent('sd','nilai')">Detail</label></div>
+      <div class="grid-2x2">
+        <div class="subject-mini"><div class="subject-name" style="color:var(--green)">Tahfidz Qur'an</div><div class="progress-wrap"><div class="progress-label"><span>Progress</span><span>60%</span></div><div class="progress-bar"><div class="fill" style="width:60%"></div></div></div></div>
+        <div class="subject-mini"><div class="subject-name" style="color:var(--teal)">PAI</div><div class="progress-wrap"><div class="progress-label"><span>Progress</span><span>85%</span></div><div class="progress-bar"><div class="fill" style="width:85%"></div></div></div></div>
+        <div class="subject-mini"><div class="subject-name" style="color:var(--blue)">Matematika</div><div class="progress-wrap"><div class="progress-label"><span>Progress</span><span>72%</span></div><div class="progress-bar"><div class="fill" style="width:72%"></div></div></div></div>
+        <div class="subject-mini"><div class="subject-name" style="color:var(--purple)">IPA</div><div class="progress-wrap"><div class="progress-label"><span>Progress</span><span>90%</span></div><div class="progress-bar"><div class="fill" style="width:90%"></div></div></div></div>
+        <div class="subject-mini"><div class="subject-name" style="color:var(--orange)">B. Indonesia</div><div class="progress-wrap"><div class="progress-label"><span>Progress</span><span>68%</span></div><div class="progress-bar"><div class="fill" style="width:68%"></div></div></div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><h3><i class="fas fa-file-invoice" style="color:var(--blue)"></i> Rapor Singkat</h3><label onclick="showContent('sd','nilai')">Lihat Rapor</label></div>
+      <div class="rapor-item"><span class="rapor-mapel">Tahfidz Qur'an</span><span class="rapor-nilai grade-B">80 (B+)</span></div>
+      <div class="rapor-item"><span class="rapor-mapel">Pendidikan Agama Islam</span><span class="rapor-nilai grade-A">92 (A)</span></div>
+      <div class="rapor-item"><span class="rapor-mapel">Matematika</span><span class="rapor-nilai grade-B">85 (B+)</span></div>
+      <div class="rapor-item"><span class="rapor-mapel">Bahasa Indonesia</span><span class="rapor-nilai grade-B">88 (A-)</span></div>
+      <div class="rapor-item"><span class="rapor-mapel">IPA</span><span class="rapor-nilai grade-A">90 (A)</span></div>
+      <div class="rapor-item"><span class="rapor-mapel">Bahasa Inggris</span><span class="rapor-nilai grade-B">84 (B+)</span></div>
+      <div class="rapor-item"><span class="rapor-mapel">IPS</span><span class="rapor-nilai grade-C">78 (B-)</span></div>
+    </div>
+  </div>
+  <div class="card" style="margin-bottom:20px">
+    <div class="card-header"><h3><i class="fas fa-trophy" style="color:var(--orange)"></i> Pencapaianku (Badge)</h3><a href="javascript:void(0)" onclick="return false">Semua Badge</a></div>
+    <div class="badge-row">
+      <div class="badge-card"><div class="badge-emoji">&#x2B50;</div><div class="badge-name">Rajin Belajar</div><div class="badge-desc">Aktif 30 hari berturut-turut</div></div>
+      <div class="badge-card"><div class="badge-emoji">&#x1F3AF;</div><div class="badge-name">Juara Quiz</div><div class="badge-desc">Nilai quiz di atas 90</div></div>
+      <div class="badge-card locked"><div class="badge-emoji">&#x1F4D6;</div><div class="badge-name">Pembaca Aktif</div><div class="badge-desc">Baca 20 materi</div></div>
+      <div class="badge-card locked"><div class="badge-emoji">&#x1F3C6;</div><div class="badge-name">Streak 7 Hari</div><div class="badge-desc">Login 7 hari berturut-turut</div></div>
+    </div>
+    <div class="streak-row">
+      <div class="streak-dots"><div class="streak-dot active">Sen</div><div class="streak-dot active">Sel</div><div class="streak-dot active">Rab</div><div class="streak-dot active">Kam</div><div class="streak-dot active">Jum</div><div class="streak-dot inactive">Sab</div><div class="streak-dot inactive">Min</div></div>
+      <span class="streak-text">&#x1F525; 5 hari berturut-turut!</span>
+    </div>
+  </div>
+  <div class="grid-2">
+    <div class="card"><div class="card-header"><h3><i class="fas fa-bullhorn" style="color:var(--orange)"></i> Pengumuman Sekolah</h3><label onclick="showContent('sd','pengumuman')">Semua</label></div>
+      <div class="ann-item"><div class="ann-date">25 Maret 2026</div><div class="ann-title">Libur Hari Raya Nyepi</div><div class="ann-desc">Sekolah libur pada tanggal 30 Maret 2026 dalam rangka Hari Raya Nyepi.</div></div>
+      <div class="ann-item"><div class="ann-date">20 Maret 2026</div><div class="ann-title">Pesantren Kilat Ramadhan</div><div class="ann-desc">Kegiatan pesantren kilat akan diadakan pada minggu kedua April.</div></div>
+      <div class="ann-item"><div class="ann-date">15 Maret 2026</div><div class="ann-title">Pembagian Rapor Tengah Semester</div><div class="ann-desc">Pembagian rapor akan dilaksanakan pada 5 April 2026 pukul 08.00 WIB.</div></div>
+    </div>
+    <div class="card"><div class="card-header"><h3><i class="fas fa-envelope" style="color:var(--blue)"></i> Pesan dari Guru</h3><label onclick="showContent('sd','pesan')" style="cursor:pointer;font-size:12px;color:var(--blue);font-weight:600;text-decoration:none">Semua Pesan</label></div>
+      <div class="msg-item"><div class="msg-sender"><i class="fas fa-user-circle" style="color:var(--teal);margin-right:6px"></i> Ustadz Ahmad Fauzi</div><div class="msg-preview">Ahmad, tolong kumpulkan tugas praktek sholat paling lambat besok...</div></div>
+      <div class="msg-item"><div class="msg-sender"><i class="fas fa-user-circle" style="color:var(--blue);margin-right:6px"></i> Bu Dewi Sartika</div><div class="msg-preview">Anak-anak, jangan lupa mengerjakan PR persamaan linear halaman 45-48.</div></div>
+      <div class="msg-item"><div class="msg-sender"><i class="fas fa-user-circle" style="color:var(--purple);margin-right:6px"></i> Ibu Siti Rahmawati</div><div class="msg-preview">Untuk tugas menulis esai, dikumpulkan melalui Google Form ya...</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- === SD: Mata Pelajaran === -->
+<div class="sd-content sd-content-mapel">
+  <div class="content-header"><h1>Mata Pelajaran <span>SDIT Al Azhar Jaya Indonesia</span></h1><div class="header-right"><div class="avatar teal">AH</div></div></div>
+  <div class="grid-2">
+    <div class="card"><div class="card-header"><h3><i class="fas fa-quran" style="color:var(--green)"></i> Tahfidz Qur'an</h3><label onclick="showContent('sd','mapel')" style="cursor:pointer;font-size:12px;color:var(--blue);font-weight:600;text-decoration:none">Detail</label></div><p style="font-size:13px;color:var(--gray-400);margin-bottom:10px">Guru: Ustadz Ahmad Fauzi</p><p style="font-size:13px;color:var(--gray-500)">Program unggulan — hafalan dan muroja'ah Al-Qur'an.</p></div>
+    <div class="card"><div class="card-header"><h3><i class="fas fa-book" style="color:var(--teal)"></i> PAI</h3><label onclick="showContent('sd','mapel')" style="cursor:pointer;font-size:12px;color:var(--blue);font-weight:600;text-decoration:none">Detail</label></div><p style="font-size:13px;color:var(--gray-400);margin-bottom:10px">Guru: Ustadz Ahmad Fauzi</p><p style="font-size:13px;color:var(--gray-500)">Mempelajari Al-Qur'an, Hadits, Fiqih, dan Akhlak Islami.</p></div>
+    <div class="card"><div class="card-header"><h3><i class="fas fa-book" style="color:var(--blue)"></i> Matematika</h3><label onclick="showContent('sd','mapel')" style="cursor:pointer;font-size:12px;color:var(--blue);font-weight:600;text-decoration:none">Detail</label></div><p style="font-size:13px;color:var(--gray-400);margin-bottom:10px">Guru: Bu Dewi Sartika</p><p style="font-size:13px;color:var(--gray-500)">Aritmatika, geometri, dan pemecahan masalah.</p></div>
+    <div class="card"><div class="card-header"><h3><i class="fas fa-book" style="color:var(--orange)"></i> Bahasa Indonesia</h3><label onclick="showContent('sd','mapel')" style="cursor:pointer;font-size:12px;color:var(--blue);font-weight:600;text-decoration:none">Detail</label></div><p style="font-size:13px;color:var(--gray-400);margin-bottom:10px">Guru: Ibu Siti Rahmawati</p><p style="font-size:13px;color:var(--gray-500)">Tata bahasa, membaca, menulis, dan sastra.</p></div>
+    <div class="card"><div class="card-header"><h3><i class="fas fa-book" style="color:var(--purple)"></i> IPA</h3><label onclick="showContent('sd','mapel')" style="cursor:pointer;font-size:12px;color:var(--blue);font-weight:600;text-decoration:none">Detail</label></div><p style="font-size:13px;color:var(--gray-400);margin-bottom:10px">Guru: Pak Budi Santoso</p><p style="font-size:13px;color:var(--gray-500)">Pengenalan sains, eksperimen, dan lingkungan.</p></div>
+    <div class="card"><div class="card-header"><h3><i class="fas fa-book" style="color:var(--cyan)"></i> Bahasa Inggris</h3><label onclick="showContent('sd','mapel')" style="cursor:pointer;font-size:12px;color:var(--blue);font-weight:600;text-decoration:none">Detail</label></div><p style="font-size:13px;color:var(--gray-400);margin-bottom:10px">Guru: Ms. Linda Wijaya</p><p style="font-size:13px;color:var(--gray-500)">Vocabulary, grammar, dan percakapan dasar.</p></div>
+    <div class="card"><div class="card-header"><h3><i class="fas fa-book" style="color:var(--pink)"></i> IPS</h3><label onclick="showContent('sd','mapel')" style="cursor:pointer;font-size:12px;color:var(--blue);font-weight:600;text-decoration:none">Detail</label></div><p style="font-size:13px;color:var(--gray-400);margin-bottom:10px">Guru: Pak Dwi Hartono</p><p style="font-size:13px;color:var(--gray-500)">Geografi, sejarah, dan ekonomi dasar.</p></div>
+  </div>
+</div>
+
+<!-- === SD: Tugas === -->
+<div class="sd-content sd-content-tugas">
+  <div class="content-header"><h1>Tugas <span>SDIT Al Azhar Jaya Indonesia</span></h1><div class="header-right"><div class="avatar teal">AH</div></div></div>
+  <div class="card"><div class="card-header"><h3><i class="fas fa-tasks" style="color:var(--teal)"></i> Semua Tugas</h3><label onclick="showContent('sd','tugas')" style="cursor:pointer;font-size:12px;color:var(--blue);font-weight:600;text-decoration:none">Filter</label></div>
+    <div class="table-wrap"><table><thead><tr><th>Judul Tugas</th><th>Mapel</th><th>Deadline</th><th>Status</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Tugas Praktek Sholat</strong></td><td>PAI</td><td>2 Apr 2026</td><td><span class="badge status-terlambat">Terlambat</span></td></tr>
+      <tr><td><strong>PR Persamaan Linear</strong></td><td>Matematika</td><td>5 Apr 2026</td><td><span class="badge status-mendekati">Mendekati</span></td></tr>
+      <tr><td><strong>Laporan Pengamatan</strong></td><td>IPA</td><td>10 Apr 2026</td><td><span class="badge status-selesai">Selesai</span></td></tr>
+      <tr><td><strong>Esai Liburan</strong></td><td>B. Indonesia</td><td>15 Apr 2026</td><td><span class="badge teal">Aktif</span></td></tr>
+      <tr><td><strong>Vocabulary Quiz</strong></td><td>B. Inggris</td><td>12 Apr 2026</td><td><span class="badge teal">Aktif</span></td></tr>
+    </tbody></table></div>
+  </div>
+</div>
+
+<!-- === SD: Ulangan === -->
+<div class="sd-content sd-content-ulangan">
+  <div class="content-header"><h1>Ulangan <span>SDIT Al Azhar Jaya Indonesia</span></h1><div class="header-right"><div class="avatar teal">AH</div></div></div>
+  <div class="card"><div class="card-header"><h3><i class="fas fa-pencil-alt" style="color:var(--orange)"></i> Jadwal Ulangan</h3><label onclick="showContent('sd','ulangan')" style="cursor:pointer;font-size:12px;color:var(--blue);font-weight:600;text-decoration:none">Riwayat</label></div>
+    <div class="table-wrap"><table><thead><tr><th>Nama Ulangan</th><th>Mapel</th><th>Tanggal</th><th>Status</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Ulangan Harian Bab 4</strong></td><td>B. Indonesia</td><td>8 Apr 2026</td><td><span class="badge status-mendekati">Mendekati</span></td></tr>
+      <tr><td><strong>Quiz Vocabulary</strong></td><td>B. Inggris</td><td>12 Apr 2026</td><td><span class="badge teal">Akan Datang</span></td></tr>
+      <tr><td><strong>UTS Genap</strong></td><td>Semua Mapel</td><td>20-25 Apr 2026</td><td><span class="badge teal">Akan Datang</span></td></tr>
+      <tr><td><strong>Ulangan Harian Bab 3</strong></td><td>Matematika</td><td>15 Mar 2026</td><td><span class="badge status-selesai">Selesai</span></td></tr>
+    </tbody></table></div>
+  </div>
+</div>
+
+<!-- === SD: Nilai === -->
+<div class="sd-content sd-content-nilai">
+  <div class="content-header"><h1>Nilai <span>SDIT Al Azhar Jaya Indonesia</span></h1><div class="header-right"><div class="avatar teal">AH</div></div></div>
+  <div class="grid-2">
+    <div class="card"><div class="card-header"><h3><i class="fas fa-file-invoice" style="color:var(--blue)"></i> Rapor Semester Genap</h3><label onclick="showContent('sd','rapor')" style="font-size:12px;color:var(--blue);font-weight:600;cursor:pointer;text-decoration:none">Cetak</label></div>
+      <div class="rapor-item"><span class="rapor-mapel">Tahfidz Qur'an</span><span class="rapor-nilai grade-B">80 (B+)</span></div>
+      <div class="rapor-item"><span class="rapor-mapel">Pendidikan Agama Islam</span><span class="rapor-nilai grade-A">92 (A)</span></div>
+      <div class="rapor-item"><span class="rapor-mapel">Matematika</span><span class="rapor-nilai grade-B">85 (B+)</span></div>
+      <div class="rapor-item"><span class="rapor-mapel">Bahasa Indonesia</span><span class="rapor-nilai grade-B">88 (A-)</span></div>
+      <div class="rapor-item"><span class="rapor-mapel">IPA</span><span class="rapor-nilai grade-A">90 (A)</span></div>
+      <div class="rapor-item"><span class="rapor-mapel">Bahasa Inggris</span><span class="rapor-nilai grade-B">84 (B+)</span></div>
+      <div class="rapor-item"><span class="rapor-mapel">IPS</span><span class="rapor-nilai grade-C">78 (B-)</span></div>
+    </div>
+    <div class="card"><div class="card-header"><h3><i class="fas fa-chart-bar" style="color:var(--teal)"></i> Statistik Nilai</h3></div>
+      <div class="h-bar-group">
+        <div class="h-bar-row"><div class="h-bar-label">Tahfidz</div><div class="h-bar-track"><div class="h-bar-fill green" style="width:80%">80</div></div></div>
+        <div class="h-bar-row"><div class="h-bar-label">PAI</div><div class="h-bar-track"><div class="h-bar-fill teal" style="width:92%">92</div></div></div>
+        <div class="h-bar-row"><div class="h-bar-label">Matematika</div><div class="h-bar-track"><div class="h-bar-fill blue" style="width:85%">85</div></div></div>
+        <div class="h-bar-row"><div class="h-bar-label">B. Indonesia</div><div class="h-bar-track"><div class="h-bar-fill orange" style="width:88%">88</div></div></div>
+        <div class="h-bar-row"><div class="h-bar-label">IPA</div><div class="h-bar-track"><div class="h-bar-fill purple" style="width:90%">90</div></div></div>
+        <div class="h-bar-row"><div class="h-bar-label">B. Inggris</div><div class="h-bar-track"><div class="h-bar-fill pink" style="width:84%">84</div></div></div>
+        <div class="h-bar-row"><div class="h-bar-label">IPS</div><div class="h-bar-track"><div class="h-bar-fill cyan" style="width:78%">78</div></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- === SD: Pengumuman === -->
+<div class="sd-content sd-content-pengumuman">
+  <div class="content-header"><h1>Pengumuman <span>SDIT Al Azhar Jaya Indonesia</span></h1><div class="header-right"><div class="avatar teal">AH</div></div></div>
+  <div class="card"><div class="card-header"><h3><i class="fas fa-bullhorn" style="color:var(--orange)"></i> Semua Pengumuman</h3><label onclick="showContent('sd','pengumuman')" style="cursor:pointer;font-size:12px;color:var(--blue);font-weight:600;text-decoration:none">Arsip</label></div>
+    <div class="ann-item"><div class="ann-date">25 Maret 2026</div><div class="ann-title">Libur Hari Raya Nyepi</div><div class="ann-desc">Sekolah libur pada tanggal 30 Maret 2026 dalam rangka Hari Raya Nyepi. Kegiatan belajar diliburkan satu hari penuh.</div></div>
+    <div class="ann-item"><div class="ann-date">20 Maret 2026</div><div class="ann-title">Pesantren Kilat Ramadhan</div><div class="ann-desc">Kegiatan pesantren kilat akan diadakan pada minggu kedua April. Harap persiapkan diri dan membawa perlengkapan ibadah.</div></div>
+    <div class="ann-item"><div class="ann-date">15 Maret 2026</div><div class="ann-title">Pembagian Rapor Tengah Semester</div><div class="ann-desc">Pembagian rapor akan dilaksanakan pada 5 April 2026 pukul 08.00 WIB di aula sekolah.</div></div>
+    <div class="ann-item"><div class="ann-date">10 Maret 2026</div><div class="ann-title">Lomba Cerdas Cermat</div><div class="ann-desc">Pendaftaran lomba cerdas cermat tingkat SD dibuka hingga 20 Maret 2026.</div></div>
+  </div>
+</div>
+
+<!-- === SD: Jadwal === -->
+<div class="sd-content sd-content-jadwal">
+  <div class="content-header"><h1>Jadwal Pelajaran</h1><div class="header-right"><div class="avatar teal">AR</div></div></div>
+  <div class="card"><div class="card-header"><h3><i class="fas fa-calendar-alt" style="color:var(--teal)"></i> Jadwal Mingguan</h3></div>
+    <div class="table-wrap"><table><thead><tr><th>Hari</th><th>06:30 - 07:30</th><th>07:30 - 08:30</th><th>08:30 - 09:30</th><th>09:30 - 10:00</th><th>10:00 - 11:00</th><th>11:00 - 12:00</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Senin</strong></td><td>Tahfidz Qur'an</td><td>Matematika</td><td>B. Indonesia</td><td rowspan="5">Istirahat</td><td>IPA</td><td>PAI</td></tr>
+      <tr><td><strong>Selasa</strong></td><td>Tahfidz Qur'an</td><td>B. Inggris</td><td>Matematika</td><td>IPS</td><td>SBK</td></tr>
+      <tr><td><strong>Rabu</strong></td><td>Tahfidz Qur'an</td><td>IPA</td><td>B. Indonesia</td><td>PAI</td><td>PJOK</td></tr>
+      <tr><td><strong>Kamis</strong></td><td>Tahfidz Qur'an</td><td>Matematika</td><td>B. Inggris</td><td>IPS</td><td>Prakarya</td></tr>
+      <tr><td><strong>Jumat</strong></td><td>Tahfidz Qur'an</td><td>PAI</td><td>B. Indonesia</td><td>Matematika</td><td>Literasi</td></tr>
+    </tbody></table></div>
+  </div>
+</div>
+
+<!-- === SD: Pesan === -->
+<div class="sd-content sd-content-pesan">
+  <div class="content-header"><h1>Pesan</h1><div class="header-right"><label onclick="alert('Fitur pesan baru sedang dalam pengembangan');return false" class="header-btn primary" style="cursor:pointer"><i class="fas fa-envelope"></i> Pesan Baru</label><div class="avatar teal">AR</div></div></div>
+  <div class="card"><div class="card-header"><h3><i class="fas fa-inbox" style="color:var(--blue)"></i> Kotak Masuk</h3><label style="font-size:12px;color:var(--blue);font-weight:600;cursor:pointer;text-decoration:none">Terkirim</label></div>
+    <div class="table-wrap"><table><thead><tr><th>Pengirim</th><th>Pesan</th><th>Waktu</th><th></th></tr></thead>
+    <tbody>
+      <tr><td><strong>Bu Dewi Sartika</strong> <span class="badge light blue">Guru</span></td><td>Jangan lupa kumpulkan PR besok!</td><td style="color:var(--gray-400);font-size:12px">2 jam lalu</td><td><a onclick="alert('Fitur balas pesan sedang dalam pengembangan');return false" class="btn-small outline" style="cursor:pointer">Balas</a></td></tr>
+      <tr><td><strong>Ustadz Ahmad Fauzi</strong> <span class="badge light blue">Wali Kelas</span></td><td>Informasi jadwal pesantren kilat...</td><td style="color:var(--gray-400);font-size:12px">Kemarin</td><td><a onclick="alert('Fitur balas pesan sedang dalam pengembangan');return false" class="btn-small outline" style="cursor:pointer">Balas</a></td></tr>
+    </tbody></table></div>
+  </div>
+</div>
+
+<!-- === SD: Rapor === -->
+<div class="sd-content sd-content-rapor">
+  <div class="content-header"><div><h1>Rapor Semester</h1><p style="font-size:14px;color:var(--gray-400);margin-top:2px">Laporan hasil belajar siswa — Semester Genap 2025/2026</p></div><div class="header-right"><a onclick="window.print();return false" class="header-btn primary" style="cursor:pointer"><i class="fas fa-print"></i> Cetak</a><div class="avatar teal">AR</div></div></div>
+  <div class="card" style="margin-bottom:20px">
+    <div class="card-header"><h3><i class="fas fa-user-graduate" style="color:var(--teal)"></i> Identitas Siswa</h3></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:4px 0">
+      <div><span style="font-size:12px;color:var(--gray-400)">Nama</span><div style="font-weight:600">Ahmad Rizky</div></div>
+      <div><span style="font-size:12px;color:var(--gray-400)">NIS</span><div style="font-weight:600">2024001</div></div>
+      <div><span style="font-size:12px;color:var(--gray-400)">Kelas</span><div style="font-weight:600">7A</div></div>
+      <div><span style="font-size:12px;color:var(--gray-400)">Semester</span><div style="font-weight:600">Genap 2025/2026</div></div>
+    </div>
+  </div>
+  <div class="card" style="margin-bottom:20px">
+    <div class="card-header"><h3><i class="fas fa-file-invoice" style="color:var(--blue)"></i> Nilai Akademik</h3></div>
+    <div class="table-wrap">
+      <table><thead><tr><th>No</th><th>Mata Pelajaran</th><th>KKM</th><th>Nilai</th><th>Grade</th><th>Predikat</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>Pendidikan Agama Islam</td><td>70</td><td style="font-weight:700">92</td><td><span class="grade-A">A</span></td><td>Sangat Baik</td></tr>
+        <tr><td>2</td><td>Tahfidz Qur'an</td><td>70</td><td style="font-weight:700">88</td><td><span class="grade-B">A-</span></td><td>Sangat Baik</td></tr>
+        <tr><td>3</td><td>Matematika</td><td>70</td><td style="font-weight:700">85</td><td><span class="grade-B">B+</span></td><td>Baik</td></tr>
+        <tr><td>4</td><td>Bahasa Indonesia</td><td>70</td><td style="font-weight:700">88</td><td><span class="grade-B">A-</span></td><td>Sangat Baik</td></tr>
+        <tr><td>5</td><td>IPA</td><td>70</td><td style="font-weight:700">90</td><td><span class="grade-A">A</span></td><td>Sangat Baik</td></tr>
+        <tr><td>6</td><td>Bahasa Inggris</td><td>70</td><td style="font-weight:700">84</td><td><span class="grade-B">B+</span></td><td>Baik</td></tr>
+        <tr><td>7</td><td>IPS</td><td>70</td><td style="font-weight:700">78</td><td><span class="grade-C">B-</span></td><td>Baik</td></tr>
+        <tr><td>8</td><td>SBK</td><td>70</td><td style="font-weight:700">82</td><td><span class="grade-B">B+</span></td><td>Baik</td></tr>
+        <tr><td>9</td><td>PJOK</td><td>70</td><td style="font-weight:700">80</td><td><span class="grade-B">B</span></td><td>Baik</td></tr>
+        <tr><td>10</td><td>Prakarya</td><td>70</td><td style="font-weight:700">86</td><td><span class="grade-B">A-</span></td><td>Sangat Baik</td></tr>
+      </tbody>
+    </table></div>
+    <div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--border-light);display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px">
+      <div><span style="font-size:12px;color:var(--gray-400)">Rata-rata</span><div style="font-size:20px;font-weight:700;color:var(--teal)">85.3</div></div>
+      <div><span style="font-size:12px;color:var(--gray-400)">Peringkat Kelas</span><div style="font-size:20px;font-weight:700;color:var(--blue)">5 / 28</div></div>
+      <div><span style="font-size:12px;color:var(--gray-400)">Status</span><div style="font-size:20px;font-weight:700;color:var(--green)">LULUS</div></div>
+    </div>
+  </div>
+  <div style="display:flex;gap:16px;flex-wrap:wrap">
+    <div class="card" style="flex:1;min-width:200px">
+      <div class="card-header"><h3><i class="fas fa-star" style="color:var(--orange)"></i> Catatan Wali Kelas</h3></div>
+      <p style="font-size:14px;color:var(--gray-500);line-height:1.7;font-style:italic">"Ahmad adalah siswa yang rajin dan memiliki semangat belajar tinggi. Tingkatkan lagi fokus pada mata pelajaran IPS agar nilai lebih maksimal."</p>
+      <p style="font-size:12px;color:var(--gray-400);margin-top:8px">— Ustadz Ahmad Fauzi, Wali Kelas 7A</p>
+    </div>
+    <div class="card" style="flex:1;min-width:200px">
+      <div class="card-header"><h3><i class="fas fa-calendar-check" style="color:var(--teal)"></i> Ringkasan Kehadiran</h3></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <div><span style="font-size:12px;color:var(--gray-400)">Hadir</span><div style="font-weight:700;color:var(--green)">112 Hari</div></div>
+        <div><span style="font-size:12px;color:var(--gray-400)">Sakit</span><div style="font-weight:700;color:var(--orange)">2 Hari</div></div>
+        <div><span style="font-size:12px;color:var(--gray-400)">Izin</span><div style="font-weight:700;color:var(--blue)">1 Hari</div></div>
+        <div><span style="font-size:12px;color:var(--gray-400)">Alpha</span><div style="font-weight:700;color:var(--red)">0 Hari</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</main>
+</div>
+</div>
+
+<!-- ============================================================ -->
+<!-- DASHBOARD SISWA SMP                                          -->
+<!-- ============================================================ -->
+<div class="dashboard hidden" id="d-student-smp">
+
+<div class="dashboard-layout">
+<aside class="sidebar">
+    <div class="brand"><h2><i class="fas fa-graduation-cap"></i>LMS Al Azhar Jaya</h2><p>SMPIT Al Azhar Jaya Indonesia</p></div>
+    <ul class="sidebar-menu">
+      <li class="smp-nav-dashboard"><label onclick="showContent('smp','dashboard')"><i class="fas fa-th-large"></i> Dashboard</label></li>
+      <li class="smp-nav-mapel"><label onclick="showContent('smp','mapel')"><i class="fas fa-book"></i> Mata Pelajaran</label></li>
+      <li class="smp-nav-tugas"><label onclick="showContent('smp','tugas')"><i class="fas fa-tasks"></i> Tugas</label></li>
+      <li class="smp-nav-ulangan"><label onclick="showContent('smp','ulangan')"><i class="fas fa-pencil-alt"></i> Ulangan</label></li>
+      <li class="smp-nav-nilai"><label onclick="showContent('smp','nilai')"><i class="fas fa-chart-line"></i> Nilai</label></li>
+      <li class="smp-nav-pengumuman"><label onclick="showContent('smp','pengumuman')"><i class="fas fa-bullhorn"></i> Pengumuman</label></li>
+  </ul>
+  <div class="sidebar-logout"><label onclick="logout()"><i class="fas fa-sign-out-alt"></i> Keluar</label></div>
+</aside>
+
+<main class="main-area">
+
+<!-- === SMP: Dashboard === -->
+<div class="smp-content smp-content-dashboard">
+  <div class="header-blue"><div class="content-header"><div class="greeting">Halo, <strong>Budi Santoso</strong> &#x1F44B;</div><div class="header-right"><div class="notif-badge"><i class="fas fa-bell"></i></div><div class="avatar blue">BS</div><span style="font-weight:600;font-size:14px;color:#fff">Budi Santoso</span></div></div></div>
+  <div class="welcome-mini"><p><strong>Halo, Budi!</strong> Kamu punya <strong>3 tugas</strong> mendekati deadline minggu ini. Ayo segera kerjakan!</p></div>
+  <div class="performa-grid" style="margin-bottom:20px"><div class="performa-card"><div class="performa-icon teal"><i class="fas fa-calculator"></i></div><div class="performa-value">86</div><div class="performa-label">Rata-rata Nilai</div></div><div class="performa-card"><div class="performa-icon blue"><i class="fas fa-check-circle"></i></div><div class="performa-value">12/15</div><div class="performa-label">Tugas Selesai</div></div><div class="performa-card"><div class="performa-icon orange"><i class="fas fa-user-check"></i></div><div class="performa-value">95%</div><div class="performa-label">Kehadiran</div></div></div>
+  <div class="grid-2" style="margin-bottom:20px">
+    <div class="card"><div class="card-header"><h3><i class="fas fa-calendar-day" style="color:var(--teal)"></i> Jadwal Hari Ini</h3><label onclick="showContent('smp','jadwal')" style="cursor:pointer;font-size:12px;color:var(--blue);font-weight:600;text-decoration:none">Lihat Semua</label></div>
+      <div class="schedule-item"><div class="schedule-time">06:30</div><div class="schedule-info"><div class="mapel">Tahfidz Qur'an</div><div class="guru">Ustadz Ahmad Fauzi</div></div><span class="badge green light">TAH</span></div>
+      <div class="schedule-item"><div class="schedule-time">07:00</div><div class="schedule-info"><div class="mapel">Pendidikan Agama Islam</div><div class="guru">Ustadz Ahmad Fauzi</div></div><span class="badge teal">PAI</span></div>
+      <div class="schedule-item"><div class="schedule-time">08:30</div><div class="schedule-info"><div class="mapel">Matematika</div><div class="guru">Bu Dewi Sartika</div></div><span class="badge blue">MTK</span></div>
+      <div class="schedule-item"><div class="schedule-time">10:00</div><div class="schedule-info"><div class="mapel">Bahasa Indonesia</div><div class="guru">Ibu Siti Rahmawati</div></div><span class="badge orange light">B.IND</span></div>
+      <div class="schedule-item"><div class="schedule-time">11:30</div><div class="schedule-info"><div class="mapel">IPA</div><div class="guru">Pak Budi Santoso</div></div><span class="badge purple light">IPA</span></div>
+      <div class="schedule-item"><div class="schedule-time">13:00</div><div class="schedule-info"><div class="mapel">Bahasa Inggris</div><div class="guru">Ms. Linda Wijaya</div></div><span class="badge cyan light">ING</span></div>
+    </div>
+    <div class="card"><div class="card-header"><h3><i class="fas fa-exclamation-triangle" style="color:var(--orange)"></i> Tugas &amp; Ulangan</h3><label onclick="showContent('smp','tugas')">Lihat Semua</label></div>
+      <div class="task-item"><i class="fas fa-file-alt" style="color:var(--teal);font-size:18px"></i><div class="task-info"><div class="task-title">Tugas Praktek Sholat</div><div class="task-meta">PAI &ndash; Deadline: 2 Apr 2026</div></div><span class="badge status-terlambat">Terlambat</span></div>
+      <div class="task-item"><i class="fas fa-file-alt" style="color:var(--blue);font-size:18px"></i><div class="task-info"><div class="task-title">PR Persamaan Linear</div><div class="task-meta">Matematika &ndash; Deadline: 5 Apr 2026</div></div><span class="badge status-mendekati">Mendekati</span></div>
+      <div class="task-item"><i class="fas fa-file-alt" style="color:var(--purple);font-size:18px"></i><div class="task-info"><div class="task-title">Laporan Pengamatan</div><div class="task-meta">IPA &ndash; Deadline: 10 Apr 2026</div></div><span class="badge status-selesai">Selesai</span></div>
+      <div class="task-item"><i class="fas fa-pencil-alt" style="color:var(--orange);font-size:18px"></i><div class="task-info"><div class="task-title">Ulangan Harian Bab 4</div><div class="task-meta">B. Indonesia &ndash; 8 Apr 2026</div></div><span class="badge status-mendekati">Mendekati</span></div>
+      <div class="task-item"><i class="fas fa-pencil-alt" style="color:var(--cyan);font-size:18px"></i><div class="task-info"><div class="task-title">Quiz Vocabulary</div><div class="task-meta">B. Inggris &ndash; 12 Apr 2026</div></div><span class="badge teal">Akan Datang</span></div>
+    </div>
+  </div>
+  <div class="grid-2" style="margin-bottom:20px">
+    <div class="card"><div class="card-header"><h3><i class="fas fa-chart-line" style="color:var(--blue)"></i> Perkembangan Nilai 6 Bulan</h3><label onclick="showContent('smp','nilai')">Detail</label></div>
+      <div class="mini-chart"><div class="chart-row"><span class="month-label">Nov</span><div class="bar-track"><div class="bar-fill" style="width:72%"></div></div></div><div class="chart-row"><span class="month-label">Des</span><div class="bar-track"><div class="bar-fill" style="width:68%"></div></div></div><div class="chart-row"><span class="month-label">Jan</span><div class="bar-track"><div class="bar-fill" style="width:75%"></div></div></div><div class="chart-row"><span class="month-label">Feb</span><div class="bar-track"><div class="bar-fill" style="width:80%"></div></div></div><div class="chart-row"><span class="month-label">Mar</span><div class="bar-track"><div class="bar-fill" style="width:86%"></div></div></div><div class="chart-row"><span class="month-label">Apr</span><div class="bar-track"><div class="bar-fill" style="width:82%"></div></div></div></div>
+    </div>
+    <div class="card"><div class="card-header"><h3><i class="fas fa-trophy" style="color:var(--orange)"></i> Leaderboard Kelas 7A</h3><a href="javascript:void(0)" onclick="return false">Semua</a></div>
+      <ul class="leaderboard"><li class="rank-1"><span class="rank-num">1</span><span class="rank-name">Siti Aisyah</span><span class="rank-poin">2.450</span></li><li><span class="rank-num">2</span><span class="rank-name">Budi Santoso</span><span class="rank-poin">2.320</span></li><li><span class="rank-num">3</span><span class="rank-name">Citra Dewi</span><span class="rank-poin">2.180</span></li></ul>
+    </div>
+  </div>
+  <div class="grid-2">
+    <div class="card"><div class="card-header"><h3><i class="fas fa-bullhorn" style="color:var(--orange)"></i> Pengumuman Sekolah</h3><label onclick="showContent('smp','pengumuman')">Semua</label></div>
+      <div class="ann-item"><div class="ann-date">25 Maret 2026</div><div class="ann-title">Libur Hari Raya Nyepi</div><div class="ann-desc">Sekolah libur pada tanggal 30 Maret 2026.</div></div>
+      <div class="ann-item"><div class="ann-date">20 Maret 2026</div><div class="ann-title">Pesantren Kilat Ramadhan</div><div class="ann-desc">Kegiatan pesantren kilat minggu kedua April.</div></div>
+    </div>
+    <div class="card"><div class="card-header"><h3><i class="fas fa-envelope" style="color:var(--blue)"></i> Pesan dari Guru</h3><label onclick="showContent('smp','pesan')" style="cursor:pointer;font-size:12px;color:var(--blue);font-weight:600;text-decoration:none">Semua Pesan</label></div>
+      <div class="msg-item"><div class="msg-sender"><i class="fas fa-user-circle" style="color:var(--teal);margin-right:6px"></i> Ustadz Ahmad Fauzi</div><div class="msg-preview">Budi, tolong kumpulkan tugas praktek sholat...</div></div>
+      <div class="msg-item"><div class="msg-sender"><i class="fas fa-user-circle" style="color:var(--blue);margin-right:6px"></i> Bu Dewi Sartika</div><div class="msg-preview">Jangan lupa PR persamaan linear halaman 45-48.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- === SMP: Mata Pelajaran === -->
+<div class="smp-content smp-content-mapel">
+  <div class="content-header"><h1>Mata Pelajaran <span>SMPIT Al Azhar Jaya Indonesia</span></h1><div class="header-right"><div class="avatar blue">BS</div></div></div>
+  <div class="grid-2">
+    <div class="card"><div class="card-header"><h3><i class="fas fa-quran" style="color:var(--green)"></i> Tahfidz Qur'an</h3><label onclick="showContent('smp','mapel')" style="cursor:pointer;font-size:12px;color:var(--blue);font-weight:600;text-decoration:none">Detail</label></div><p style="font-size:13px;color:var(--gray-400)">Guru: Ustadz Ahmad Fauzi</p><p style="font-size:13px;color:var(--gray-500);margin-top:6px">Program unggulan — hafalan dan muroja'ah Al-Qur'an</p></div>
+    <div class="card"><div class="card-header"><h3><i class="fas fa-book" style="color:var(--teal)"></i> PAI</h3><label onclick="showContent('smp','mapel')" style="cursor:pointer;font-size:12px;color:var(--blue);font-weight:600;text-decoration:none">Detail</label></div><p style="font-size:13px;color:var(--gray-400)">Guru: Ustadz Ahmad Fauzi</p><p style="font-size:13px;color:var(--gray-500);margin-top:6px">Al-Qur'an Hadits, Fiqih, Akidah Akhlak, SKI</p></div>
+    <div class="card"><div class="card-header"><h3><i class="fas fa-book" style="color:var(--blue)"></i> Matematika</h3><label onclick="showContent('smp','mapel')" style="cursor:pointer;font-size:12px;color:var(--blue);font-weight:600;text-decoration:none">Detail</label></div><p style="font-size:13px;color:var(--gray-400)">Guru: Bu Dewi Sartika</p><p style="font-size:13px;color:var(--gray-500);margin-top:6px">Aljabar, geometri, statistika, peluang</p></div>
+    <div class="card"><div class="card-header"><h3><i class="fas fa-book" style="color:var(--orange)"></i> Bahasa Indonesia</h3><label onclick="showContent('smp','mapel')" style="cursor:pointer;font-size:12px;color:var(--blue);font-weight:600;text-decoration:none">Detail</label></div><p style="font-size:13px;color:var(--gray-400)">Guru: Ibu Siti Rahmawati</p><p style="font-size:13px;color:var(--gray-500);margin-top:6px">Teks narasi, eksposisi, puisi, drama</p></div>
+    <div class="card"><div class="card-header"><h3><i class="fas fa-book" style="color:var(--purple)"></i> IPA</h3><label onclick="showContent('smp','mapel')" style="cursor:pointer;font-size:12px;color:var(--blue);font-weight:600;text-decoration:none">Detail</label></div><p style="font-size:13px;color:var(--gray-400)">Guru: Pak Budi Santoso</p><p style="font-size:13px;color:var(--gray-500);margin-top:6px">Fisika, biologi, kimia dasar</p></div>
+    <div class="card"><div class="card-header"><h3><i class="fas fa-book" style="color:var(--cyan)"></i> Bahasa Inggris</h3><label onclick="showContent('smp','mapel')" style="cursor:pointer;font-size:12px;color:var(--blue);font-weight:600;text-decoration:none">Detail</label></div><p style="font-size:13px;color:var(--gray-400)">Guru: Ms. Linda Wijaya</p><p style="font-size:13px;color:var(--gray-500);margin-top:6px">Reading, writing, speaking, listening</p></div>
+    <div class="card"><div class="card-header"><h3><i class="fas fa-book" style="color:var(--pink)"></i> IPS</h3><label onclick="showContent('smp','mapel')" style="cursor:pointer;font-size:12px;color:var(--blue);font-weight:600;text-decoration:none">Detail</label></div><p style="font-size:13px;color:var(--gray-400)">Guru: Pak Dwi Hartono</p><p style="font-size:13px;color:var(--gray-500);margin-top:6px">Geografi, sejarah, sosiologi, ekonomi</p></div>
+  </div>
+</div>
+
+<!-- === SMP: Tugas === -->
+<div class="smp-content smp-content-tugas">
+  <div class="content-header"><h1>Tugas <span>SMPIT Al Azhar Jaya Indonesia</span></h1><div class="header-right"><div class="avatar blue">BS</div></div></div>
+  <div class="card"><div class="card-header"><h3><i class="fas fa-tasks" style="color:var(--teal)"></i> Semua Tugas</h3><label onclick="showContent('smp','tugas')" style="cursor:pointer;font-size:12px;color:var(--blue);font-weight:600;text-decoration:none">Filter</label></div>
+    <div class="table-wrap"><table><thead><tr><th>Judul</th><th>Mapel</th><th>Deadline</th><th>Status</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Tugas Praktek Sholat</strong></td><td>PAI</td><td>2 Apr 2026</td><td><span class="badge status-terlambat">Terlambat</span></td></tr>
+      <tr><td><strong>PR Persamaan Linear</strong></td><td>Matematika</td><td>5 Apr 2026</td><td><span class="badge status-mendekati">Mendekati</span></td></tr>
+      <tr><td><strong>Laporan Pengamatan</strong></td><td>IPA</td><td>10 Apr 2026</td><td><span class="badge status-selesai">Selesai</span></td></tr>
+      <tr><td><strong>Analisis Puisi</strong></td><td>B. Indonesia</td><td>14 Apr 2026</td><td><span class="badge teal">Aktif</span></td></tr>
+      <tr><td><strong>Essay Writing</strong></td><td>B. Inggris</td><td>18 Apr 2026</td><td><span class="badge teal">Aktif</span></td></tr>
+    </tbody></table></div>
+  </div>
+</div>
+
+<!-- === SMP: Ulangan === -->
+<div class="smp-content smp-content-ulangan">
+  <div class="content-header"><h1>Ulangan <span>SMPIT Al Azhar Jaya Indonesia</span></h1><div class="header-right"><div class="avatar blue">BS</div></div></div>
+  <div class="card"><div class="card-header"><h3><i class="fas fa-pencil-alt" style="color:var(--orange)"></i> Jadwal Ulangan</h3><label onclick="showContent('smp','ulangan')" style="cursor:pointer;font-size:12px;color:var(--blue);font-weight:600;text-decoration:none">Riwayat</label></div>
+    <div class="table-wrap"><table><thead><tr><th>Nama</th><th>Mapel</th><th>Tanggal</th><th>Status</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Ulangan Harian Bab 4</strong></td><td>B. Indonesia</td><td>8 Apr 2026</td><td><span class="badge status-mendekati">Mendekati</span></td></tr>
+      <tr><td><strong>Quiz Vocabulary</strong></td><td>B. Inggris</td><td>12 Apr 2026</td><td><span class="badge teal">Akan Datang</span></td></tr>
+      <tr><td><strong>UTS Genap</strong></td><td>Semua Mapel</td><td>20-25 Apr 2026</td><td><span class="badge teal">Akan Datang</span></td></tr>
+      <tr><td><strong>UH Bab 3</strong></td><td>Matematika</td><td>15 Mar 2026</td><td><span class="badge status-selesai">Selesai</span></td></tr>
+    </tbody></table></div>
+  </div>
+</div>
+
+<!-- === SMP: Nilai === -->
+<div class="smp-content smp-content-nilai">
+  <div class="content-header"><h1>Nilai <span>SMPIT Al Azhar Jaya Indonesia</span></h1><div class="header-right"><div class="avatar blue">BS</div></div></div>
+  <div class="grid-2">
+    <div class="card"><div class="card-header"><h3><i class="fas fa-file-invoice" style="color:var(--blue)"></i> Rapor Semester Genap</h3><label onclick="showContent('smp','rapor')" style="font-size:12px;color:var(--blue);font-weight:600;cursor:pointer;text-decoration:none">Cetak</label></div>
+      <div class="rapor-item"><span class="rapor-mapel">Tahfidz Qur'an</span><span class="rapor-nilai grade-B">82 (B+)</span></div>
+      <div class="rapor-item"><span class="rapor-mapel">Pendidikan Agama Islam</span><span class="rapor-nilai grade-A">95 (A)</span></div>
+      <div class="rapor-item"><span class="rapor-mapel">Matematika</span><span class="rapor-nilai grade-B">82 (B+)</span></div>
+      <div class="rapor-item"><span class="rapor-mapel">Bahasa Indonesia</span><span class="rapor-nilai grade-A">91 (A)</span></div>
+      <div class="rapor-item"><span class="rapor-mapel">IPA</span><span class="rapor-nilai grade-B">87 (A-)</span></div>
+      <div class="rapor-item"><span class="rapor-mapel">Bahasa Inggris</span><span class="rapor-nilai grade-B">80 (B+)</span></div>
+      <div class="rapor-item"><span class="rapor-mapel">IPS</span><span class="rapor-nilai grade-C">76 (B-)</span></div>
+    </div>
+    <div class="card"><div class="card-header"><h3><i class="fas fa-chart-bar" style="color:var(--teal)"></i> Statistik Nilai</h3></div>
+      <div class="h-bar-group">
+        <div class="h-bar-row"><div class="h-bar-label">Tahfidz</div><div class="h-bar-track"><div class="h-bar-fill green" style="width:82%">82</div></div></div>
+        <div class="h-bar-row"><div class="h-bar-label">PAI</div><div class="h-bar-track"><div class="h-bar-fill teal" style="width:95%">95</div></div></div>
+        <div class="h-bar-row"><div class="h-bar-label">Matematika</div><div class="h-bar-track"><div class="h-bar-fill blue" style="width:82%">82</div></div></div>
+        <div class="h-bar-row"><div class="h-bar-label">B. Indonesia</div><div class="h-bar-track"><div class="h-bar-fill orange" style="width:91%">91</div></div></div>
+        <div class="h-bar-row"><div class="h-bar-label">IPA</div><div class="h-bar-track"><div class="h-bar-fill purple" style="width:87%">87</div></div></div>
+        <div class="h-bar-row"><div class="h-bar-label">B. Inggris</div><div class="h-bar-track"><div class="h-bar-fill pink" style="width:80%">80</div></div></div>
+        <div class="h-bar-row"><div class="h-bar-label">IPS</div><div class="h-bar-track"><div class="h-bar-fill cyan" style="width:76%">76</div></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- === SMP: Pengumuman === -->
+<div class="smp-content smp-content-pengumuman">
+  <div class="content-header"><h1>Pengumuman <span>SMPIT Al Azhar Jaya Indonesia</span></h1><div class="header-right"><div class="avatar blue">BS</div></div></div>
+  <div class="card"><div class="card-header"><h3><i class="fas fa-bullhorn" style="color:var(--orange)"></i> Semua Pengumuman</h3><label onclick="showContent('smp','pengumuman')" style="cursor:pointer;font-size:12px;color:var(--blue);font-weight:600;text-decoration:none">Arsip</label></div>
+    <div class="ann-item"><div class="ann-date">25 Maret 2026</div><div class="ann-title">Libur Hari Raya Nyepi</div><div class="ann-desc">Sekolah libur pada tanggal 30 Maret 2026.</div></div>
+    <div class="ann-item"><div class="ann-date">20 Maret 2026</div><div class="ann-title">Pesantren Kilat Ramadhan</div><div class="ann-desc">Kegiatan pesantren kilat minggu kedua April.</div></div>
+    <div class="ann-item"><div class="ann-date">15 Maret 2026</div><div class="ann-title">Pembagian Rapor Tengah Semester</div><div class="ann-desc">Pembagian rapor 5 April 2026 pukul 08.00 WIB.</div></div>
+  </div>
+</div>
+
+<!-- === SMP: Jadwal === -->
+<div class="smp-content smp-content-jadwal">
+  <div class="content-header"><h1>Jadwal Pelajaran</h1><div class="header-right"><div class="avatar blue">AR</div></div></div>
+  <div class="card"><div class="card-header"><h3><i class="fas fa-calendar-alt" style="color:var(--teal)"></i> Jadwal Mingguan</h3></div>
+    <div class="table-wrap"><table><thead><tr><th>Hari</th><th>06:30 - 07:30</th><th>07:30 - 08:30</th><th>08:30 - 09:30</th><th>09:30 - 10:00</th><th>10:00 - 11:00</th><th>11:00 - 12:00</th><th>12:00 - 13:00</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Senin</strong></td><td>Tahfidz Qur'an</td><td>Matematika</td><td>B. Indonesia</td><td rowspan="5">Istirahat</td><td>IPA</td><td>B. Inggris</td><td>PAI</td></tr>
+      <tr><td><strong>Selasa</strong></td><td>Tahfidz Qur'an</td><td>Matematika</td><td>IPS</td><td>PJOK</td><td>Prakarya</td><td>SBK</td></tr>
+      <tr><td><strong>Rabu</strong></td><td>Tahfidz Qur'an</td><td>IPA</td><td>B. Indonesia</td><td>Matematika</td><td>B. Inggris</td><td>Tahfidz</td></tr>
+      <tr><td><strong>Kamis</strong></td><td>Tahfidz Qur'an</td><td>PAI</td><td>Matematika</td><td>IPS</td><td>IPA</td><td>Literasi</td></tr>
+      <tr><td><strong>Jumat</strong></td><td>Tahfidz Qur'an</td><td>B. Indonesia</td><td>PJOK</td><td>Prakarya</td><td>BK</td><td></td></tr>
+    </tbody></table></div>
+  </div>
+</div>
+
+<!-- === SMP: Pesan === -->
+<div class="smp-content smp-content-pesan">
+  <div class="content-header"><h1>Pesan</h1><div class="header-right"><label onclick="alert('Fitur pesan baru sedang dalam pengembangan');return false" class="header-btn primary" style="cursor:pointer"><i class="fas fa-envelope"></i> Pesan Baru</label><div class="avatar blue">AR</div></div></div>
+  <div class="card"><div class="card-header"><h3><i class="fas fa-inbox" style="color:var(--blue)"></i> Kotak Masuk</h3><label style="font-size:12px;color:var(--blue);font-weight:600;cursor:pointer;text-decoration:none">Terkirim</label></div>
+    <div class="table-wrap"><table><thead><tr><th>Pengirim</th><th>Pesan</th><th>Waktu</th><th></th></tr></thead>
+    <tbody>
+      <tr><td><strong>Bu Dewi Sartika</strong> <span class="badge light blue">Guru</span></td><td>Jangan lupa kumpulkan tugas besok!</td><td style="color:var(--gray-400);font-size:12px">1 jam lalu</td><td><a onclick="alert('Fitur balas pesan sedang dalam pengembangan');return false" class="btn-small outline" style="cursor:pointer">Balas</a></td></tr>
+      <tr><td><strong>Ustadz Ahmad Fauzi</strong> <span class="badge light blue">Wali Kelas</span></td><td>Rapat orang tua siswa Sabtu depan...</td><td style="color:var(--gray-400);font-size:12px">Kemarin</td><td><a onclick="alert('Fitur balas pesan sedang dalam pengembangan');return false" class="btn-small outline" style="cursor:pointer">Balas</a></td></tr>
+    </tbody></table></div>
+  </div>
+</div>
+
+<!-- === SMP: Rapor === -->
+<div class="smp-content smp-content-rapor">
+  <div class="content-header"><div><h1>Rapor Semester</h1><p style="font-size:14px;color:var(--gray-400);margin-top:2px">Laporan hasil belajar siswa — Semester Genap 2025/2026</p></div><div class="header-right"><a onclick="window.print();return false" class="header-btn primary" style="cursor:pointer"><i class="fas fa-print"></i> Cetak</a><div class="avatar blue">AR</div></div></div>
+  <div class="card" style="margin-bottom:20px">
+    <div class="card-header"><h3><i class="fas fa-user-graduate" style="color:var(--teal)"></i> Identitas Siswa</h3></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:4px 0">
+      <div><span style="font-size:12px;color:var(--gray-400)">Nama</span><div style="font-weight:600">Ahmad Rizky</div></div>
+      <div><span style="font-size:12px;color:var(--gray-400)">NIS</span><div style="font-weight:600">2024001</div></div>
+      <div><span style="font-size:12px;color:var(--gray-400)">Kelas</span><div style="font-weight:600">7A</div></div>
+      <div><span style="font-size:12px;color:var(--gray-400)">Semester</span><div style="font-weight:600">Genap 2025/2026</div></div>
+    </div>
+  </div>
+  <div class="card" style="margin-bottom:20px">
+    <div class="card-header"><h3><i class="fas fa-file-invoice" style="color:var(--blue)"></i> Nilai Akademik</h3></div>
+    <div class="table-wrap">
+      <table><thead><tr><th>No</th><th>Mata Pelajaran</th><th>KKM</th><th>Nilai</th><th>Grade</th><th>Predikat</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>Pendidikan Agama Islam</td><td>75</td><td style="font-weight:700">90</td><td><span class="grade-A">A</span></td><td>Sangat Baik</td></tr>
+        <tr><td>2</td><td>Tahfidz Qur'an</td><td>75</td><td style="font-weight:700">85</td><td><span class="grade-B">A-</span></td><td>Sangat Baik</td></tr>
+        <tr><td>3</td><td>Matematika</td><td>75</td><td style="font-weight:700">82</td><td><span class="grade-B">B+</span></td><td>Baik</td></tr>
+        <tr><td>4</td><td>Bahasa Indonesia</td><td>75</td><td style="font-weight:700">86</td><td><span class="grade-B">A-</span></td><td>Sangat Baik</td></tr>
+        <tr><td>5</td><td>IPA</td><td>75</td><td style="font-weight:700">88</td><td><span class="grade-B">A-</span></td><td>Sangat Baik</td></tr>
+        <tr><td>6</td><td>Bahasa Inggris</td><td>75</td><td style="font-weight:700">80</td><td><span class="grade-B">B</span></td><td>Baik</td></tr>
+        <tr><td>7</td><td>IPS</td><td>75</td><td style="font-weight:700">76</td><td><span class="grade-C">B-</span></td><td>Baik</td></tr>
+        <tr><td>8</td><td>PJOK</td><td>75</td><td style="font-weight:700">78</td><td><span class="grade-C">B-</span></td><td>Baik</td></tr>
+        <tr><td>9</td><td>Prakarya</td><td>75</td><td style="font-weight:700">84</td><td><span class="grade-B">B+</span></td><td>Baik</td></tr>
+        <tr><td>10</td><td>Bahasa Daerah</td><td>75</td><td style="font-weight:700">82</td><td><span class="grade-B">B+</span></td><td>Baik</td></tr>
+      </tbody>
+    </table></div>
+    <div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--border-light);display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px">
+      <div><span style="font-size:12px;color:var(--gray-400)">Rata-rata</span><div style="font-size:20px;font-weight:700;color:var(--teal)">83.1</div></div>
+      <div><span style="font-size:12px;color:var(--gray-400)">Peringkat Kelas</span><div style="font-size:20px;font-weight:700;color:var(--blue)">8 / 28</div></div>
+      <div><span style="font-size:12px;color:var(--gray-400)">Status</span><div style="font-size:20px;font-weight:700;color:var(--green)">LULUS</div></div>
+    </div>
+  </div>
+  <div style="display:flex;gap:16px;flex-wrap:wrap">
+    <div class="card" style="flex:1;min-width:200px">
+      <div class="card-header"><h3><i class="fas fa-star" style="color:var(--orange)"></i> Catatan Wali Kelas</h3></div>
+      <p style="font-size:14px;color:var(--gray-500);line-height:1.7;font-style:italic">"Ahmad menunjukkan perkembangan positif di semester ini. Pertahankan prestasi dan tingkatkan lagi kedisiplinan dalam mengumpulkan tugas."</p>
+      <p style="font-size:12px;color:var(--gray-400);margin-top:8px">— Ustadz Ahmad Fauzi, Wali Kelas 7A</p>
+    </div>
+    <div class="card" style="flex:1;min-width:200px">
+      <div class="card-header"><h3><i class="fas fa-calendar-check" style="color:var(--teal)"></i> Ringkasan Kehadiran</h3></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <div><span style="font-size:12px;color:var(--gray-400)">Hadir</span><div style="font-weight:700;color:var(--green)">110 Hari</div></div>
+        <div><span style="font-size:12px;color:var(--gray-400)">Sakit</span><div style="font-weight:700;color:var(--orange)">3 Hari</div></div>
+        <div><span style="font-size:12px;color:var(--gray-400)">Izin</span><div style="font-weight:700;color:var(--blue)">1 Hari</div></div>
+        <div><span style="font-size:12px;color:var(--gray-400)">Alpha</span><div style="font-weight:700;color:var(--red)">0 Hari</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</main>
+</div>
+</div>
+
+<!-- ============================================================ -->
+<!-- DASHBOARD GURU                                               -->
+<!-- ============================================================ -->
+<div class="dashboard hidden" id="d-teacher">
+
+<div class="dashboard-layout">
+<aside class="sidebar">
+  <div class="brand"><h2><i class="fas fa-graduation-cap"></i>LMS Al Azhar Jaya</h2><p>SDIT &amp; SMPIT Al Azhar Jaya Indonesia</p></div>
+  <ul class="sidebar-menu">
+    <li class="tch-nav-dashboard"><label onclick="showContent('tch','dashboard')"><i class="fas fa-th-large"></i> Dashboard</label></li>
+    <li class="tch-nav-kelas"><label onclick="showContent('tch','kelas')"><i class="fas fa-chalkboard"></i> Kelas Saya</label></li>
+    <li class="tch-nav-tugas"><label onclick="showContent('tch','tugas')"><i class="fas fa-tasks"></i> Tugas &amp; Ulangan</label></li>
+    <li class="tch-nav-nilai"><label onclick="showContent('tch','nilai')"><i class="fas fa-chart-line"></i> Nilai</label></li>
+    <li class="tch-nav-pengumuman"><label onclick="showContent('tch','pengumuman')"><i class="fas fa-bullhorn"></i> Pengumuman</label></li>
+    <li class="tch-nav-pesan"><label onclick="showContent('tch','pesan')"><i class="fas fa-envelope"></i> Pesan</label></li>
+  </ul>
+  <div class="sidebar-logout"><label onclick="logout()"><i class="fas fa-sign-out-alt"></i> Keluar</label></div>
+</aside>
+
+<main class="main-area">
+
+<!-- === Teacher: Dashboard === -->
+<div class="tch-content tch-content-dashboard">
+  <div class="content-header"><div><h1>Dashboard Guru</h1><p style="font-size:14px;color:var(--gray-400);margin-top:2px">Selamat datang, Bu Dewi Sartika</p></div><div class="header-right"><label onclick="showContent('tch','tugas')" class="header-btn primary"><i class="fas fa-plus"></i> Buat Tugas</label><label onclick="showContent('tch','tugas')" class="header-btn outline"><i class="fas fa-pencil-alt"></i> Buat Ulangan</label><div class="avatar blue">DS</div></div></div>
+  <div class="quick-action"><label onclick="showContent('tch','tugas')" class="quick-action-item"><span class="qa-icon">&#x1F4DD;</span><span class="qa-label">Buat Tugas</span></label><label onclick="showContent('tch','nilai')" class="quick-action-item"><span class="qa-icon">&#x1F4CA;</span><span class="qa-label">Input Nilai</span></label><label onclick="showContent('tch','pengumuman')" class="quick-action-item"><span class="qa-icon">&#x1F4E2;</span><span class="qa-label">Pengumuman</span></label><label onclick="showContent('tch','kelas')" class="quick-action-item" style="cursor:pointer"><span class="qa-icon">&#x1F4C5;</span><span class="qa-label">Jadwal</span></label></div>
+  <div class="grid-4" style="margin-bottom:20px"><div class="stat-card centered"><div class="stat-icon-wrap teal"><i class="fas fa-chalkboard"></i></div><div class="stat-number">6</div><div class="stat-label">Kelas Aktif</div></div><div class="stat-card centered"><div class="stat-icon-wrap blue"><i class="fas fa-users"></i></div><div class="stat-number">156</div><div class="stat-label">Jumlah Siswa</div></div><div class="stat-card centered"><div class="stat-icon-wrap orange"><i class="fas fa-file-alt"></i></div><div class="stat-number">12</div><div class="stat-label">Tugas Belum Dinilai</div></div><div class="stat-card centered"><div class="stat-icon-wrap purple"><i class="fas fa-pencil-alt"></i></div><div class="stat-number">3</div><div class="stat-label">Ulangan Aktif</div></div></div>
+  <div class="grid-2" style="margin-bottom:20px">
+    <div class="card"><div class="card-header"><h3><i class="fas fa-chalkboard" style="color:var(--teal)"></i> Kelas yang Diajar</h3><label onclick="showContent('tch','kelas')">Kelola</label></div>
+      <div class="table-wrap"><table><thead><tr><th>Kelas</th><th>Mapel</th><th>Siswa</th><th>Progress</th><th></th></tr></thead>
+      <tbody>
+        <tr><td><strong>7A</strong></td><td>Matematika</td><td>28</td><td><div class="class-progress"><div class="cp-bar"><div class="cp-fill" style="width:70%"></div></div><span class="cp-label">70%</span></div></td><td><label onclick="showContent('tch','kelas-detail')" class="btn-small teal" style="cursor:pointer">Masuk</label></td></tr>
+        <tr><td><strong>7B</strong></td><td>Matematika</td><td>26</td><td><div class="class-progress"><div class="cp-bar"><div class="cp-fill" style="width:45%"></div></div><span class="cp-label">45%</span></div></td><td><label onclick="showContent('tch','kelas-detail')" class="btn-small teal" style="cursor:pointer">Masuk</label></td></tr>
+        <tr><td><strong>8A</strong></td><td>Matematika</td><td>27</td><td><div class="class-progress"><div class="cp-bar"><div class="cp-fill" style="width:90%"></div></div><span class="cp-label">90%</span></div></td><td><label onclick="showContent('tch','kelas-detail')" class="btn-small teal" style="cursor:pointer">Masuk</label></td></tr>
+        <tr><td><strong>8B</strong></td><td>Matematika</td><td>25</td><td><div class="class-progress"><div class="cp-bar"><div class="cp-fill" style="width:60%"></div></div><span class="cp-label">60%</span></div></td><td><label onclick="showContent('tch','kelas-detail')" class="btn-small teal" style="cursor:pointer">Masuk</label></td></tr>
+        <tr><td><strong>9A</strong></td><td>Matematika</td><td>24</td><td><div class="class-progress"><div class="cp-bar"><div class="cp-fill" style="width:82%"></div></div><span class="cp-label">82%</span></div></td><td><label onclick="showContent('tch','kelas-detail')" class="btn-small teal" style="cursor:pointer">Masuk</label></td></tr>
+        <tr><td><strong>9B</strong></td><td>Matematika</td><td>26</td><td><div class="class-progress"><div class="cp-bar"><div class="cp-fill" style="width:35%"></div></div><span class="cp-label">35%</span></div></td><td><label onclick="showContent('tch','kelas-detail')" class="btn-small teal" style="cursor:pointer">Masuk</label></td></tr>
+      </tbody></table></div>
+    </div>
+    <div><div class="card" style="margin-bottom:16px"><div class="card-header"><h3><i class="fas fa-tasks" style="color:var(--orange)"></i> Tugas Terbaru</h3><label onclick="showContent('tch','tugas')">Semua</label></div>
+      <div class="task-item"><i class="fas fa-file-alt" style="color:var(--blue);font-size:18px"></i><div class="task-info"><div class="task-title">PR Persamaan Linear</div><div class="task-meta">7A &ndash; 5 Apr 2026</div></div><span class="badge status-mendekati">Mendekati</span></div>
+      <div class="task-item"><i class="fas fa-file-alt" style="color:var(--purple);font-size:18px"></i><div class="task-info"><div class="task-title">Latihan Soal Bab 5</div><div class="task-meta">7B &ndash; 8 Apr 2026</div></div><span class="badge teal">Aktif</span></div>
+      <div class="task-item"><i class="fas fa-file-alt" style="color:var(--teal);font-size:18px"></i><div class="task-info"><div class="task-title">Quiz Bangun Ruang</div><div class="task-meta">8A &ndash; 2 Apr 2026</div></div><span class="badge status-terlambat">Terlambat</span></div>
+      <div class="task-item"><i class="fas fa-file-alt" style="color:var(--orange);font-size:18px"></i><div class="task-info"><div class="task-title">Tugas Kelompok Statistika</div><div class="task-meta">9A &ndash; 15 Apr 2026</div></div><span class="badge teal">Aktif</span></div>
+    </div>
+  </div>
+    <div class="card"><div class="card-header"><h3><i class="fas fa-calendar-alt" style="color:var(--blue)"></i> Kalender Akademik</h3><label onclick="showContent('tch','kelas')" style="font-size:12px;color:var(--blue);font-weight:600;cursor:pointer;text-decoration:none">Semua</label></div>
+      <div class="mini-calendar"><table class="cal-table"><thead><tr><th>Sen</th><th>Sel</th><th>Rab</th><th>Kam</th><th>Jum</th><th>Sab</th><th>Min</th></tr></thead>
+      <tbody><tr><td></td><td></td><td>1</td><td class="has-event">2</td><td>3</td><td>4</td><td>5</td></tr><tr><td class="has-event">6</td><td>7</td><td class="today">8</td><td>9</td><td>10</td><td>11</td><td>12</td></tr><tr><td>13</td><td class="has-event">14</td><td>15</td><td>16</td><td>17</td><td>18</td><td>19</td></tr><tr><td>20</td><td>21</td><td>22</td><td>23</td><td>24</td><td>25</td><td>26</td></tr></tbody></table></div>
+    </div>
+  </div>
+  <div class="card"><div class="card-header"><h3><i class="fas fa-inbox" style="color:var(--blue)"></i> Pesan Masuk</h3><label onclick="showContent('tch','pesan')">Semua Pesan</label></div>
+    <div class="table-wrap"><table><thead><tr><th>Pengirim</th><th>Pesan</th><th>Waktu</th><th></th></tr></thead>
+    <tbody>
+      <tr><td><strong>Ahmad Rizky</strong> <span class="badge light teal">Siswa</span></td><td>Bu, saya mau tanya tentang PR nomor 5...</td><td style="color:var(--gray-400);font-size:12px">1 jam lalu</td><td><a onclick="alert('Fitur balas pesan sedang dalam pengembangan');return false" class="btn-small outline" style="cursor:pointer">Balas</a></td></tr>
+      <tr><td><strong>Budi Santoso</strong> <span class="badge light teal">Siswa</span></td><td>Bu, tugas kelompoknya dikumpulkan dalam bentuk PDF ya?</td><td style="color:var(--gray-400);font-size:12px">3 jam lalu</td><td><a onclick="alert('Fitur balas pesan sedang dalam pengembangan');return false" class="btn-small outline" style="cursor:pointer">Balas</a></td></tr>
+      <tr><td><strong>Ibu Sari</strong> <span class="badge light orange">Orang Tua</span></td><td>Selamat siang Bu Dewi, bagaimana perkembangan nilai anak saya...</td><td style="color:var(--gray-400);font-size:12px">Kemarin</td><td><a onclick="alert('Fitur balas pesan sedang dalam pengembangan');return false" class="btn-small outline" style="cursor:pointer">Balas</a></td></tr>
+      <tr><td><strong>Citra Dewi</strong> <span class="badge light teal">Siswa</span></td><td>Bu, saya izin tidak masuk besok karena sakit...</td><td style="color:var(--gray-400);font-size:12px">Kemarin</td><td><a onclick="alert('Fitur balas pesan sedang dalam pengembangan');return false" class="btn-small outline" style="cursor:pointer">Balas</a></td></tr>
+      <tr><td><strong>Pak Andi</strong> <span class="badge light orange">Orang Tua</span></td><td>Mohon info jadwal remedial...</td><td style="color:var(--gray-400);font-size:12px">2 hari lalu</td><td><a onclick="alert('Fitur balas pesan sedang dalam pengembangan');return false" class="btn-small outline" style="cursor:pointer">Balas</a></td></tr>
+    </tbody></table></div>
+  </div>
+</div>
+
+<!-- === Teacher: Kelas Saya === -->
+<div class="tch-content tch-content-kelas">
+  <div class="content-header"><h1>Kelas Saya</h1><div class="header-right"><label onclick="showContent('tch','kelas-form')" class="header-btn primary" style="cursor:pointer"><i class="fas fa-plus"></i> Tambah Kelas</label><div class="avatar blue">DS</div></div></div>
+  <div class="card"><div class="table-wrap"><table><thead><tr><th>Kelas</th><th>Mapel</th><th>Siswa</th><th>Progress</th><th>Wali Kelas</th><th></th></tr></thead>
+    <tbody>
+      <tr><td><strong>7A</strong></td><td>Matematika</td><td>28</td><td><div class="class-progress"><div class="cp-bar"><div class="cp-fill" style="width:70%"></div></div><span class="cp-label">70%</span></div></td><td>Ustadz Ahmad Fauzi</td><td><label onclick="showContent('tch','kelas-detail')" class="btn-small teal" style="cursor:pointer">Masuk</label></td></tr>
+      <tr><td><strong>7B</strong></td><td>Matematika</td><td>26</td><td><div class="class-progress"><div class="cp-bar"><div class="cp-fill" style="width:45%"></div></div><span class="cp-label">45%</span></div></td><td>Ustadz Ahmad Fauzi</td><td><label onclick="showContent('tch','kelas-detail')" class="btn-small teal" style="cursor:pointer">Masuk</label></td></tr>
+      <tr><td><strong>8A</strong></td><td>Matematika</td><td>27</td><td><div class="class-progress"><div class="cp-bar"><div class="cp-fill" style="width:90%"></div></div><span class="cp-label">90%</span></div></td><td>Bu Dewi Sartika</td><td><label onclick="showContent('tch','kelas-detail')" class="btn-small teal" style="cursor:pointer">Masuk</label></td></tr>
+      <tr><td><strong>8B</strong></td><td>Matematika</td><td>25</td><td><div class="class-progress"><div class="cp-bar"><div class="cp-fill" style="width:60%"></div></div><span class="cp-label">60%</span></div></td><td>Bu Dewi Sartika</td><td><label onclick="showContent('tch','kelas-detail')" class="btn-small teal" style="cursor:pointer">Masuk</label></td></tr>
+      <tr><td><strong>9A</strong></td><td>Matematika</td><td>24</td><td><div class="class-progress"><div class="cp-bar"><div class="cp-fill" style="width:82%"></div></div><span class="cp-label">82%</span></div></td><td>Pak Budi Santoso</td><td><label onclick="showContent('tch','kelas-detail')" class="btn-small teal" style="cursor:pointer">Masuk</label></td></tr>
+      <tr><td><strong>9B</strong></td><td>Matematika</td><td>26</td><td><div class="class-progress"><div class="cp-bar"><div class="cp-fill" style="width:35%"></div></div><span class="cp-label">35%</span></div></td><td>Pak Budi Santoso</td><td><label onclick="showContent('tch','kelas-detail')" class="btn-small teal" style="cursor:pointer">Masuk</label></td></tr>
+    </tbody></table></div>
+  </div>
+</div>
+
+<!-- === Teacher: Tugas & Ulangan === -->
+<div class="tch-content tch-content-tugas">
+  <div class="content-header"><h1>Tugas &amp; Ulangan</h1><div class="header-right"><label onclick="alert('Fitur buat tugas sedang dalam pengembangan');return false" class="header-btn primary" style="cursor:pointer"><i class="fas fa-plus"></i> Buat Tugas</label><label onclick="alert('Fitur buat ulangan sedang dalam pengembangan');return false" class="header-btn outline" style="cursor:pointer"><i class="fas fa-pencil-alt"></i> Buat Ulangan</label><div class="avatar blue">DS</div></div></div>
+  <div class="card"><div class="card-header"><h3><i class="fas fa-tasks" style="color:var(--orange)"></i> Tugas Aktif</h3><label style="font-size:12px;color:var(--blue);font-weight:600;cursor:pointer;text-decoration:none">Semua</label></div>
+    <div class="table-wrap"><table><thead><tr><th>Judul</th><th>Kelas</th><th>Deadline</th><th>Dikumpulkan</th><th>Status</th></tr></thead>
+    <tbody>
+      <tr><td><strong>PR Persamaan Linear</strong></td><td>7A</td><td>5 Apr 2026</td><td>18/28</td><td><span class="badge status-mendekati">Mendekati</span></td></tr>
+      <tr><td><strong>Latihan Soal Bab 5</strong></td><td>7B</td><td>8 Apr 2026</td><td>10/26</td><td><span class="badge teal">Aktif</span></td></tr>
+      <tr><td><strong>Quiz Bangun Ruang</strong></td><td>8A</td><td>2 Apr 2026</td><td>27/27</td><td><span class="badge status-selesai">Selesai</span></td></tr>
+      <tr><td><strong>Tugas Kelompok Statistika</strong></td><td>9A</td><td>15 Apr 2026</td><td>5/24</td><td><span class="badge teal">Aktif</span></td></tr>
+    </tbody></table></div>
+  </div>
+  <div class="card" style="margin-top:16px"><div class="card-header"><h3><i class="fas fa-pencil-alt" style="color:var(--purple)"></i> Ulangan Aktif</h3><label style="font-size:12px;color:var(--blue);font-weight:600;cursor:pointer;text-decoration:none">Semua</label></div>
+    <div class="table-wrap"><table><thead><tr><th>Nama</th><th>Kelas</th><th>Tanggal</th><th>Peserta</th><th>Status</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Ulangan Harian Bab 5</strong></td><td>7A</td><td>10 Apr 2026</td><td>28</td><td><span class="badge teal">Akan Datang</span></td></tr>
+      <tr><td><strong>UTS Genap</strong></td><td>8A, 8B</td><td>20 Apr 2026</td><td>52</td><td><span class="badge teal">Akan Datang</span></td></tr>
+    </tbody></table></div>
+  </div>
+</div>
+
+<!-- === Teacher: Nilai === -->
+<div class="tch-content tch-content-nilai">
+  <div class="content-header"><h1>Nilai</h1><div class="header-right"><label onclick="alert('Fitur input nilai sedang dalam pengembangan');return false" class="header-btn primary" style="cursor:pointer"><i class="fas fa-upload"></i> Input Nilai</label><div class="avatar blue">DS</div></div></div>
+  <div class="card"><div class="card-header"><h3><i class="fas fa-chart-bar" style="color:var(--teal)"></i> Rekap Nilai per Kelas</h3><a onclick="alert('Fitur export sedang dalam pengembangan');return false" style="font-size:12px;color:var(--blue);font-weight:600;cursor:pointer;text-decoration:none">Export</a></div>
+    <div class="table-wrap"><table><thead><tr><th>Kelas</th><th>Rata-rata</th><th>Tertinggi</th><th>Terendah</th><th>Lulus</th><th></th></tr></thead>
+    <tbody>
+      <tr><td><strong>7A</strong></td><td>82</td><td>98</td><td>65</td><td><span class="badge light green">95%</span></td><td><label onclick="showContent('tch','kelas-detail')" class="btn-small outline" style="cursor:pointer">Detail</label></td></tr>
+      <tr><td><strong>7B</strong></td><td>78</td><td>95</td><td>60</td><td><span class="badge light green">88%</span></td><td><label onclick="showContent('tch','kelas-detail')" class="btn-small outline" style="cursor:pointer">Detail</label></td></tr>
+      <tr><td><strong>8A</strong></td><td>85</td><td>100</td><td>70</td><td><span class="badge light green">100%</span></td><td><label onclick="showContent('tch','kelas-detail')" class="btn-small outline" style="cursor:pointer">Detail</label></td></tr>
+      <tr><td><strong>8B</strong></td><td>80</td><td>96</td><td>62</td><td><span class="badge light green">92%</span></td><td><label onclick="showContent('tch','kelas-detail')" class="btn-small outline" style="cursor:pointer">Detail</label></td></tr>
+      <tr><td><strong>9A</strong></td><td>76</td><td>92</td><td>55</td><td><span class="badge light orange">82%</span></td><td><label onclick="showContent('tch','kelas-detail')" class="btn-small outline" style="cursor:pointer">Detail</label></td></tr>
+    </tbody></table></div>
+  </div>
+</div>
+
+<!-- === Teacher: Pengumuman === -->
+<div class="tch-content tch-content-pengumuman">
+  <div class="content-header"><h1>Pengumuman</h1><div class="header-right"><label onclick="alert('Fitur buat pengumuman sedang dalam pengembangan');return false" class="header-btn primary" style="cursor:pointer"><i class="fas fa-plus"></i> Buat Pengumuman</label><div class="avatar blue">DS</div></div></div>
+  <div class="card"><div class="card-header"><h3><i class="fas fa-bullhorn" style="color:var(--orange)"></i> Pengumuman Sekolah</h3><label style="font-size:12px;color:var(--blue);font-weight:600;cursor:pointer;text-decoration:none">Arsip</label></div>
+    <div class="ann-item"><div class="ann-date">25 Maret 2026</div><div class="ann-title">Libur Hari Raya Nyepi</div><div class="ann-desc">Sekolah libur pada tanggal 30 Maret 2026.</div></div>
+    <div class="ann-item"><div class="ann-date">20 Maret 2026</div><div class="ann-title">Pesantren Kilat Ramadhan</div><div class="ann-desc">Kegiatan pesantren kilat minggu kedua April.</div></div>
+    <div class="ann-item"><div class="ann-date">15 Maret 2026</div><div class="ann-title">Rapat Guru Bulanan</div><div class="ann-desc">Rapat akan diadakan pada 28 Maret 2026 pukul 14.00 WIB.</div></div>
+  </div>
+</div>
+
+<!-- === Teacher: Pesan === -->
+<div class="tch-content tch-content-pesan">
+  <div class="content-header"><h1>Pesan</h1><div class="header-right"><label onclick="alert('Fitur pesan baru sedang dalam pengembangan');return false" class="header-btn primary" style="cursor:pointer"><i class="fas fa-envelope"></i> Pesan Baru</label><div class="avatar blue">DS</div></div></div>
+
+</div>
+
+<!-- === Teacher: Detail Kelas === -->
+<div class="tch-content tch-content-kelas-detail">
+  <div class="content-header">
+    <div>
+      <h1>Detail Kelas <span id="kelas-detail-name">7A</span></h1>
+      <p style="font-size:14px;color:var(--gray-400);margin-top:2px">Matematika — Bu Dewi Sartika</p>
+    </div>
+    <div class="header-right">
+      <label onclick="showContent('tch','kelas')" class="header-btn outline" style="cursor:pointer"><i class="fas fa-arrow-left"></i> Kembali</label>
+      <div class="avatar blue">DS</div>
+    </div>
+  </div>
+  <div class="card" style="margin-bottom:20px">
+    <div class="card-header"><h3><i class="fas fa-users" style="color:var(--teal)"></i> Daftar Siswa <span id="kelas-detail-count" style="color:var(--gray-400);font-weight:400">(28 siswa)</span></h3><a onclick="alert('Fitur export sedang dalam pengembangan');return false" class="btn-small teal" style="cursor:pointer"><i class="fas fa-download"></i> Export</a></div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>No</th><th>NIS</th><th>Nama</th><th>L/P</th><th>Tugas</th><th>UH</th><th>UTS</th><th>Rata-rata</th><th></th></tr></thead>
+        <tbody id="kelas-detail-body">
+          <tr><td>1</td><td>2024001</td><td><strong>Ahmad Rizky</strong></td><td>L</td><td>85</td><td>90</td><td>88</td><td><strong>87.7</strong></td><td><a onclick="showContent('tch','kelas-detail');return false" class="btn-small outline" style="cursor:pointer">Detail</a></td></tr>
+          <tr><td>2</td><td>2024002</td><td><strong>Siti Aisyah</strong></td><td>P</td><td>92</td><td>95</td><td>90</td><td><strong>92.3</strong></td><td><a onclick="showContent('tch','kelas-detail');return false" class="btn-small outline" style="cursor:pointer">Detail</a></td></tr>
+          <tr><td>3</td><td>2024003</td><td><strong>Budi Santoso</strong></td><td>L</td><td>78</td><td>82</td><td>80</td><td><strong>80.0</strong></td><td><a onclick="showContent('tch','kelas-detail');return false" class="btn-small outline" style="cursor:pointer">Detail</a></td></tr>
+          <tr><td>4</td><td>2024004</td><td><strong>Citra Dewi</strong></td><td>P</td><td>88</td><td>85</td><td>92</td><td><strong>88.3</strong></td><td><a onclick="showContent('tch','kelas-detail');return false" class="btn-small outline" style="cursor:pointer">Detail</a></td></tr>
+          <tr><td>5</td><td>2024005</td><td><strong>Doni Prasetyo</strong></td><td>L</td><td>70</td><td>75</td><td>72</td><td><strong>72.3</strong></td><td><a onclick="showContent('tch','kelas-detail');return false" class="btn-small outline" style="cursor:pointer">Detail</a></td></tr>
+          <tr><td>6</td><td>2024006</td><td><strong>Eka Putri</strong></td><td>P</td><td>95</td><td>88</td><td>94</td><td><strong>92.3</strong></td><td><a onclick="showContent('tch','kelas-detail');return false" class="btn-small outline" style="cursor:pointer">Detail</a></td></tr>
+          <tr><td>7</td><td>2024007</td><td><strong>Fajar Nugroho</strong></td><td>L</td><td>82</td><td>80</td><td>78</td><td><strong>80.0</strong></td><td><a onclick="showContent('tch','kelas-detail');return false" class="btn-small outline" style="cursor:pointer">Detail</a></td></tr>
+          <tr><td>8</td><td>2024008</td><td><strong>Gita Anggraini</strong></td><td>P</td><td>90</td><td>92</td><td>86</td><td><strong>89.3</strong></td><td><a onclick="showContent('tch','kelas-detail');return false" class="btn-small outline" style="cursor:pointer">Detail</a></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="grid-2">
+    <div class="card"><div class="card-header"><h3><i class="fas fa-chart-bar" style="color:var(--teal)"></i> Statistik Kelas</h3></div>
+      <div class="h-bar-group">
+        <div class="h-bar-row"><div class="h-bar-label">Rata-rata</div><div class="h-bar-track"><div class="h-bar-fill teal" style="width:82%">82</div></div></div>
+        <div class="h-bar-row"><div class="h-bar-label">Tertinggi</div><div class="h-bar-track"><div class="h-bar-fill blue" style="width:95%">95</div></div></div>
+        <div class="h-bar-row"><div class="h-bar-label">Terendah</div><div class="h-bar-track"><div class="h-bar-fill orange" style="width:70%">70</div></div></div>
+        <div class="h-bar-row"><div class="h-bar-label">Lulus</div><div class="h-bar-track"><div class="h-bar-fill green" style="width:88%">88%</div></div></div>
+      </div>
+    </div>
+    <div class="card"><div class="card-header"><h3><i class="fas fa-tasks" style="color:var(--orange)"></i> Tugas Terbaru</h3><label onclick="showContent('tch','tugas')" style="font-size:12px;color:var(--blue);font-weight:600;cursor:pointer">Semua</label></div>
+      <div class="task-item"><i class="fas fa-file-alt" style="color:var(--blue);font-size:18px"></i><div class="task-info"><div class="task-title">PR Persamaan Linear</div><div class="task-meta">Deadline: 5 Apr 2026 &mdash; 18/28 terkumpul</div></div><span class="badge status-mendekati">Mendekati</span></div>
+      <div class="task-item"><i class="fas fa-file-alt" style="color:var(--teal);font-size:18px"></i><div class="task-info"><div class="task-title">Quiz Bangun Ruang</div><div class="task-meta">Deadline: 2 Apr 2026 &mdash; 27/28 terkumpul</div></div><span class="badge status-selesai">Selesai</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="tch-content tch-content-kelas-form">
+  <div class="content-header"><div><h1>Tambah Kelas</h1><p style="font-size:14px;color:var(--gray-400);margin-top:2px">Buat kelas baru untuk mata pelajaran</p></div><div class="header-right"><label onclick="showContent('tch','kelas')" class="header-btn outline" style="cursor:pointer"><i class="fas fa-arrow-left"></i> Kembali</label><div class="avatar blue">DS</div></div></div>
+  <div class="form-card" style="background:var(--white);border-radius:var(--radius);padding:24px;box-shadow:var(--shadow);max-width:600px">
+    <div class="form-group" style="margin-bottom:16px"><label style="display:block;font-size:13px;font-weight:600;color:var(--gray-500);margin-bottom:6px">Nama Kelas</label><div class="input-wrap" style="border:1px solid var(--border);border-radius:var(--radius-sm);padding:0 14px"><input type="text" placeholder="Contoh: 7C" style="border:none;outline:none;padding:10px 0;font-size:14px;font-family:var(--font);width:100%"></div></div>
+    <div class="form-group" style="margin-bottom:16px"><label style="display:block;font-size:13px;font-weight:600;color:var(--gray-500);margin-bottom:6px">Mata Pelajaran</label><div class="input-wrap" style="border:1px solid var(--border);border-radius:var(--radius-sm);padding:0 14px"><input type="text" placeholder="Contoh: Matematika" style="border:none;outline:none;padding:10px 0;font-size:14px;font-family:var(--font);width:100%"></div></div>
+    <div class="form-group" style="margin-bottom:16px"><label style="display:block;font-size:13px;font-weight:600;color:var(--gray-500);margin-bottom:6px">Tingkat</label><select class="form-select" style="width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:14px;font-family:var(--font);background:var(--white)"><option>Kelas 7</option><option>Kelas 8</option><option>Kelas 9</option></select></div>
+    <div class="form-group" style="margin-bottom:16px"><label style="display:block;font-size:13px;font-weight:600;color:var(--gray-500);margin-bottom:6px">Jumlah Siswa</label><div class="input-wrap" style="border:1px solid var(--border);border-radius:var(--radius-sm);padding:0 14px"><input type="number" placeholder="Contoh: 28" style="border:none;outline:none;padding:10px 0;font-size:14px;font-family:var(--font);width:100%"></div></div>
+    <div style="display:flex;gap:10px;margin-top:24px">
+      <label onclick="showContent('tch','kelas')" class="btn-login" style="text-align:center;flex:1;cursor:pointer"><i class="fas fa-save"></i> Simpan</label>
+      <label onclick="showContent('tch','kelas')" class="btn-login" style="text-align:center;flex:1;cursor:pointer;background:var(--gray-300);color:var(--text)"><i class="fas fa-times"></i> Batal</label>
+    </div>
+  </div>
+</div>
+
+</main>
+</div>
+</div>
+
+<!-- ============================================================ -->
+<!-- DASHBOARD ADMIN                                              -->
+<!-- ============================================================ -->
+<div class="dashboard hidden" id="d-admin">
+
+<div class="dashboard-layout">
+<aside class="sidebar">
+  <div class="brand"><h2><i class="fas fa-graduation-cap"></i>LMS Al Azhar Jaya</h2><p>SDIT &amp; SMPIT Al Azhar Jaya Indonesia</p></div>
+  <ul class="sidebar-menu">
+    <li class="adm-nav-dashboard"><label onclick="showContent('adm','dashboard')"><i class="fas fa-th-large"></i> Dashboard</label></li>
+    <li class="adm-nav-siswa"><label onclick="showContent('adm','siswa')"><i class="fas fa-user-graduate"></i> Siswa</label></li>
+    <li class="adm-nav-guru"><label onclick="showContent('adm','guru')"><i class="fas fa-chalkboard-teacher"></i> Guru</label></li>
+    <li class="adm-nav-ortu"><label onclick="showContent('adm','ortu')"><i class="fas fa-users"></i> Orang Tua</label></li>
+    <li class="adm-nav-kelas"><label onclick="showContent('adm','kelas')"><i class="fas fa-school"></i> Kelas</label></li>
+    <li class="adm-nav-pengaturan"><label onclick="showContent('adm','pengaturan')"><i class="fas fa-cog"></i> Pengaturan</label></li>
+  </ul>
+  <div class="sidebar-logout"><label onclick="logout()"><i class="fas fa-sign-out-alt"></i> Keluar</label></div>
+</aside>
+
+<main class="main-area">
+
+<!-- === Admin: Dashboard === -->
+<div class="adm-content adm-content-dashboard">
+  <div class="content-header"><div><h1>Dashboard Admin</h1><p style="font-size:14px;color:var(--gray-400);margin-top:2px">Selamat datang, Admin Sekolah</p></div><div class="header-right"><span class="badge teal" style="font-size:12px;padding:6px 16px"><i class="fas fa-school"></i> SDIT &amp; SMPIT</span><div class="avatar teal">AD</div></div></div>
+  <div class="grid-4" style="margin-bottom:20px">
+    <div class="admin-stat-card"><div class="asc-icon grad-teal"><i class="fas fa-user-graduate"></i></div><div class="asc-body"><div class="asc-number">520</div><div class="asc-label">Total Siswa</div><div class="asc-compare up">&#x2191; 12 siswa baru bulan ini</div></div></div>
+    <div class="admin-stat-card"><div class="asc-icon grad-blue"><i class="fas fa-chalkboard-teacher"></i></div><div class="asc-body"><div class="asc-number">42</div><div class="asc-label">Total Guru</div><div class="asc-compare up">&#x2191; 3 guru baru tahun ini</div></div></div>
+    <div class="admin-stat-card"><div class="asc-icon grad-orange"><i class="fas fa-users"></i></div><div class="asc-body"><div class="asc-number">380</div><div class="asc-label">Total Orang Tua</div><div class="asc-compare up">&#x2191; 8 akun baru bulan ini</div></div></div>
+    <div class="admin-stat-card"><div class="asc-icon grad-purple"><i class="fas fa-school"></i></div><div class="asc-body"><div class="asc-number">18</div><div class="asc-label">Kelas Aktif</div><div class="asc-compare down">&#x2193; 2 kelas dari bulan lalu</div></div></div>
+  </div>
+  <div class="grid-2" style="margin-bottom:20px">
+    <div class="card"><div class="card-header"><h3><i class="fas fa-signal" style="color:var(--teal)"></i> Aktivitas Login (30 Hari)</h3><label onclick="showContent('adm','pengaturan')" style="font-size:12px;color:var(--blue);font-weight:600;cursor:pointer;text-decoration:none">Detail</label></div>
+      <div class="chart-area"><div class="chart-bar" style="height:60%;background:linear-gradient(to top,var(--teal-light),var(--teal))"><span class="bar-label">Sen</span></div><div class="chart-bar" style="height:80%;background:linear-gradient(to top,var(--teal-light),var(--teal))"><span class="bar-label">Sel</span></div><div class="chart-bar" style="height:45%"><span class="bar-label">Rab</span></div><div class="chart-bar" style="height:90%"><span class="bar-label">Kam</span></div><div class="chart-bar" style="height:70%"><span class="bar-label">Jum</span></div><div class="chart-bar" style="height:30%"><span class="bar-label">Sab</span></div><div class="chart-bar" style="height:25%"><span class="bar-label">Min</span></div><div class="chart-bar" style="height:65%"><span class="bar-label">Sen</span></div><div class="chart-bar" style="height:85%"><span class="bar-label">Sel</span></div><div class="chart-bar" style="height:50%"><span class="bar-label">Rab</span></div><div class="chart-bar" style="height:75%"><span class="bar-label">Kam</span></div><div class="chart-bar" style="height:95%"><span class="bar-label">Jum</span></div><div class="chart-bar" style="height:35%"><span class="bar-label">Sab</span></div><div class="chart-bar" style="height:20%"><span class="bar-label">Min</span></div></div>
+      <p style="font-size:11px;color:var(--gray-400);text-align:center">Login per hari (14 hari terakhir)</p>
+    </div>
+    <div class="card"><div class="card-header"><h3><i class="fas fa-layer-group" style="color:var(--blue)"></i> Distribusi Siswa per Jenjang</h3><label onclick="showContent('adm','siswa')" style="font-size:12px;color:var(--blue);font-weight:600;cursor:pointer;text-decoration:none">Detail</label></div>
+      <div class="h-bar-group"><div class="h-bar-row"><div class="h-bar-label">Kelas 1-3 SD</div><div class="h-bar-track"><div class="h-bar-fill teal" style="width:90%">180</div></div></div><div class="h-bar-row"><div class="h-bar-label">Kelas 4-6 SD</div><div class="h-bar-track"><div class="h-bar-fill blue" style="width:72%">145</div></div></div><div class="h-bar-row"><div class="h-bar-label">Kelas 7</div><div class="h-bar-track"><div class="h-bar-fill orange" style="width:58%">80</div></div></div><div class="h-bar-row"><div class="h-bar-label">Kelas 8</div><div class="h-bar-track"><div class="h-bar-fill purple" style="width:50%">70</div></div></div><div class="h-bar-row"><div class="h-bar-label">Kelas 9</div><div class="h-bar-track"><div class="h-bar-fill pink" style="width:38%">55</div></div></div></div>
+    </div>
+  </div>
+  <div class="card">    <div class="card-header"><h3><i class="fas fa-history" style="color:var(--orange)"></i> Aktivitas Terbaru</h3><label style="font-size:12px;color:var(--blue);font-weight:600;cursor:pointer;text-decoration:none">Semua</label></div>
+    <div class="filter-bar"><button class="filter-btn active">Semua</button><button class="filter-btn">SD</button><button class="filter-btn">SMP</button></div>
+    <div class="table-wrap"><table><thead><tr><th>Waktu</th><th>Jenis</th><th>Deskripsi</th><th>Status</th></tr></thead>
+    <tbody>
+      <tr><td style="color:var(--gray-400);font-size:12px">28 Mar 2026, 09:15</td><td><span class="badge light teal">User</span></td><td>User baru &mdash; Siti Aisyah (Siswa)</td><td><span class="badge light green">Selesai</span></td></tr>
+      <tr><td style="color:var(--gray-400);font-size:12px">28 Mar 2026, 08:30</td><td><span class="badge light blue">Kelas</span></td><td>Kelas 7C ditambahkan</td><td><span class="badge light green">Selesai</span></td></tr>
+      <tr><td style="color:var(--gray-400);font-size:12px">27 Mar 2026, 14:00</td><td><span class="badge light orange">Pengumuman</span></td><td>Pengumuman UTS dibuat</td><td><span class="badge light teal">Aktif</span></td></tr>
+      <tr><td style="color:var(--gray-400);font-size:12px">27 Mar 2026, 11:20</td><td><span class="badge light purple">Tugas</span></td><td>Tugas "Praktek Sholat" PAI 7A</td><td><span class="badge light teal">Aktif</span></td></tr>
+      <tr><td style="color:var(--gray-400);font-size:12px">26 Mar 2026, 15:45</td><td><span class="badge light pink">Laporan</span></td><td>Laporan bulanan Maret 2026</td><td><span class="badge light green">Selesai</span></td></tr>
+      <tr><td style="color:var(--gray-400);font-size:12px">25 Mar 2026, 13:30</td><td><span class="badge light red">Sistem</span></td><td>Pembaruan LMS versi 2.4.1</td><td><span class="badge light green">Selesai</span></td></tr>
+    </tbody></table></div>
+  </div>
+</div>
+
+<!-- === Admin: Siswa === -->
+<div class="adm-content adm-content-siswa">
+  <div class="content-header"><h1>Manajemen Siswa</h1><div class="header-right"><label onclick="showContent('adm','siswa-form')" class="header-btn primary" style="cursor:pointer"><i class="fas fa-plus"></i> Tambah Siswa</label><label onclick="alert('Fitur import sedang dalam pengembangan');return false" class="header-btn outline" style="cursor:pointer"><i class="fas fa-upload"></i> Import</label><div class="avatar teal">AD</div></div></div>
+  <div class="card"><div class="table-wrap"><table><thead><tr><th>NIS</th><th>Nama</th><th>Kelas</th><th>Jenis Kelamin</th><th>Status</th><th></th></tr></thead>
+    <tbody>
+      <tr><td>2024001</td><td><strong>Ahmad Rizky</strong></td><td>7A</td><td>L</td><td><span class="badge light green">Aktif</span></td><td><label onclick="showContent('adm','siswa-detail')" class="btn-small outline" style="cursor:pointer">Detail</label> <label onclick="showContent('adm','siswa-edit')" class="btn-small outline" style="cursor:pointer">Edit</label></td></tr>
+      <tr><td>2024002</td><td><strong>Siti Aisyah</strong></td><td>7A</td><td>P</td><td><span class="badge light green">Aktif</span></td><td><label onclick="showContent('adm','siswa-detail')" class="btn-small outline" style="cursor:pointer">Detail</label> <label onclick="showContent('adm','siswa-edit')" class="btn-small outline" style="cursor:pointer">Edit</label></td></tr>
+      <tr><td>2024003</td><td><strong>Budi Santoso</strong></td><td>7A</td><td>L</td><td><span class="badge light green">Aktif</span></td><td><label onclick="showContent('adm','siswa-detail')" class="btn-small outline" style="cursor:pointer">Detail</label> <label onclick="showContent('adm','siswa-edit')" class="btn-small outline" style="cursor:pointer">Edit</label></td></tr>
+      <tr><td>2024004</td><td><strong>Citra Dewi</strong></td><td>7A</td><td>P</td><td><span class="badge light green">Aktif</span></td><td><label onclick="showContent('adm','siswa-detail')" class="btn-small outline" style="cursor:pointer">Detail</label> <label onclick="showContent('adm','siswa-edit')" class="btn-small outline" style="cursor:pointer">Edit</label></td></tr>
+      <tr><td>2023101</td><td><strong>Doni Prasetyo</strong></td><td>8B</td><td>L</td><td><span class="badge light red">Nonaktif</span></td><td><label onclick="showContent('adm','siswa-detail')" class="btn-small outline" style="cursor:pointer">Detail</label> <label onclick="showContent('adm','siswa-edit')" class="btn-small outline" style="cursor:pointer">Edit</label></td></tr>
+    </tbody></table></div>
+  </div>
+</div>
+
+<!-- === Admin: Guru === -->
+<div class="adm-content adm-content-guru">
+  <div class="content-header"><h1>Manajemen Guru</h1><div class="header-right"><label onclick="showContent('adm','guru-form')" class="header-btn primary" style="cursor:pointer"><i class="fas fa-plus"></i> Tambah Guru</label><div class="avatar teal">AD</div></div></div>
+  <div class="card"><div class="table-wrap"><table><thead><tr><th>NIP</th><th>Nama</th><th>Mapel</th><th>Kelas</th><th>Status</th><th></th></tr></thead>
+    <tbody>
+      <tr><td>19870101</td><td><strong>Ustadz Ahmad Fauzi</strong></td><td>PAI</td><td>7A, 7B, 8A</td><td><span class="badge light green">Aktif</span></td><td><label onclick="showContent('adm','guru-detail')" class="btn-small outline" style="cursor:pointer">Detail</label> <label onclick="showContent('adm','guru-form')" class="btn-small outline" style="cursor:pointer">Edit</label></td></tr>
+      <tr><td>19900215</td><td><strong>Bu Dewi Sartika</strong></td><td>Matematika</td><td>7A-9B</td><td><span class="badge light green">Aktif</span></td><td><label onclick="showContent('adm','guru-detail')" class="btn-small outline" style="cursor:pointer">Detail</label> <label onclick="showContent('adm','guru-form')" class="btn-small outline" style="cursor:pointer">Edit</label></td></tr>
+      <tr><td>19910520</td><td><strong>Ibu Siti Rahmawati</strong></td><td>B. Indonesia</td><td>7A, 7B</td><td><span class="badge light green">Aktif</span></td><td><label onclick="showContent('adm','guru-detail')" class="btn-small outline" style="cursor:pointer">Detail</label> <label onclick="showContent('adm','guru-form')" class="btn-small outline" style="cursor:pointer">Edit</label></td></tr>
+      <tr><td>19881210</td><td><strong>Pak Budi Santoso</strong></td><td>IPA</td><td>7A, 8B, 9A</td><td><span class="badge light green">Aktif</span></td><td><label onclick="showContent('adm','guru-detail')" class="btn-small outline" style="cursor:pointer">Detail</label> <label onclick="showContent('adm','guru-form')" class="btn-small outline" style="cursor:pointer">Edit</label></td></tr>
+    </tbody></table></div>
+  </div>
+</div>
+
+<!-- === Admin: Orang Tua === -->
+<div class="adm-content adm-content-ortu">
+  <div class="content-header"><h1>Manajemen Orang Tua</h1><div class="header-right"><label onclick="showContent('adm','ortu-form')" class="header-btn primary" style="cursor:pointer"><i class="fas fa-plus"></i> Tambah Akun</label><div class="avatar teal">AD</div></div></div>
+  <div class="card"><div class="table-wrap"><table><thead><tr><th>Nama</th><th>Anak</th><th>Kelas</th><th>Email</th><th>Status</th><th></th></tr></thead>
+    <tbody>
+      <tr><td><strong>Bpk. Andi Pratama</strong></td><td>Ahmad Rizky</td><td>7A</td><td>andi@email.com</td><td><span class="badge light green">Aktif</span></td><td><label onclick="showContent('adm','ortu-detail')" class="btn-small outline" style="cursor:pointer">Detail</label> <label onclick="showContent('adm','ortu-form')" class="btn-small outline" style="cursor:pointer">Edit</label></td></tr>
+      <tr><td><strong>Ibu Sari Indah</strong></td><td>Siti Aisyah</td><td>7A</td><td>sari@email.com</td><td><span class="badge light green">Aktif</span></td><td><label onclick="showContent('adm','ortu-detail')" class="btn-small outline" style="cursor:pointer">Detail</label> <label onclick="showContent('adm','ortu-form')" class="btn-small outline" style="cursor:pointer">Edit</label></td></tr>
+      <tr><td><strong>Bpk. Dwi Hartono</strong></td><td>Budi Santoso</td><td>7A</td><td>dwi@email.com</td><td><span class="badge light green">Aktif</span></td><td><label onclick="showContent('adm','ortu-detail')" class="btn-small outline" style="cursor:pointer">Detail</label> <label onclick="showContent('adm','ortu-form')" class="btn-small outline" style="cursor:pointer">Edit</label></td></tr>
+    </tbody></table></div>
+  </div>
+</div>
+
+<!-- === Admin: Kelas === -->
+<div class="adm-content adm-content-kelas">
+  <div class="content-header"><h1>Manajemen Kelas</h1><div class="header-right"><label onclick="showContent('adm','kelas-form')" class="header-btn primary" style="cursor:pointer"><i class="fas fa-plus"></i> Tambah Kelas</label><div class="avatar teal">AD</div></div></div>
+  <div class="card"><div class="table-wrap"><table><thead><tr><th>Kelas</th><th>Jenjang</th><th>Jumlah Siswa</th><th>Wali Kelas</th><th>Status</th><th></th></tr></thead>
+    <tbody>
+      <tr><td><strong>1A</strong></td><td>SD</td><td>28</td><td>Ibu Siti Rahmawati</td><td><span class="badge light green">Aktif</span></td><td><label onclick="showContent('adm','kelas-form')" class="btn-small outline" style="cursor:pointer">Edit</label> <label onclick="showContent('adm','kelas-detail')" class="btn-small outline" style="cursor:pointer">Detail</label></td></tr>
+      <tr><td><strong>4B</strong></td><td>SD</td><td>26</td><td>Pak Budi Santoso</td><td><span class="badge light green">Aktif</span></td><td><label onclick="showContent('adm','kelas-form')" class="btn-small outline" style="cursor:pointer">Edit</label> <label onclick="showContent('adm','kelas-detail')" class="btn-small outline" style="cursor:pointer">Detail</label></td></tr>
+      <tr><td><strong>7A</strong></td><td>SMP</td><td>28</td><td>Ustadz Ahmad Fauzi</td><td><span class="badge light green">Aktif</span></td><td><label onclick="showContent('adm','kelas-form')" class="btn-small outline" style="cursor:pointer">Edit</label> <label onclick="showContent('adm','kelas-detail')" class="btn-small outline" style="cursor:pointer">Detail</label></td></tr>
+      <tr><td><strong>8B</strong></td><td>SMP</td><td>25</td><td>Bu Dewi Sartika</td><td><span class="badge light green">Aktif</span></td><td><label onclick="showContent('adm','kelas-form')" class="btn-small outline" style="cursor:pointer">Edit</label> <label onclick="showContent('adm','kelas-detail')" class="btn-small outline" style="cursor:pointer">Detail</label></td></tr>
+      <tr><td><strong>9A</strong></td><td>SMP</td><td>24</td><td>Pak Dwi Hartono</td><td><span class="badge light green">Aktif</span></td><td><label onclick="showContent('adm','kelas-form')" class="btn-small outline" style="cursor:pointer">Edit</label> <label onclick="showContent('adm','kelas-detail')" class="btn-small outline" style="cursor:pointer">Detail</label></td></tr>
+    </tbody></table></div>
+  </div>
+</div>
+
+<!-- === Admin: Pengaturan === -->
+<div class="adm-content adm-content-pengaturan">
+  <div class="content-header"><h1>Pengaturan</h1><div class="header-right"><div class="avatar teal">AD</div></div></div>
+  <div class="grid-2">
+    <div class="card"><div class="card-header"><h3><i class="fas fa-cog" style="color:var(--teal)"></i> Pengaturan Umum</h3></div>
+      <p style="font-size:13px;color:var(--gray-500);margin-bottom:12px">Nama Sekolah: SDIT &amp; SMPIT Al Azhar Jaya Indonesia</p>
+      <p style="font-size:13px;color:var(--gray-500);margin-bottom:12px">Tahun Ajaran: 2025/2026</p>
+      <p style="font-size:13px;color:var(--gray-500);margin-bottom:12px">Semester: Genap</p>
+      <p style="font-size:13px;color:var(--gray-500)">Alamat: Jl. Sirih Prada No. 135, Pabuaran, Kec. Mustika Jaya, Kota Bekasi</p>
+    </div>
+    <div class="card"><div class="card-header"><h3><i class="fas fa-palette" style="color:var(--purple)"></i> Tampilan</h3></div>
+      <p style="font-size:13px;color:var(--gray-500);margin-bottom:12px">Tema: Default (Hijau &amp; Biru)</p>
+      <p style="font-size:13px;color:var(--gray-500);margin-bottom:12px">Bahasa: Indonesia</p>
+      <p style="font-size:13px;color:var(--gray-500)">Zona Waktu: WIB (UTC+7)</p>
+    </div>
+  </div>
+</div>
+
+<!-- === Admin: Form Siswa === -->
+<div class="adm-content adm-content-siswa-form">
+  <div class="content-header">
+    <h1><span id="siswa-form-title">Tambah</span> Siswa</h1>
+    <div class="header-right">
+      <label onclick="showContent('adm','siswa')" class="header-btn outline" style="cursor:pointer"><i class="fas fa-arrow-left"></i> Kembali</label>
+      <div class="avatar teal">AD</div>
+    </div>
+  </div>
+  <div class="card" style="max-width:600px">
+    <div class="grid-2" style="margin-bottom:16px">
+      <div class="form-group"><label>NIS</label><div class="input-wrap"><input type="text" placeholder="2024001" style="border:none;outline:none;padding:10px 0;font-size:14px;font-family:var(--font);width:100%"></div><div class="form-error">NIS wajib diisi</div></div>
+      <div class="form-group"><label>Nama Lengkap</label><div class="input-wrap"><input type="text" placeholder="Ahmad Rizky" style="border:none;outline:none;padding:10px 0;font-size:14px;font-family:var(--font);width:100%"></div><div class="form-error">Nama wajib diisi</div></div>
+    </div>
+    <div class="grid-2" style="margin-bottom:16px">
+      <div class="form-group"><label>Kelas</label><div class="input-wrap"><input type="text" placeholder="7A" style="border:none;outline:none;padding:10px 0;font-size:14px;font-family:var(--font);width:100%"></div><div class="form-error">Kelas wajib diisi</div></div>
+      <div class="form-group"><label>Jenis Kelamin</label><select class="form-select"><option>L</option><option>P</option></select></div>
+    </div>
+    <div class="form-group" style="margin-bottom:16px"><label>Email</label><div class="input-wrap"><input type="email" placeholder="siswa@alazharjayaindonesia.sch.id" style="border:none;outline:none;padding:10px 0;font-size:14px;font-family:var(--font);width:100%"></div><div class="form-error">Email wajib diisi</div></div>
+    <div class="form-group" style="margin-bottom:16px"><label>Alamat</label><div class="input-wrap"><input type="text" placeholder="Jl. ..." style="border:none;outline:none;padding:10px 0;font-size:14px;font-family:var(--font);width:100%"></div><div class="form-error">Alamat wajib diisi</div></div>
+    <div style="display:flex;gap:10px;margin-top:8px">
+      <label onclick="validateAndSave('adm','siswa')" class="btn-login" style="text-align:center;flex:1;cursor:pointer"><i class="fas fa-save"></i> Simpan</label>
+      <label onclick="showContent('adm','siswa')" class="btn-login" style="text-align:center;flex:1;cursor:pointer;background:var(--gray-300);color:var(--text)"><i class="fas fa-times"></i> Batal</label>
+    </div>
+  </div>
+</div>
+
+<!-- === Admin: Form Guru === -->
+<div class="adm-content adm-content-guru-form">
+  <div class="content-header">
+    <h1><span id="guru-form-title">Tambah</span> Guru</h1>
+    <div class="header-right">
+      <label onclick="showContent('adm','guru')" class="header-btn outline" style="cursor:pointer"><i class="fas fa-arrow-left"></i> Kembali</label>
+      <div class="avatar teal">AD</div>
+    </div>
+  </div>
+  <div class="card" style="max-width:600px">
+    <div class="grid-2" style="margin-bottom:16px">
+      <div class="form-group"><label>NIP</label><div class="input-wrap"><input type="text" placeholder="19870101" style="border:none;outline:none;padding:10px 0;font-size:14px;font-family:var(--font);width:100%"></div><div class="form-error">NIP wajib diisi</div></div>
+      <div class="form-group"><label>Nama Lengkap</label><div class="input-wrap"><input type="text" placeholder="Ustadz Ahmad Fauzi" style="border:none;outline:none;padding:10px 0;font-size:14px;font-family:var(--font);width:100%"></div><div class="form-error">Nama wajib diisi</div></div>
+    </div>
+    <div class="grid-2" style="margin-bottom:16px">
+      <div class="form-group"><label>Mata Pelajaran</label><div class="input-wrap"><input type="text" placeholder="PAI" style="border:none;outline:none;padding:10px 0;font-size:14px;font-family:var(--font);width:100%"></div><div class="form-error">Mata Pelajaran wajib diisi</div></div>
+      <div class="form-group"><label>Kelas</label><div class="input-wrap"><input type="text" placeholder="7A, 7B, 8A" style="border:none;outline:none;padding:10px 0;font-size:14px;font-family:var(--font);width:100%"></div><div class="form-error">Kelas wajib diisi</div></div>
+    </div>
+    <div class="form-group" style="margin-bottom:16px"><label>Email</label><div class="input-wrap"><input type="email" placeholder="guru@alazharjayaindonesia.sch.id" style="border:none;outline:none;padding:10px 0;font-size:14px;font-family:var(--font);width:100%"></div><div class="form-error">Email wajib diisi</div></div>
+    <div style="display:flex;gap:10px;margin-top:8px">
+      <label onclick="validateAndSave('adm','guru')" class="btn-login" style="text-align:center;flex:1;cursor:pointer"><i class="fas fa-save"></i> Simpan</label>
+      <label onclick="showContent('adm','guru')" class="btn-login" style="text-align:center;flex:1;cursor:pointer;background:var(--gray-300);color:var(--text)"><i class="fas fa-times"></i> Batal</label>
+    </div>
+  </div>
+</div>
+
+<!-- === Admin: Form Orang Tua === -->
+<div class="adm-content adm-content-ortu-form">
+  <div class="content-header">
+    <h1><span id="ortu-form-title">Tambah</span> Orang Tua</h1>
+    <div class="header-right">
+      <label onclick="showContent('adm','ortu')" class="header-btn outline" style="cursor:pointer"><i class="fas fa-arrow-left"></i> Kembali</label>
+      <div class="avatar teal">AD</div>
+    </div>
+  </div>
+  <div class="card" style="max-width:600px">
+    <div class="grid-2" style="margin-bottom:16px">
+      <div class="form-group"><label>Nama</label><div class="input-wrap"><input type="text" placeholder="Bpk. Andi Pratama" style="border:none;outline:none;padding:10px 0;font-size:14px;font-family:var(--font);width:100%"></div><div class="form-error">Nama wajib diisi</div></div>
+      <div class="form-group"><label>Nama Anak</label><div class="input-wrap"><input type="text" placeholder="Ahmad Rizky" style="border:none;outline:none;padding:10px 0;font-size:14px;font-family:var(--font);width:100%"></div><div class="form-error">Nama Anak wajib diisi</div></div>
+    </div>
+    <div class="grid-2" style="margin-bottom:16px">
+      <div class="form-group"><label>Kelas Anak</label><div class="input-wrap"><input type="text" placeholder="7A" style="border:none;outline:none;padding:10px 0;font-size:14px;font-family:var(--font);width:100%"></div><div class="form-error">Kelas Anak wajib diisi</div></div>
+      <div class="form-group"><label>Email</label><div class="input-wrap"><input type="email" placeholder="ortu@email.com" style="border:none;outline:none;padding:10px 0;font-size:14px;font-family:var(--font);width:100%"></div><div class="form-error">Email wajib diisi</div></div>
+    </div>
+    <div style="display:flex;gap:10px;margin-top:8px">
+      <label onclick="validateAndSave('adm','ortu')" class="btn-login" style="text-align:center;flex:1;cursor:pointer"><i class="fas fa-save"></i> Simpan</label>
+      <label onclick="showContent('adm','ortu')" class="btn-login" style="text-align:center;flex:1;cursor:pointer;background:var(--gray-300);color:var(--text)"><i class="fas fa-times"></i> Batal</label>
+    </div>
+  </div>
+</div>
+
+<!-- === Admin: Form Kelas === -->
+<div class="adm-content adm-content-kelas-form">
+  <div class="content-header">
+    <h1><span id="kelas-form-title">Tambah</span> Kelas</h1>
+    <div class="header-right">
+      <label onclick="showContent('adm','kelas')" class="header-btn outline" style="cursor:pointer"><i class="fas fa-arrow-left"></i> Kembali</label>
+      <div class="avatar teal">AD</div>
+    </div>
+  </div>
+  <div class="card" style="max-width:600px">
+    <div class="grid-2" style="margin-bottom:16px">
+      <div class="form-group"><label>Nama Kelas</label><div class="input-wrap"><input type="text" placeholder="1A" style="border:none;outline:none;padding:10px 0;font-size:14px;font-family:var(--font);width:100%"></div><div class="form-error">Nama Kelas wajib diisi</div></div>
+      <div class="form-group"><label>Jenjang</label><select class="form-select"><option>SD</option><option>SMP</option></select></div>
+    </div>
+    <div class="form-group" style="margin-bottom:16px"><label>Wali Kelas</label><div class="input-wrap"><input type="text" placeholder="Ibu Siti Rahmawati" style="border:none;outline:none;padding:10px 0;font-size:14px;font-family:var(--font);width:100%"></div><div class="form-error">Wali Kelas wajib diisi</div></div>
+    <div style="display:flex;gap:10px;margin-top:8px">
+      <label onclick="validateAndSave('adm','kelas')" class="btn-login" style="text-align:center;flex:1;cursor:pointer"><i class="fas fa-save"></i> Simpan</label>
+      <label onclick="showContent('adm','kelas')" class="btn-login" style="text-align:center;flex:1;cursor:pointer;background:var(--gray-300);color:var(--text)"><i class="fas fa-times"></i> Batal</label>
+    </div>
+  </div>
+</div>
+
+<!-- === Admin: Detail Siswa === -->
+<div class="adm-content adm-content-siswa-detail">
+  <div class="content-header"><div><h1>Detail Siswa</h1><p style="font-size:14px;color:var(--gray-400);margin-top:2px">Informasi lengkap siswa</p></div><div class="header-right"><label onclick="showContent('adm','siswa')" class="header-btn outline" style="cursor:pointer"><i class="fas fa-arrow-left"></i> Kembali</label><div class="avatar teal">AR</div></div></div>
+  <div class="card" style="margin-bottom:20px">
+    <div class="card-header"><h3><i class="fas fa-user-graduate" style="color:var(--teal)"></i> Identitas Siswa</h3><label onclick="showContent('adm','siswa-edit')" class="btn-small teal" style="cursor:pointer"><i class="fas fa-edit"></i> Edit</label></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;padding:8px 0">
+      <div><span style="font-size:12px;color:var(--gray-400)">NIS</span><div style="font-weight:600">2024001</div></div>
+      <div><span style="font-size:12px;color:var(--gray-400)">Nama Lengkap</span><div style="font-weight:600">Ahmad Rizky</div></div>
+      <div><span style="font-size:12px;color:var(--gray-400)">Jenis Kelamin</span><div style="font-weight:600">Laki-laki</div></div>
+      <div><span style="font-size:12px;color:var(--gray-400)">Kelas</span><div style="font-weight:600">7A</div></div>
+      <div><span style="font-size:12px;color:var(--gray-400)">Tempat, Tgl Lahir</span><div style="font-weight:600">Bekasi, 12 Mei 2013</div></div>
+      <div><span style="font-size:12px;color:var(--gray-400)">Alamat</span><div style="font-weight:600">Jl. Sirih Prada No. 12</div></div>
+      <div><span style="font-size:12px;color:var(--gray-400)">Nama Orang Tua</span><div style="font-weight:600">Bapak Ahmad Fauzi</div></div>
+      <div><span style="font-size:12px;color:var(--gray-400)">No. Telepon</span><div style="font-weight:600">0812-3456-7890</div></div>
+      <div><span style="font-size:12px;color:var(--gray-400)">Email</span><div style="font-weight:600">ahmad.rizky@alazharjayaindonesia.sch.id</div></div>
+    </div>
+  </div>
+  <div class="card"><div class="card-header"><h3><i class="fas fa-chart-line" style="color:var(--blue)"></i> Ringkasan Akademik</h3></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px;padding:8px 0">
+      <div style="text-align:center;padding:16px;background:var(--teal-bg);border-radius:var(--radius-sm)"><div style="font-size:24px;font-weight:700;color:var(--teal)">85.3</div><div style="font-size:11px;color:var(--gray-400)">Rata-rata</div></div>
+      <div style="text-align:center;padding:16px;background:var(--blue-bg);border-radius:var(--radius-sm)"><div style="font-size:24px;font-weight:700;color:var(--blue)">5</div><div style="font-size:11px;color:var(--gray-400)">Peringkat</div></div>
+      <div style="text-align:center;padding:16px;background:var(--green-bg);border-radius:var(--radius-sm)"><div style="font-size:24px;font-weight:700;color:var(--green)">112</div><div style="font-size:11px;color:var(--gray-400)">Hadir</div></div>
+      <div style="text-align:center;padding:16px;background:var(--orange-bg);border-radius:var(--radius-sm)"><div style="font-size:24px;font-weight:700;color:var(--orange)">3</div><div style="font-size:11px;color:var(--gray-400)">Tugas</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- === Admin: Detail Guru === -->
+<div class="adm-content adm-content-guru-detail">
+  <div class="content-header"><div><h1>Detail Guru</h1><p style="font-size:14px;color:var(--gray-400);margin-top:2px">Informasi lengkap guru</p></div><div class="header-right"><label onclick="showContent('adm','guru')" class="header-btn outline" style="cursor:pointer"><i class="fas fa-arrow-left"></i> Kembali</label><div class="avatar blue">DS</div></div></div>
+  <div class="card" style="margin-bottom:20px">
+    <div class="card-header"><h3><i class="fas fa-chalkboard-teacher" style="color:var(--blue)"></i> Identitas Guru</h3><label onclick="showContent('adm','guru-form')" class="btn-small teal" style="cursor:pointer"><i class="fas fa-edit"></i> Edit</label></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;padding:8px 0">
+      <div><span style="font-size:12px;color:var(--gray-400)">NIP</span><div style="font-weight:600">198703202010012010</div></div>
+      <div><span style="font-size:12px;color:var(--gray-400)">Nama Lengkap</span><div style="font-weight:600">Bu Dewi Sartika, S.Pd.</div></div>
+      <div><span style="font-size:12px;color:var(--gray-400)">Jenis Kelamin</span><div style="font-weight:600">Perempuan</div></div>
+      <div><span style="font-size:12px;color:var(--gray-400)">Mata Pelajaran</span><div style="font-weight:600">Matematika</div></div>
+      <div><span style="font-size:12px;color:var(--gray-400)">No. Telepon</span><div style="font-weight:600">0856-7890-1234</div></div>
+      <div><span style="font-size:12px;color:var(--gray-400)">Email</span><div style="font-weight:600">dewi.sartika@alazharjayaindonesia.sch.id</div></div>
+      <div><span style="font-size:12px;color:var(--gray-400)">Alamat</span><div style="font-weight:600">Perumahan Mustika Jaya Blok A5</div></div>
+      <div><span style="font-size:12px;color:var(--gray-400)">Status</span><div><span class="badge teal">Aktif</span></div></div>
+    </div>
+  </div>
+  <div class="card"><div class="card-header"><h3><i class="fas fa-chalkboard" style="color:var(--teal)"></i> Kelas yang Diajar</h3></div>
+    <div class="table-wrap"><table><thead><tr><th>Kelas</th><th>Jumlah Siswa</th><th>Wali Kelas</th><th></th></tr></thead>
+    <tbody>
+      <tr><td><strong>7A</strong></td><td>28</td><td>Ustadz Ahmad Fauzi</td><td><label onclick="showContent('adm','kelas-detail')" class="btn-small teal" style="cursor:pointer">Detail</label></td></tr>
+      <tr><td><strong>7B</strong></td><td>26</td><td>Ustadz Ahmad Fauzi</td><td><label onclick="showContent('adm','kelas-detail')" class="btn-small teal" style="cursor:pointer">Detail</label></td></tr>
+      <tr><td><strong>8A</strong></td><td>27</td><td>Bu Dewi Sartika</td><td><label onclick="showContent('adm','kelas-detail')" class="btn-small teal" style="cursor:pointer">Detail</label></td></tr>
+    </tbody></table></div>
+  </div>
+</div>
+
+<!-- === Admin: Detail Orang Tua === -->
+<div class="adm-content adm-content-ortu-detail">
+  <div class="content-header"><div><h1>Detail Orang Tua</h1><p style="font-size:14px;color:var(--gray-400);margin-top:2px">Informasi lengkap orang tua/wali</p></div><div class="header-right"><label onclick="showContent('adm','ortu')" class="header-btn outline" style="cursor:pointer"><i class="fas fa-arrow-left"></i> Kembali</label><div class="avatar orange">SR</div></div></div>
+  <div class="card" style="margin-bottom:20px">
+    <div class="card-header"><h3><i class="fas fa-users" style="color:var(--orange)"></i> Identitas Orang Tua</h3><label onclick="showContent('adm','ortu-form')" class="btn-small teal" style="cursor:pointer"><i class="fas fa-edit"></i> Edit</label></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;padding:8px 0">
+      <div><span style="font-size:12px;color:var(--gray-400)">Nama Ayah</span><div style="font-weight:600">Bapak Ahmad Syahroni</div></div>
+      <div><span style="font-size:12px;color:var(--gray-400)">Nama Ibu</span><div style="font-weight:600">Ibu Siti Rohmah</div></div>
+      <div><span style="font-size:12px;color:var(--gray-400)">No. Telepon</span><div style="font-weight:600">0812-3456-7890</div></div>
+      <div><span style="font-size:12px;color:var(--gray-400)">Email</span><div style="font-weight:600">siti.rohmah@email.com</div></div>
+      <div><span style="font-size:12px;color:var(--gray-400)">Alamat</span><div style="font-weight:600">Jl. Sirih Prada No. 12</div></div>
+      <div><span style="font-size:12px;color:var(--gray-400)">Anak</span><div style="font-weight:600">Ahmad Rizky (7A), Siti Fatimah (5B)</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- === Admin: Detail Kelas === -->
+<div class="adm-content adm-content-kelas-detail">
+  <div class="content-header"><div><h1>Detail Kelas</h1><p style="font-size:14px;color:var(--gray-400);margin-top:2px">Informasi lengkap kelas</p></div><div class="header-right"><label onclick="showContent('adm','kelas')" class="header-btn outline" style="cursor:pointer"><i class="fas fa-arrow-left"></i> Kembali</label><div class="avatar teal">7A</div></div></div>
+  <div class="card" style="margin-bottom:20px">
+    <div class="card-header"><h3><i class="fas fa-school" style="color:var(--teal)"></i> Informasi Kelas</h3><label onclick="showContent('adm','kelas-form')" class="btn-small teal" style="cursor:pointer"><i class="fas fa-edit"></i> Edit</label></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;padding:8px 0">
+      <div><span style="font-size:12px;color:var(--gray-400)">Nama Kelas</span><div style="font-weight:600">7A</div></div>
+      <div><span style="font-size:12px;color:var(--gray-400)">Jenjang</span><div style="font-weight:600">SMP</div></div>
+      <div><span style="font-size:12px;color:var(--gray-400)">Wali Kelas</span><div style="font-weight:600">Ustadz Ahmad Fauzi</div></div>
+      <div><span style="font-size:12px;color:var(--gray-400)">Jumlah Siswa</span><div style="font-weight:600">28</div></div>
+      <div><span style="font-size:12px;color:var(--gray-400)">Tahun Ajaran</span><div style="font-weight:600">2025/2026</div></div>
+      <div><span style="font-size:12px;color:var(--gray-400)">Status</span><div><span class="badge teal">Aktif</span></div></div>
+    </div>
+  </div>
+  <div class="card"><div class="card-header"><h3><i class="fas fa-user-graduate" style="color:var(--blue)"></i> Daftar Siswa</h3><a href="javascript:void(0)" onclick="return false" style="font-size:12px;color:var(--blue);font-weight:600;cursor:pointer;text-decoration:none">Lihat Semua</a></div>
+    <div class="table-wrap"><table><thead><tr><th>No</th><th>NIS</th><th>Nama</th><th>L/P</th><th></th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>2024001</td><td><strong>Ahmad Rizky</strong></td><td>L</td><td><label onclick="showContent('adm','siswa-detail')" class="btn-small outline" style="cursor:pointer">Detail</label></td></tr>
+      <tr><td>2</td><td>2024002</td><td><strong>Siti Aisyah</strong></td><td>P</td><td><label onclick="showContent('adm','siswa-detail')" class="btn-small outline" style="cursor:pointer">Detail</label></td></tr>
+      <tr><td>3</td><td>2024003</td><td><strong>Budi Santoso</strong></td><td>L</td><td><label onclick="showContent('adm','siswa-detail')" class="btn-small outline" style="cursor:pointer">Detail</label></td></tr>
+    </tbody></table></div>
+  </div>
+</div>
+
+<!-- === Admin: Edit Siswa === -->
+<div class="adm-content adm-content-siswa-edit">
+  <div class="content-header">
+    <h1>Edit Siswa</h1>
+    <div class="header-right">
+      <label onclick="showContent('adm','siswa')" class="header-btn outline" style="cursor:pointer"><i class="fas fa-arrow-left"></i> Kembali</label>
+      <div class="avatar teal">AD</div>
+    </div>
+  </div>
+  <div class="card" style="max-width:600px">
+    <div class="grid-2" style="margin-bottom:16px">
+      <div class="form-group"><label>NIS</label><div class="input-wrap"><input type="text" value="2024001" style="border:none;outline:none;padding:10px 0;font-size:14px;font-family:var(--font);width:100%"></div></div>
+      <div class="form-group"><label>Nama Lengkap</label><div class="input-wrap"><input type="text" value="Ahmad Rizky" style="border:none;outline:none;padding:10px 0;font-size:14px;font-family:var(--font);width:100%"></div></div>
+    </div>
+    <div class="grid-2" style="margin-bottom:16px">
+      <div class="form-group"><label>Kelas</label><div class="input-wrap"><input type="text" value="7A" style="border:none;outline:none;padding:10px 0;font-size:14px;font-family:var(--font);width:100%"></div></div>
+      <div class="form-group"><label>Jenis Kelamin</label><select class="form-select"><option selected>L</option><option>P</option></select></div>
+    </div>
+    <div class="form-group" style="margin-bottom:16px"><label>Email</label><div class="input-wrap"><input type="email" value="ahmad.rizky@alazharjayaindonesia.sch.id" style="border:none;outline:none;padding:10px 0;font-size:14px;font-family:var(--font);width:100%"></div></div>
+    <div class="form-group" style="margin-bottom:16px"><label>Alamat</label><div class="input-wrap"><input type="text" value="Jl. Sirih Prada No. 12" style="border:none;outline:none;padding:10px 0;font-size:14px;font-family:var(--font);width:100%"></div></div>
+    <div style="display:flex;gap:10px;margin-top:8px">
+      <label onclick="showContent('adm','siswa')" class="btn-login" style="text-align:center;flex:1;cursor:pointer"><i class="fas fa-save"></i> Simpan</label>
+      <label onclick="showContent('adm','siswa-detail')" class="btn-login" style="text-align:center;flex:1;cursor:pointer;background:var(--gray-300);color:var(--text)"><i class="fas fa-times"></i> Batal</label>
+    </div>
+  </div>
+</div>
+
+</main>
+</div>
+</div>
+
+<!-- ============================================================ -->
+<!-- DASHBOARD ORANG TUA                                          -->
+<!-- ============================================================ -->
+<div class="dashboard hidden" id="d-parent">
+
+<div class="dashboard-layout">
+<aside class="sidebar">
+  <div class="brand"><h2><i class="fas fa-graduation-cap"></i>LMS Al Azhar Jaya</h2><p>SDIT &amp; SMPIT Al Azhar Jaya Indonesia</p></div>
+  <ul class="sidebar-menu">
+    <li class="prt-nav-dashboard"><label onclick="showContent('prt','dashboard')"><i class="fas fa-th-large"></i> Dashboard</label></li>
+    <li class="prt-nav-nilai"><label onclick="showContent('prt','nilai')"><i class="fas fa-chart-line"></i> Nilai Anak</label></li>
+    <li class="prt-nav-tahfidz"><label onclick="showContent('prt','tahfidz')"><i class="fas fa-quran"></i> Tahfidz</label></li>
+    <li class="prt-nav-kehadiran"><label onclick="showContent('prt','kehadiran')"><i class="fas fa-clipboard-check"></i> Kehadiran</label></li>
+    <li class="prt-nav-jadwal"><label onclick="showContent('prt','jadwal')"><i class="fas fa-calendar-alt"></i> Jadwal</label></li>
+    <li class="prt-nav-pesan"><label onclick="showContent('prt','pesan')"><i class="fas fa-envelope"></i> Pesan &amp; Pengumuman</label></li>
+  </ul>
+  <div class="sidebar-logout"><label onclick="logout()"><i class="fas fa-sign-out-alt"></i> Keluar</label></div>
+</aside>
+
+<main class="main-area">
+
+<!-- === Parent: Dashboard === -->
+<div class="prt-content prt-content-dashboard">
+  <div class="content-header"><div><h1>Dashboard Orang Tua</h1><p style="font-size:14px;color:var(--gray-400);margin-top:2px">Pantau perkembangan putra/putri Anda</p></div><div class="header-right"><select onchange="switchChild(this.value)" class="child-select"><option value="ahmad" selected>Ahmad Rizky &mdash; 7A</option><option value="siti">Siti Fatimah &mdash; 5B</option><option value="abdullah">Abdullah Hasan &mdash; 3A</option><option value="aisyah">Aisyah Rahma &mdash; 1A</option></select><div class="avatar orange">SR</div></div></div>
+<div class="prt-child-ahmad">
+  <div class="parent-banner"><div class="pb-avatar">AR</div><div class="pb-info"><h2>Ahmad Rizky</h2><p>Kelas 7A &mdash; SMPIT Al Azhar Jaya Indonesia</p><div class="pb-meta"><span><i class="fas fa-user-tie"></i> Wali Kelas: Ustadz Ahmad Fauzi</span><span><i class="fas fa-id-card"></i> NIS: 2024001</span></div></div></div>
+  <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:20px"><div class="att-item hadir" style="flex:1;min-width:100px"><div class="att-number">22</div><div class="att-label">&#x2705; Hadir</div></div><div class="att-item izin" style="flex:1;min-width:100px"><div class="att-number">1</div><div class="att-label">&#x26A0;&#xFE0F; Izin</div></div><div class="att-item sakit" style="flex:1;min-width:100px"><div class="att-number">0</div><div class="att-label">&#x274C; Sakit</div></div></div>
+  <div class="grid-2" style="margin-bottom:20px">
+    <div class="card"><div class="card-header"><h3><i class="fas fa-file-invoice" style="color:var(--blue)"></i> Rapor Singkat</h3><label onclick="showContent('prt','nilai')">Lihat Semua</label></div>
+      <div class="table-wrap"><table class="rapor-table"><thead><tr><th>Mata Pelajaran</th><th>Nilai</th><th>Grade</th><th>Trend</th></tr></thead>
+      <tbody><tr><td>PAI</td><td style="font-weight:700">92</td><td><span class="grade-A">A</span></td><td><span class="trend-up">&#x2191; +3</span></td></tr><tr><td>Matematika</td><td style="font-weight:700">85</td><td><span class="grade-B">B+</span></td><td><span class="trend-up">&#x2191; +2</span></td></tr><tr><td>B. Indonesia</td><td style="font-weight:700">88</td><td><span class="grade-B">A-</span></td><td><span class="trend-down">&#x2193; -1</span></td></tr><tr><td>IPA</td><td style="font-weight:700">90</td><td><span class="grade-A">A</span></td><td><span class="trend-up">&#x2191; +5</span></td></tr><tr><td>B. Inggris</td><td style="font-weight:700">84</td><td><span class="grade-B">B+</span></td><td><span class="trend-up">&#x2191; +1</span></td></tr><tr><td>IPS</td><td style="font-weight:700">78</td><td><span class="grade-C">B-</span></td><td><span class="trend-down">&#x2193; -2</span></td></tr></tbody></table></div>
+    </div>
+    <div class="card"><div class="card-header"><h3><i class="fas fa-exclamation-triangle" style="color:var(--red)"></i> Tugas &amp; Ulangan</h3><label onclick="showContent('prt','nilai')" style="font-size:12px;color:var(--blue);font-weight:600;cursor:pointer;text-decoration:none">Selengkapnya</label></div>
+      <div class="task-item"><i class="fas fa-file-alt" style="color:var(--teal);font-size:18px"></i><div class="task-info"><div class="task-title">Tugas Praktek Sholat</div><div class="task-meta">PAI &ndash; Deadline: 2 Apr 2026</div></div><span class="badge status-terlambat">Terlambat</span></div>
+      <div class="task-item"><i class="fas fa-file-alt" style="color:var(--blue);font-size:18px"></i><div class="task-info"><div class="task-title">PR Persamaan Linear</div><div class="task-meta">Matematika &ndash; 5 Apr 2026</div></div><span class="badge status-mendekati">Mendekati</span></div>
+      <div class="task-item"><i class="fas fa-file-alt" style="color:var(--purple);font-size:18px"></i><div class="task-info"><div class="task-title">Laporan Pengamatan</div><div class="task-meta">IPA &ndash; 10 Apr 2026</div></div><span class="badge status-selesai">Selesai</span></div>
+      <div class="task-item"><i class="fas fa-pencil-alt" style="color:var(--orange);font-size:18px"></i><div class="task-info"><div class="task-title">Ulangan Harian Bab 4</div><div class="task-meta">B. Indonesia &ndash; 8 Apr 2026</div></div><span class="badge status-mendekati">Mendekati</span></div>
+      <div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--border-light)"><p style="font-size:13px;font-weight:600;margin-bottom:8px"><i class="fas fa-paper-plane" style="color:var(--teal);margin-right:6px"></i> Pesan Cepat ke Guru</p><div class="quick-msg"><textarea placeholder="Tulis pesan untuk wali kelas..."></textarea><button class="btn-send"><i class="fas fa-paper-plane"></i></button></div></div>
+    </div>
+  </div>
+  <div class="grid-2">
+    <div class="card"><div class="card-header"><h3><i class="fas fa-clipboard-check" style="color:var(--teal)"></i> Kehadiran &amp; Jadwal</h3><label onclick="showContent('prt','kehadiran')">Detail</label></div>
+      <div class="att-grid" style="margin-bottom:12px"><div class="att-item hadir"><div class="att-number">22</div><div class="att-label">Hadir</div></div><div class="att-item izin"><div class="att-number">1</div><div class="att-label">Izin</div></div><div class="att-item sakit"><div class="att-number">0</div><div class="att-label">Sakit</div></div><div class="att-item alpha"><div class="att-number">0</div><div class="att-label">Alpha</div></div></div>
+      <div style="padding-top:12px;border-top:1px solid var(--border-light)"><p style="font-size:13px;font-weight:600;margin-bottom:8px"><i class="fas fa-calendar-week" style="color:var(--blue);margin-right:6px"></i> Event Penting</p><div style="display:flex;align-items:center;gap:10px;padding:5px 0"><span class="badge teal">5 Apr</span><span style="font-size:12px">Pembagian Rapor</span></div><div style="display:flex;align-items:center;gap:10px;padding:5px 0"><span class="badge orange">8 Apr</span><span style="font-size:12px">Ulangan Harian</span></div><div style="display:flex;align-items:center;gap:10px;padding:5px 0"><span class="badge purple">15 Apr</span><span style="font-size:12px">Pesantren Kilat</span></div></div>
+    </div>
+    <div class="card"><div class="card-header"><h3><i class="fas fa-envelope" style="color:var(--blue)"></i> Pesan &amp; Pengumuman</h3><label onclick="showContent('prt','pesan')">Semua</label></div>
+      <div style="margin-bottom:10px"><p style="font-size:12px;font-weight:600;color:var(--teal);margin-bottom:6px"><i class="fas fa-envelope-open-text"></i> Pesan dari Guru</p>
+      <div class="msg-item" style="padding:7px 0"><div class="msg-sender" style="font-size:12px">Ustadz Ahmad Fauzi <span style="color:var(--gray-400);font-weight:400">&mdash; Wali Kelas</span></div><div class="msg-preview" style="font-size:11px">Mohon bimbingan untuk tugas praktek sholat...</div></div>
+      <div class="msg-item" style="padding:7px 0"><div class="msg-sender" style="font-size:12px">Bu Dewi Sartika <span style="color:var(--gray-400);font-weight:400">&mdash; Guru Matematika</span></div><div class="msg-preview" style="font-size:11px">Ananda Rizky perlu perhatian pada persamaan linear...</div></div></div>
+      <div style="padding-top:10px;border-top:1px solid var(--border-light)"><p style="font-size:12px;font-weight:600;color:var(--orange);margin-bottom:6px"><i class="fas fa-bullhorn"></i> Pengumuman</p>
+      <div class="ann-item" style="padding:7px 0"><div class="ann-date" style="font-size:11px">25 Maret 2026</div><div class="ann-title" style="font-size:12px">Libur Hari Raya Nyepi</div></div>
+      <div class="ann-item" style="padding:7px 0"><div class="ann-date" style="font-size:11px">20 Maret 2026</div><div class="ann-title" style="font-size:12px">Pesantren Kilat Ramadhan</div></div></div>
+    </div>
+  </div>
+</div>
+<div class="prt-child-siti hidden">
+  <div class="parent-banner"><div class="pb-avatar">SF</div><div class="pb-info"><h2>Siti Fatimah</h2><p>Kelas 5B &mdash; SDIT Al Azhar Jaya Indonesia</p><div class="pb-meta"><span><i class="fas fa-user-tie"></i> Wali Kelas: Ibu Siti Rahmawati</span><span><i class="fas fa-id-card"></i> NIS: 2023105</span></div></div></div>
+  <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:20px"><div class="att-item hadir" style="flex:1;min-width:100px"><div class="att-number">20</div><div class="att-label">&#x2705; Hadir</div></div><div class="att-item izin" style="flex:1;min-width:100px"><div class="att-number">2</div><div class="att-label">&#x26A0;&#xFE0F; Izin</div></div><div class="att-item sakit" style="flex:1;min-width:100px"><div class="att-number">1</div><div class="att-label">&#x274C; Sakit</div></div></div>
+  <div class="grid-2" style="margin-bottom:20px">
+    <div class="card"><div class="card-header"><h3><i class="fas fa-file-invoice" style="color:var(--blue)"></i> Rapor Singkat</h3><label onclick="showContent('prt','nilai')">Lihat Semua</label></div>
+      <div class="table-wrap"><table class="rapor-table"><thead><tr><th>Mata Pelajaran</th><th>Nilai</th><th>Grade</th><th>Trend</th></tr></thead>
+      <tbody><tr><td>PAI</td><td style="font-weight:700">88</td><td><span class="grade-B">A-</span></td><td><span class="trend-up">&#x2191; +2</span></td></tr><tr><td>Matematika</td><td style="font-weight:700">78</td><td><span class="grade-C">B-</span></td><td><span class="trend-down">&#x2193; -3</span></td></tr><tr><td>B. Indonesia</td><td style="font-weight:700">82</td><td><span class="grade-B">B+</span></td><td><span class="trend-up">&#x2191; +1</span></td></tr><tr><td>IPA</td><td style="font-weight:700">85</td><td><span class="grade-B">B+</span></td><td><span class="trend-down">&#x2193; -2</span></td></tr><tr><td>B. Inggris</td><td style="font-weight:700">76</td><td><span class="grade-C">B-</span></td><td><span class="trend-down">&#x2193; -1</span></td></tr><tr><td>IPS</td><td style="font-weight:700">72</td><td><span class="grade-C">C+</span></td><td><span class="trend-up">&#x2191; +4</span></td></tr></tbody></table></div>
+    </div>
+    <div class="card"><div class="card-header"><h3><i class="fas fa-exclamation-triangle" style="color:var(--red)"></i> Tugas &amp; Ulangan</h3><label onclick="showContent('prt','nilai')" style="font-size:12px;color:var(--blue);font-weight:600;cursor:pointer;text-decoration:none">Selengkapnya</label></div>
+      <div class="task-item"><i class="fas fa-file-alt" style="color:var(--teal);font-size:18px"></i><div class="task-info"><div class="task-title">Tugas Menulis Ayat</div><div class="task-meta">PAI &ndash; Deadline: 4 Apr 2026</div></div><span class="badge status-mendekati">Mendekati</span></div>
+      <div class="task-item"><i class="fas fa-file-alt" style="color:var(--blue);font-size:18px"></i><div class="task-info"><div class="task-title">PR Hitung Campuran</div><div class="task-meta">Matematika &ndash; 7 Apr 2026</div></div><span class="badge status-mendekati">Mendekati</span></div>
+      <div class="task-item"><i class="fas fa-file-alt" style="color:var(--purple);font-size:18px"></i><div class="task-info"><div class="task-title">Laporan Pengamatan Tumbuhan</div><div class="task-meta">IPA &ndash; 12 Apr 2026</div></div><span class="badge teal">Aktif</span></div>
+      <div class="task-item"><i class="fas fa-pencil-alt" style="color:var(--orange);font-size:18px"></i><div class="task-info"><div class="task-title">Ulangan Harian Bab 3</div><div class="task-meta">B. Indonesia &ndash; 9 Apr 2026</div></div><span class="badge status-mendekati">Mendekati</span></div>
+      <div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--border-light)"><p style="font-size:13px;font-weight:600;margin-bottom:8px"><i class="fas fa-paper-plane" style="color:var(--teal);margin-right:6px"></i> Pesan Cepat ke Guru</p><div class="quick-msg"><textarea placeholder="Tulis pesan untuk wali kelas..."></textarea><button class="btn-send"><i class="fas fa-paper-plane"></i></button></div></div>
+    </div>
+  </div>
+  <div class="grid-2">
+    <div class="card"><div class="card-header"><h3><i class="fas fa-clipboard-check" style="color:var(--teal)"></i> Kehadiran &amp; Jadwal</h3><label onclick="showContent('prt','kehadiran')">Detail</label></div>
+      <div class="att-grid" style="margin-bottom:12px"><div class="att-item hadir"><div class="att-number">20</div><div class="att-label">Hadir</div></div><div class="att-item izin"><div class="att-number">2</div><div class="att-label">Izin</div></div><div class="att-item sakit"><div class="att-number">1</div><div class="att-label">Sakit</div></div><div class="att-item alpha"><div class="att-number">0</div><div class="att-label">Alpha</div></div></div>
+      <div style="padding-top:12px;border-top:1px solid var(--border-light)"><p style="font-size:13px;font-weight:600;margin-bottom:8px"><i class="fas fa-calendar-week" style="color:var(--blue);margin-right:6px"></i> Event Penting</p><div style="display:flex;align-items:center;gap:10px;padding:5px 0"><span class="badge teal">5 Apr</span><span style="font-size:12px">Pembagian Rapor</span></div><div style="display:flex;align-items:center;gap:10px;padding:5px 0"><span class="badge orange">9 Apr</span><span style="font-size:12px">Ulangan Harian</span></div><div style="display:flex;align-items:center;gap:10px;padding:5px 0"><span class="badge purple">15 Apr</span><span style="font-size:12px">Pesantren Kilat</span></div></div>
+    </div>
+    <div class="card"><div class="card-header"><h3><i class="fas fa-envelope" style="color:var(--blue)"></i> Pesan &amp; Pengumuman</h3><label onclick="showContent('prt','pesan')">Semua</label></div>
+      <div style="margin-bottom:10px"><p style="font-size:12px;font-weight:600;color:var(--teal);margin-bottom:6px"><i class="fas fa-envelope-open-text"></i> Pesan dari Guru</p>
+      <div class="msg-item" style="padding:7px 0"><div class="msg-sender" style="font-size:12px">Ibu Siti Rahmawati <span style="color:var(--gray-400);font-weight:400">&mdash; Wali Kelas</span></div><div class="msg-preview" style="font-size:11px">Mohon bimbingan untuk tugas menulis ayat...</div></div>
+      <div class="msg-item" style="padding:7px 0"><div class="msg-sender" style="font-size:12px">Pak Budi Santoso <span style="color:var(--gray-400);font-weight:400">&mdash; Guru IPA</span></div><div class="msg-preview" style="font-size:11px">Ananda Fatimah perlu perhatian pada materi IPA...</div></div></div>
+      <div style="padding-top:10px;border-top:1px solid var(--border-light)"><p style="font-size:12px;font-weight:600;color:var(--orange);margin-bottom:6px"><i class="fas fa-bullhorn"></i> Pengumuman</p>
+      <div class="ann-item" style="padding:7px 0"><div class="ann-date" style="font-size:11px">25 Maret 2026</div><div class="ann-title" style="font-size:12px">Libur Hari Raya Nyepi</div></div>
+      <div class="ann-item" style="padding:7px 0"><div class="ann-date" style="font-size:11px">20 Maret 2026</div><div class="ann-title" style="font-size:12px">Pesantren Kilat Ramadhan</div></div></div>
+    </div>
+  </div>
+  </div>
+
+<div class="prt-child-abdullah hidden">
+  <div class="parent-banner"><div class="pb-avatar" style="background:var(--purple)">AH</div><div class="pb-info"><h2>Abdullah Hasan</h2><p>Kelas 3A &mdash; SDIT Al Azhar Jaya Indonesia</p><div class="pb-meta"><span><i class="fas fa-user-tie"></i> Wali Kelas: Bu Dewi Sartika</span><span><i class="fas fa-id-card"></i> NIS: 2024203</span></div></div></div>
+  <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:20px"><div class="att-item hadir" style="flex:1;min-width:100px"><div class="att-number">18</div><div class="att-label">&#x2705; Hadir</div></div><div class="att-item izin" style="flex:1;min-width:100px"><div class="att-number">3</div><div class="att-label">&#x26A0;&#xFE0F; Izin</div></div><div class="att-item sakit" style="flex:1;min-width:100px"><div class="att-number">1</div><div class="att-label">&#x274C; Sakit</div></div></div>
+  <div class="grid-2" style="margin-bottom:20px">
+    <div class="card"><div class="card-header"><h3><i class="fas fa-file-invoice" style="color:var(--blue)"></i> Rapor Singkat</h3><label onclick="showContent('prt','nilai')">Lihat Semua</label></div>
+      <div class="table-wrap"><table class="rapor-table"><thead><tr><th>Mata Pelajaran</th><th>Nilai</th><th>Grade</th><th>Trend</th></tr></thead>
+      <tbody><tr><td>PAI</td><td style="font-weight:700">80</td><td><span class="grade-B">B+</span></td><td><span class="trend-up">&#x2191; +4</span></td></tr><tr><td>Matematika</td><td style="font-weight:700">72</td><td><span class="grade-C">B-</span></td><td><span class="trend-up">&#x2191; +6</span></td></tr><tr><td>B. Indonesia</td><td style="font-weight:700">78</td><td><span class="grade-C">B-</span></td><td><span class="trend-down">&#x2193; -2</span></td></tr><tr><td>IPA</td><td style="font-weight:700">75</td><td><span class="grade-C">B-</span></td><td><span class="trend-up">&#x2191; +3</span></td></tr><tr><td>B. Inggris</td><td style="font-weight:700">70</td><td><span class="grade-C">C+</span></td><td><span class="trend-down">&#x2193; -1</span></td></tr></tbody></table></div>
+    </div>
+    <div class="card"><div class="card-header"><h3><i class="fas fa-exclamation-triangle" style="color:var(--red)"></i> Tugas &amp; Ulangan</h3><label onclick="showContent('prt','nilai')" style="font-size:12px;color:var(--blue);font-weight:600;cursor:pointer;text-decoration:none">Selengkapnya</label></div>
+      <div class="task-item"><i class="fas fa-file-alt" style="color:var(--teal);font-size:18px"></i><div class="task-info"><div class="task-title">Tulis Surah Pendek</div><div class="task-meta">PAI &ndash; Deadline: 5 Apr 2026</div></div><span class="badge status-mendekati">Mendekati</span></div>
+      <div class="task-item"><i class="fas fa-file-alt" style="color:var(--blue);font-size:18px"></i><div class="task-info"><div class="task-title">PR Hitung Cepat</div><div class="task-meta">Matematika &ndash; 8 Apr 2026</div></div><span class="badge status-mendekati">Mendekati</span></div>
+      <div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--border-light)"><p style="font-size:13px;font-weight:600;margin-bottom:8px"><i class="fas fa-paper-plane" style="color:var(--teal);margin-right:6px"></i> Pesan Cepat ke Guru</p><div class="quick-msg"><textarea placeholder="Tulis pesan untuk wali kelas..."></textarea><button class="btn-send"><i class="fas fa-paper-plane"></i></button></div></div>
+    </div>
+  </div>
+  <div class="grid-2">
+    <div class="card"><div class="card-header"><h3><i class="fas fa-clipboard-check" style="color:var(--teal)"></i> Kehadiran &amp; Jadwal</h3><label onclick="showContent('prt','kehadiran')">Detail</label></div>
+      <div class="att-grid" style="margin-bottom:12px"><div class="att-item hadir"><div class="att-number">18</div><div class="att-label">Hadir</div></div><div class="att-item izin"><div class="att-number">3</div><div class="att-label">Izin</div></div><div class="att-item sakit"><div class="att-number">1</div><div class="att-label">Sakit</div></div><div class="att-item alpha"><div class="att-number">0</div><div class="att-label">Alpha</div></div></div>
+      <div style="padding-top:12px;border-top:1px solid var(--border-light)"><p style="font-size:13px;font-weight:600;margin-bottom:8px"><i class="fas fa-calendar-week" style="color:var(--blue);margin-right:6px"></i> Event Penting</p><div style="display:flex;align-items:center;gap:10px;padding:5px 0"><span class="badge teal">5 Apr</span><span style="font-size:12px">Pembagian Rapor</span></div></div>
+    </div>
+    <div class="card"><div class="card-header"><h3><i class="fas fa-envelope" style="color:var(--blue)"></i> Pesan &amp; Pengumuman</h3><label onclick="showContent('prt','pesan')">Semua</label></div>
+      <div style="margin-bottom:10px"><p style="font-size:12px;font-weight:600;color:var(--teal);margin-bottom:6px"><i class="fas fa-envelope-open-text"></i> Pesan dari Guru</p>
+      <div class="msg-item" style="padding:7px 0"><div class="msg-sender" style="font-size:12px">Bu Dewi Sartika <span style="color:var(--gray-400);font-weight:400">&mdash; Wali Kelas</span></div><div class="msg-preview" style="font-size:11px">Abdullah sudah menunjukkan peningkatan dalam matematika...</div></div></div>
+    </div>
+  </div>
+</div>
+
+<div class="prt-child-aisyah hidden">
+  <div class="parent-banner"><div class="pb-avatar" style="background:var(--pink)">AR</div><div class="pb-info"><h2>Aisyah Rahma</h2><p>Kelas 1A &mdash; SDIT Al Azhar Jaya Indonesia</p><div class="pb-meta"><span><i class="fas fa-user-tie"></i> Wali Kelas: Ibu Siti Rahmawati</span><span><i class="fas fa-id-card"></i> NIS: 2025105</span></div></div></div>
+  <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:20px"><div class="att-item hadir" style="flex:1;min-width:100px"><div class="att-number">15</div><div class="att-label">&#x2705; Hadir</div></div><div class="att-item izin" style="flex:1;min-width:100px"><div class="att-number">1</div><div class="att-label">&#x26A0;&#xFE0F; Izin</div></div><div class="att-item sakit" style="flex:1;min-width:100px"><div class="att-number">0</div><div class="att-label">&#x274C; Sakit</div></div></div>
+  <div class="grid-2" style="margin-bottom:20px">
+    <div class="card"><div class="card-header"><h3><i class="fas fa-file-invoice" style="color:var(--blue)"></i> Rapor Singkat</h3><label onclick="showContent('prt','nilai')">Lihat Semua</label></div>
+      <div class="table-wrap"><table class="rapor-table"><thead><tr><th>Mata Pelajaran</th><th>Nilai</th><th>Grade</th><th>Trend</th></tr></thead>
+      <tbody><tr><td>PAI</td><td style="font-weight:700">85</td><td><span class="grade-B">B+</span></td><td><span class="trend-up">&#x2191; +5</span></td></tr><tr><td>Matematika</td><td style="font-weight:700">80</td><td><span class="grade-B">B+</span></td><td><span class="trend-up">&#x2191; +3</span></td></tr><tr><td>B. Indonesia</td><td style="font-weight:700">88</td><td><span class="grade-B">A-</span></td><td><span class="trend-down">&#x2193; -1</span></td></tr><tr><td>IPA</td><td style="font-weight:700">82</td><td><span class="grade-B">B+</span></td><td><span class="trend-up">&#x2191; +2</span></td></tr></tbody></table></div>
+    </div>
+    <div class="card"><div class="card-header"><h3><i class="fas fa-exclamation-triangle" style="color:var(--red)"></i> Tugas &amp; Ulangan</h3><label onclick="showContent('prt','nilai')" style="font-size:12px;color:var(--blue);font-weight:600;cursor:pointer;text-decoration:none">Selengkapnya</label></div>
+      <div class="task-item"><i class="fas fa-file-alt" style="color:var(--teal);font-size:18px"></i><div class="task-info"><div class="task-title">Mewarnai Kaligrafi</div><div class="task-meta">SBK &ndash; Deadline: 6 Apr 2026</div></div><span class="badge status-mendekati">Mendekati</span></div>
+      <div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--border-light)"><p style="font-size:13px;font-weight:600;margin-bottom:8px"><i class="fas fa-paper-plane" style="color:var(--teal);margin-right:6px"></i> Pesan Cepat ke Guru</p><div class="quick-msg"><textarea placeholder="Tulis pesan untuk wali kelas..."></textarea><button class="btn-send"><i class="fas fa-paper-plane"></i></button></div></div>
+    </div>
+  </div>
+  <div class="grid-2">
+    <div class="card"><div class="card-header"><h3><i class="fas fa-clipboard-check" style="color:var(--teal)"></i> Kehadiran &amp; Jadwal</h3><label onclick="showContent('prt','kehadiran')">Detail</label></div>
+      <div class="att-grid" style="margin-bottom:12px"><div class="att-item hadir"><div class="att-number">15</div><div class="att-label">Hadir</div></div><div class="att-item izin"><div class="att-number">1</div><div class="att-label">Izin</div></div><div class="att-item sakit"><div class="att-number">0</div><div class="att-label">Sakit</div></div><div class="att-item alpha"><div class="att-number">0</div><div class="att-label">Alpha</div></div></div>
+    </div>
+    <div class="card"><div class="card-header"><h3><i class="fas fa-envelope" style="color:var(--blue)"></i> Pesan &amp; Pengumuman</h3><label onclick="showContent('prt','pesan')">Semua</label></div>
+      <div style="margin-bottom:10px"><p style="font-size:12px;font-weight:600;color:var(--teal);margin-bottom:6px"><i class="fas fa-envelope-open-text"></i> Pesan dari Guru</p>
+      <div class="msg-item" style="padding:7px 0"><div class="msg-sender" style="font-size:12px">Ibu Siti Rahmawati <span style="color:var(--gray-400);font-weight:400">&mdash; Wali Kelas</span></div><div class="msg-preview" style="font-size:11px">Aisyah sangat aktif di kelas dan cepat menyerap pelajaran...</div></div></div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<!-- === Parent: Tahfidz === -->
+<div class="prt-content prt-content-tahfidz">
+  <div class="content-header"><h1>Tahfidz &amp; Setoran Ayat</h1><div class="header-right"><select onchange="switchTahfidzChild(this.value)" class="child-select"><option value="ahmad" selected>Ahmad Rizky &mdash; 7A</option><option value="siti">Siti Fatimah &mdash; 5B</option><option value="abdullah">Abdullah Hasan &mdash; 3A</option><option value="aisyah">Aisyah Rahma &mdash; 1A</option></select><div class="avatar orange">SR</div></div></div>
+
+  <div class="card" style="margin-bottom:20px">
+    <div class="card-header"><h3><i class="fas fa-quran" style="color:var(--green)"></i> Progress Tahfidz</h3></div>
+    <div class="tahfidz-stats">
+      <div class="tahfidz-stat"><span class="tahfidz-stat-number green">10</span><span class="tahfidz-stat-label">Juz Dihafal</span></div>
+      <div class="tahfidz-stat"><span class="tahfidz-stat-number teal">24</span><span class="tahfidz-stat-label">Setoran Bulan Ini</span></div>
+      <div class="tahfidz-stat"><span class="tahfidz-stat-number blue">92</span><span class="tahfidz-stat-label">Rata-rata Nilai</span></div>
+      <div class="tahfidz-stat"><span class="tahfidz-stat-number orange">3</span><span class="tahfidz-stat-label">Surah Baru</span></div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:20px">
+    <div class="card-header"><h3><i class="fas fa-list" style="color:var(--teal)"></i> Riwayat Setoran Ayat</h3></div>
+    <div class="table-wrap">
+      <table class="tahfidz-table" id="tahfidz-table">
+        <thead><tr><th>Tanggal</th><th>Surah</th><th>Ayat</th><th>Jenis</th><th>Nilai</th><th>Aksi</th></tr></thead>
+        <tbody id="tahfidz-body"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card" id="tahfidz-form-card">
+    <div class="card-header"><h3><i class="fas fa-pen" style="color:var(--orange)"></i> Input / Edit Nilai Setoran</h3></div>
+    <div class="tahfidz-form">
+      <div class="form-row">
+        <div class="form-group" style="flex:1">
+          <label>Tanggal Setoran</label>
+          <div class="input-wrap"><input type="date" id="tf-date"></div>
+        </div>
+        <div class="form-group" style="flex:1">
+          <label>Surah</label>
+          <div class="input-wrap"><input type="text" id="tf-surah" placeholder="Contoh: Al-Baqarah"></div>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group" style="flex:1">
+          <label>Ayat (Dari)</label>
+          <div class="input-wrap"><input type="number" id="tf-ayat-dari" placeholder="1"></div>
+        </div>
+        <div class="form-group" style="flex:1">
+          <label>Ayat (Sampai)</label>
+          <div class="input-wrap"><input type="number" id="tf-ayat-sampai" placeholder="5"></div>
+        </div>
+        <div class="form-group" style="flex:1">
+          <label>Jenis</label>
+          <select class="form-select" id="tf-jenis"><option value="Setoran Baru">Setoran Baru</option><option value="Muroja'ah">Muroja'ah</option></select>
+        </div>
+        <div class="form-group" style="flex:1">
+          <label>Nilai (0-100)</label>
+          <div class="input-wrap"><input type="number" id="tf-nilai" min="0" max="100" placeholder="85"></div>
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:12px">
+        <label onclick="simpanNilaiTahfidz()" class="btn-login" style="cursor:pointer;width:auto;padding:10px 28px"><i class="fas fa-save"></i> Simpan Nilai</label>
+        <label onclick="resetFormTahfidz()" class="btn-login" style="cursor:pointer;width:auto;padding:10px 28px;background:var(--gray-300);color:var(--text)"><i class="fas fa-undo"></i> Reset</label>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><h3><i class="fas fa-chart-bar" style="color:var(--blue)"></i> Grafik Perkembangan Tahfidz</h3></div>
+    <div class="h-bar-group">
+      <div class="h-bar-row"><div class="h-bar-label">Minggu 1</div><div class="h-bar-track"><div class="h-bar-fill green" style="width:60%">3 ayat</div></div></div>
+      <div class="h-bar-row"><div class="h-bar-label">Minggu 2</div><div class="h-bar-track"><div class="h-bar-fill teal" style="width:75%">5 ayat</div></div></div>
+      <div class="h-bar-row"><div class="h-bar-label">Minggu 3</div><div class="h-bar-track"><div class="h-bar-fill blue" style="width:70%">4 ayat</div></div></div>
+      <div class="h-bar-row"><div class="h-bar-label">Minggu 4</div><div class="h-bar-track"><div class="h-bar-fill orange" style="width:90%">8 ayat</div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- === Parent: Nilai Anak === -->
+<div class="prt-content prt-content-nilai">
+  <div class="content-header"><h1>Nilai Anak</h1><div class="header-right"><select onchange="switchChild(this.value)" class="child-select"><option value="ahmad" selected>Ahmad Rizky &mdash; 7A</option><option value="siti">Siti Fatimah &mdash; 5B</option><option value="abdullah">Abdullah Hasan &mdash; 3A</option><option value="aisyah">Aisyah Rahma &mdash; 1A</option></select><div class="avatar orange">SR</div></div></div>
+  <div class="card"><div class="card-header"><h3><i class="fas fa-file-invoice" style="color:var(--blue)"></i> Rapor Semester Genap</h3><a onclick="alert('Fitur cetak rapor sedang dalam pengembangan');return false" style="font-size:12px;color:var(--blue);font-weight:600;cursor:pointer;text-decoration:none"><i class="fas fa-print"></i> Cetak</a></div>
+    <div class="table-wrap"><table class="rapor-table"><thead><tr><th>Mata Pelajaran</th><th>Nilai</th><th>Grade</th><th>Trend</th></tr></thead>
+    <tbody><tr><td>Pendidikan Agama Islam</td><td style="font-weight:700">92</td><td><span class="grade-A">A</span></td><td><span class="trend-up">&#x2191; +3</span></td></tr><tr><td>Matematika</td><td style="font-weight:700">85</td><td><span class="grade-B">B+</span></td><td><span class="trend-up">&#x2191; +2</span></td></tr><tr><td>Bahasa Indonesia</td><td style="font-weight:700">88</td><td><span class="grade-B">A-</span></td><td><span class="trend-down">&#x2193; -1</span></td></tr><tr><td>IPA</td><td style="font-weight:700">90</td><td><span class="grade-A">A</span></td><td><span class="trend-up">&#x2191; +5</span></td></tr><tr><td>Bahasa Inggris</td><td style="font-weight:700">84</td><td><span class="grade-B">B+</span></td><td><span class="trend-up">&#x2191; +1</span></td></tr><tr><td>IPS</td><td style="font-weight:700">78</td><td><span class="grade-C">B-</span></td><td><span class="trend-down">&#x2193; -2</span></td></tr></tbody></table></div>
+  </div>
+</div>
+
+<!-- === Parent: Kehadiran === -->
+<div class="prt-content prt-content-kehadiran">
+  <div class="content-header"><h1>Kehadiran</h1><div class="header-right"><select onchange="switchChild(this.value)" class="child-select"><option value="ahmad" selected>Ahmad Rizky &mdash; 7A</option><option value="siti">Siti Fatimah &mdash; 5B</option><option value="abdullah">Abdullah Hasan &mdash; 3A</option><option value="aisyah">Aisyah Rahma &mdash; 1A</option></select><div class="avatar orange">SR</div></div></div>
+  <div class="grid-2">
+    <div class="card"><div class="card-header"><h3><i class="fas fa-clipboard-check" style="color:var(--teal)"></i> Rekap Kehadiran</h3></div>
+      <div class="att-grid"><div class="att-item hadir"><div class="att-number">22</div><div class="att-label">Hadir</div></div><div class="att-item izin"><div class="att-number">1</div><div class="att-label">Izin</div></div><div class="att-item sakit"><div class="att-number">0</div><div class="att-label">Sakit</div></div><div class="att-item alpha"><div class="att-number">0</div><div class="att-label">Alpha</div></div></div>
+    </div>
+    <div class="card"><div class="card-header"><h3><i class="fas fa-list" style="color:var(--blue)"></i> Riwayat Kehadiran</h3></div>
+      <div class="table-wrap"><table><thead><tr><th>Tanggal</th><th>Status</th><th>Keterangan</th></tr></thead>
+      <tbody><tr><td>28 Mar 2026</td><td><span class="badge light green">Hadir</span></td><td>Tepat waktu</td></tr><tr><td>27 Mar 2026</td><td><span class="badge light green">Hadir</span></td><td>Tepat waktu</td></tr><tr><td>26 Mar 2026</td><td><span class="badge light green">Hadir</span></td><td>Tepat waktu</td></tr><tr><td>25 Mar 2026</td><td><span class="badge light orange">Izin</span></td><td>Ada keperluan keluarga</td></tr></tbody></table></div>
+    </div>
+  </div>
+</div>
+
+<!-- === Parent: Jadwal === -->
+<div class="prt-content prt-content-jadwal">
+  <div class="content-header"><h1>Jadwal</h1><div class="header-right"><select onchange="switchChild(this.value)" class="child-select"><option value="ahmad" selected>Ahmad Rizky &mdash; 7A</option><option value="siti">Siti Fatimah &mdash; 5B</option><option value="abdullah">Abdullah Hasan &mdash; 3A</option><option value="aisyah">Aisyah Rahma &mdash; 1A</option></select><div class="avatar orange">SR</div></div></div>
+  <div class="card"><div class="card-header"><h3><i class="fas fa-calendar-alt" style="color:var(--teal)"></i> Jadwal Pelajaran Kelas 7A</h3><a onclick="alert('Fitur cetak rapor sedang dalam pengembangan');return false" style="font-size:12px;color:var(--blue);font-weight:600;cursor:pointer;text-decoration:none">Cetak</a></div>
+    <div class="table-wrap"><table><thead><tr><th>Jam</th><th>Senin</th><th>Selasa</th><th>Rabu</th><th>Kamis</th><th>Jumat</th></tr></thead>
+    <tbody><tr><td><strong>06:30-07:00</strong></td><td>Tahfidz Qur'an</td><td>Tahfidz Qur'an</td><td>Tahfidz Qur'an</td><td>Tahfidz Qur'an</td><td>Tahfidz Qur'an</td></tr><tr><td><strong>07:00-08:30</strong></td><td>PAI</td><td>Matematika</td><td>B. Inggris</td><td>IPA</td><td>PAI</td></tr><tr><td><strong>08:30-10:00</strong></td><td>Matematika</td><td>B. Indonesia</td><td>IPA</td><td>Matematika</td><td>B. Indonesia</td></tr><tr><td><strong>10:00-11:30</strong></td><td>B. Indonesia</td><td>IPA</td><td>Matematika</td><td>B. Inggris</td><td>IPS</td></tr><tr><td><strong>11:30-13:00</strong></td><td>IPA</td><td>B. Inggris</td><td>IPS</td><td>PAI</td><td>&mdash;</td></tr></tbody></table></div>
+  </div>
+</div>
+
+<!-- === Parent: Pesan === -->
+<div class="prt-content prt-content-pesan">
+  <div class="content-header"><h1>Pesan &amp; Pengumuman</h1><div class="header-right"><label onclick="showContent('prt','pesan')" class="header-btn primary" style="cursor:pointer"><i class="fas fa-envelope"></i> Pesan Baru</label><select onchange="switchChild(this.value)" class="child-select"><option value="ahmad" selected>Ahmad Rizky &mdash; 7A</option><option value="siti">Siti Fatimah &mdash; 5B</option><option value="abdullah">Abdullah Hasan &mdash; 3A</option><option value="aisyah">Aisyah Rahma &mdash; 1A</option></select><div class="avatar orange">SR</div></div></div>
+  <div class="grid-2">
+    <div class="card"><div class="card-header"><h3><i class="fas fa-envelope" style="color:var(--blue)"></i> Pesan dari Guru</h3><label onclick="showContent('prt','pesan')" style="font-size:12px;color:var(--blue);font-weight:600;cursor:pointer;text-decoration:none">Semua</label></div>
+      <div class="msg-item"><div class="msg-sender">Ustadz Ahmad Fauzi <span style="color:var(--gray-400);font-weight:400">&mdash; Wali Kelas</span></div><div class="msg-preview">Mohon bimbingan untuk putra Bapak/Ibu dalam mengerjakan tugas praktek sholat...</div></div>
+      <div class="msg-item"><div class="msg-sender">Bu Dewi Sartika <span style="color:var(--gray-400);font-weight:400">&mdash; Guru Matematika</span></div><div class="msg-preview">Ananda Rizky perlu perhatian ekstra pada materi persamaan linear...</div></div>
+      <div class="quick-msg" style="margin-top:12px"><textarea placeholder="Tulis pesan..."></textarea><button class="btn-send"><i class="fas fa-paper-plane"></i></button></div>
+    </div>
+    <div class="card"><div class="card-header"><h3><i class="fas fa-bullhorn" style="color:var(--orange)"></i> Pengumuman</h3><label onclick="showContent('prt','pesan')" style="font-size:12px;color:var(--blue);font-weight:600;cursor:pointer;text-decoration:none">Arsip</label></div>
+      <div class="ann-item"><div class="ann-date">25 Maret 2026</div><div class="ann-title">Libur Hari Raya Nyepi</div><div class="ann-desc">Sekolah libur pada tanggal 30 Maret 2026.</div></div>
+      <div class="ann-item"><div class="ann-date">20 Maret 2026</div><div class="ann-title">Pesantren Kilat Ramadhan</div><div class="ann-desc">Kegiatan pesantren kilat minggu kedua April.</div></div>
+      <div class="ann-item"><div class="ann-date">15 Maret 2026</div><div class="ann-title">Pembagian Rapor</div><div class="ann-desc">Pembagian rapor 5 April 2026.</div></div>
+    </div>
+  </div>
+</div>
+
+</main>
+</div>
+</div>
+
+<script>
+function initDashboards(){
+  document.querySelectorAll('.sd-content, .smp-content, .tch-content, .adm-content, .prt-content').forEach(function(e){
+    e.classList.add('hidden');
+  });
+  // show default dashboard for each role
+  var defaults={'d-student-sd':'sd-dashboard','d-student-smp':'smp-dashboard','d-teacher':'tch-dashboard','d-admin':'adm-dashboard','d-parent':'prt-dashboard'};
+  Object.keys(defaults).forEach(function(id){
+    var el=document.getElementById(id);
+    if(el&&!el.classList.contains('hidden')){
+      document.querySelector('.'+defaults[id]).classList.remove('hidden');
+    }
+  });
+  renderTahfidz('ahmad');
+}
+function switchTab(tabId){
+  document.querySelectorAll('.login-page, .dashboard, .global-header').forEach(function(e){
+    e.classList.add('hidden');
+  });
+  document.querySelectorAll('.tab-nav label').forEach(function(e){
+    e.classList.remove('active');
+  });
+  if(tabId==='tab-login'){
+    document.querySelector('.login-page').classList.remove('hidden');
+    return;
+  }
+  document.querySelector('.global-header').classList.remove('hidden');
+  document.getElementById(tabId.replace('tab-','d-')).classList.remove('hidden');
+  document.querySelector('.tab-nav label[onclick*="'+tabId+'"]').classList.add('active');
+  var map={'tab-student-sd':'sd','tab-student-smp':'smp','tab-teacher':'tch','tab-admin':'adm','tab-parent':'prt'};
+  showContent(map[tabId],'dashboard');
+}
+function showContent(dash,section){
+  try{
+    var ids={sd:'d-student-sd',smp:'d-student-smp',tch:'d-teacher',adm:'d-admin',prt:'d-parent'};
+    var prefix={sd:'sd',smp:'smp',tch:'tch',adm:'adm',prt:'prt'}[dash];
+    var c=document.getElementById(ids[dash]);
+    if(!c)return console.error('Dashboard '+ids[dash]+' not found');
+    c.querySelectorAll('.'+prefix+'-content').forEach(function(e){e.classList.add('hidden')});
+    var target=c.querySelector('.'+prefix+'-content-'+section);
+    if(!target)return console.error('Section '+prefix+'-content-'+section+' not found');
+    target.classList.remove('hidden');
+    c.querySelectorAll('.sidebar-menu li').forEach(function(e){e.classList.remove('active')});
+    var nav=c.querySelector('.sidebar-menu li.'+prefix+'-nav-'+section);
+    if(nav)nav.classList.add('active');
+  }catch(e){console.error('showContent error:',e)}
+}
+function validateAndSave(prefix,next){
+  var valid=true;
+  var fields=document.querySelector('.'+prefix+'-content-'+prefix+'-form').querySelectorAll('input[type="text"],input[type="email"]');
+  fields.forEach(function(f){
+    var wrap=f.closest('.input-wrap');
+    var err=f.closest('.form-group').querySelector('.form-error');
+    if(wrap){wrap.classList.remove('error')}
+    if(err){err.classList.remove('show')}
+    if(!f.value.trim()){
+      valid=false;
+      if(wrap){wrap.classList.add('error')}
+      if(err){err.classList.add('show')}
+    }
+  });
+  if(!valid){alert('Harap isi semua field yang wajib diisi!');return false}
+  alert('Data berhasil disimpan!');
+  showContent(prefix,next);
+}
+function switchChild(child){
+  var kids=['ahmad','siti','abdullah','aisyah'];
+  kids.forEach(function(k){document.querySelectorAll('.prt-child-'+k).forEach(function(e){e.classList.add('hidden')})});
+  document.querySelectorAll('.prt-child-'+child).forEach(function(e){e.classList.remove('hidden')});
+}
+
+var tahfidzData={};
+tahfidzData['ahmad']=[
+  {date:'2026-03-28',surah:'Ar-Rahman',ayatDari:1,ayatSampai:13,jenis:'Setoran Baru',nilai:90},
+  {date:'2026-03-25',surah:'Ar-Rahman',ayatDari:1,ayatSampai:5,jenis:'Muroja\'ah',nilai:'-'},
+  {date:'2026-03-20',surah:'Al-Waqi\'ah',ayatDari:1,ayatSampai:12,jenis:'Setoran Baru',nilai:85},
+  {date:'2026-03-15',surah:'Al-Waqi\'ah',ayatDari:1,ayatSampai:8,jenis:'Muroja\'ah',nilai:88},
+  {date:'2026-03-10',surah:'Yasin',ayatDari:1,ayatSampai:10,jenis:'Setoran Baru',nilai:92},
+];
+tahfidzData['siti']=[
+  {date:'2026-03-27',surah:'An-Naba',ayatDari:1,ayatSampai:10,jenis:'Setoran Baru',nilai:88},
+  {date:'2026-03-23',surah:'An-Naba',ayatDari:1,ayatSampai:5,jenis:'Muroja\'ah',nilai:85},
+  {date:'2026-03-18',surah:'At-Takwir',ayatDari:1,ayatSampai:8,jenis:'Setoran Baru',nilai:80},
+  {date:'2026-03-12',surah:'Al-Infitar',ayatDari:1,ayatSampai:6,jenis:'Setoran Baru',nilai:'-'},
+];
+tahfidzData['abdullah']=[
+  {date:'2026-03-26',surah:'An-Nas',ayatDari:1,ayatSampai:6,jenis:'Setoran Baru',nilai:90},
+  {date:'2026-03-24',surah:'Al-Falaq',ayatDari:1,ayatSampai:5,jenis:'Setoran Baru',nilai:85},
+  {date:'2026-03-20',surah:'Al-Ikhlas',ayatDari:1,ayatSampai:4,jenis:'Muroja\'ah',nilai:90},
+  {date:'2026-03-15',surah:'Al-Lahab',ayatDari:1,ayatSampai:5,jenis:'Setoran Baru',nilai:'-'},
+];
+tahfidzData['aisyah']=[
+  {date:'2026-03-27',surah:'Al-Fatihah',ayatDari:1,ayatSampai:7,jenis:'Setoran Baru',nilai:95},
+  {date:'2026-03-22',surah:'An-Nas',ayatDari:1,ayatSampai:6,jenis:'Setoran Baru',nilai:92},
+  {date:'2026-03-16',surah:'Al-Falaq',ayatDari:1,ayatSampai:5,jenis:'Muroja\'ah',nilai:90},
+  {date:'2026-03-10',surah:'Al-Ikhlas',ayatDari:1,ayatSampai:4,jenis:'Setoran Baru',nilai:'-'},
+];
+
+function renderTahfidz(child){
+  var data=tahfidzData[child]||[];
+  var tbody=document.getElementById('tahfidz-body');
+  tbody.innerHTML='';
+  data.forEach(function(row,i){
+    var tr=document.createElement('tr');
+    var nilaiTd=row.nilai==='-'?'<span class="badge light orange">Belum Dinilai</span>':'<span class="badge light green">'+row.nilai+'</span>';
+    tr.innerHTML=
+      '<td>'+row.date+'</td>'+
+      '<td><strong>'+row.surah+'</strong></td>'+
+      '<td>'+row.ayatDari+'-'+row.ayatSampai+'</td>'+
+      '<td>'+row.jenis+'</td>'+
+      '<td>'+nilaiTd+'</td>'+
+      '<td><label onclick="editTahfidz('+i+')" class="btn-small outline" style="cursor:pointer">Input Nilai</label></td>';
+    tbody.appendChild(tr);
+  });
+  updateTahfidzStats(child);
+}
+
+function updateTahfidzStats(child){
+  var data=tahfidzData[child]||[];
+  var totalAyat=0;
+  var countNilai=0;
+  var sumNilai=0;
+  var surahBaru=0;
+  data.forEach(function(row){
+    var a=row.ayatSampai-row.ayatDari+1;
+    totalAyat+=a;
+    if(row.jenis==='Setoran Baru')surahBaru++;
+    if(row.nilai!=='-'){sumNilai+=parseInt(row.nilai);countNilai++}
+  });
+  var avg=countNilai>0?Math.round(sumNilai/countNilai):0;
+  var juz=Math.floor(totalAyat/500);
+  var card=document.querySelector('.prt-content-tahfidz');
+  if(card){
+    card.querySelector('.tahfidz-stat:nth-child(1) .tahfidz-stat-number').textContent=juz;
+    card.querySelector('.tahfidz-stat:nth-child(2) .tahfidz-stat-number').textContent=data.length;
+    card.querySelector('.tahfidz-stat:nth-child(3) .tahfidz-stat-number').textContent=avg;
+    card.querySelector('.tahfidz-stat:nth-child(4) .tahfidz-stat-number').textContent=surahBaru;
+  }
+}
+
+function switchTahfidzChild(child){
+  renderTahfidz(child);
+}
+
+function editTahfidz(index){
+  var child=document.querySelector('.prt-content-tahfidz .child-select').value;
+  var data=tahfidzData[child][index];
+  document.getElementById('tf-date').value=data.date;
+  document.getElementById('tf-surah').value=data.surah;
+  document.getElementById('tf-ayat-dari').value=data.ayatDari;
+  document.getElementById('tf-ayat-sampai').value=data.ayatSampai;
+  document.getElementById('tf-jenis').value=data.jenis;
+  document.getElementById('tf-nilai').value=data.nilai==='-'?'':data.nilai;
+  document.querySelector('#tahfidz-form-card').scrollIntoView({behavior:'smooth'});
+}
+
+function simpanNilaiTahfidz(){
+  var child=document.querySelector('.prt-content-tahfidz .child-select').value;
+  var surah=document.getElementById('tf-surah').value.trim();
+  var nilai=document.getElementById('tf-nilai').value.trim();
+  if(!surah){alert('Harap isi nama Surah!');return}
+  if(!nilai||nilai<0||nilai>100){alert('Harap isi Nilai (0-100)!');return}
+  var date=document.getElementById('tf-date').value||new Date().toISOString().slice(0,10);
+  var ayatDari=document.getElementById('tf-ayat-dari').value||1;
+  var ayatSampai=document.getElementById('tf-ayat-sampai').value||5;
+  var jenis=document.getElementById('tf-jenis').value;
+  if(!tahfidzData[child])tahfidzData[child]=[];
+  tahfidzData[child].push({
+    date:date,
+    surah:surah,
+    ayatDari:parseInt(ayatDari),
+    ayatSampai:parseInt(ayatSampai),
+    jenis:jenis,
+    nilai:parseInt(nilai)
+  });
+  alert('Nilai tahfidz berhasil disimpan untuk '+surah+'!');
+  resetFormTahfidz();
+  renderTahfidz(child);
+}
+
+function resetFormTahfidz(){
+  document.getElementById('tf-date').value='';
+  document.getElementById('tf-surah').value='';
+  document.getElementById('tf-ayat-dari').value='';
+  document.getElementById('tf-ayat-sampai').value='';
+  document.getElementById('tf-jenis').value='Setoran Baru';
+  document.getElementById('tf-nilai').value='';
+}
+function doLogin(){
+  var role=document.querySelector('.login-page .form-select').value;
+  var map={'Siswa SD':'tab-student-sd','Siswa SMP':'tab-student-smp','Guru':'tab-teacher','Admin':'tab-admin','Orang Tua':'tab-parent'};
+  switchTab(map[role]||'tab-student-sd');
+}
+function logout(){
+  document.querySelectorAll('.login-page, .dashboard, .global-header').forEach(function(e){
+    e.classList.add('hidden');
+  });
+  document.querySelectorAll('.tab-nav label').forEach(function(e){
+    e.classList.remove('active');
+  });
+  document.querySelector('.login-page').classList.remove('hidden');
+  document.querySelector('.tab-nav label[onclick*="tab-login"]').classList.add('active');
+}
+function toggleSidebar(){
+  var s=document.querySelector('.sidebar-overlay');
+  var sb=document.querySelectorAll('.sidebar');
+  if(s.classList.contains('hidden')){
+    s.classList.remove('hidden');
+    sb.forEach(function(e){e.classList.add('sidebar-mobile')});
+  }else{
+    s.classList.add('hidden');
+    sb.forEach(function(e){e.classList.remove('sidebar-mobile')});
+  }
+}
+document.addEventListener('DOMContentLoaded',initDashboards);
+</script>
+</body>
+</html>
