@@ -1,7 +1,5 @@
 @extends('layouts.app')
-
 @section('title', 'Tambah Soal CBT - LMS Al Azhar Jaya Indonesia')
-
 @section('sidebar')
     <li>
         <a href="{{ route('dashboard') }}" style="color:var(--gray-500);text-decoration:none;display:flex;align-items:center;gap:10px;padding:10px 16px;font-size:14px;border-radius:var(--radius-sm);transition:all 0.2s">
@@ -19,7 +17,6 @@
         </a>
     </li>
 @endsection
-
 @section('content')
 @php
     $guru = auth()->user()->guru;
@@ -34,7 +31,6 @@
         <div class="avatar blue">{{ strtoupper(substr($guru->nama, 0, 1)) }}</div>
     </div>
 </div>
-
 @if($cbtExam->status === 'draft')
 <div class="card" style="margin-bottom:20px">
     <div class="card-header"><h3><i class="fas fa-plus-circle" style="color:var(--teal)"></i> Tambah Soal Baru</h3></div>
@@ -57,7 +53,6 @@
                 </label>
             </div>
         </div>
-
         <div class="form-group" style="margin-bottom:14px">
             <label style="display:block;font-size:13px;font-weight:600;color:var(--gray-500);margin-bottom:4px">Tingkat Kesulitan</label>
             <select name="kesulitan" required class="form-select" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:14px;font-family:var(--font);background:var(--white)">
@@ -66,7 +61,6 @@
                 <option value="sulit">Sulit</option>
             </select>
         </div>
-
         <div x-show="tipe === 'pg'" x-transition>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
                 <div><label style="font-size:11px;color:var(--gray-400);font-weight:600">Pilihan A</label><input type="text" name="pilihan_a" placeholder="Opsi A" style="width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:13px;font-family:var(--font)"></div>
@@ -86,12 +80,10 @@
                 </div>
             </div>
         </div>
-
         <button type="submit" class="btn-login" style="cursor:pointer;border:none"><i class="fas fa-save"></i> Simpan Soal</button>
     </form>
 </div>
 @endif
-
 @if($soals->count() > 0)
 <div class="card">
     <div class="card-header"><h3><i class="fas fa-list" style="color:var(--blue)"></i> Daftar Soal ({{ $soals->count() }})</h3></div>
@@ -125,7 +117,6 @@
     </div>
 </div>
 @endif
-
 @if($cbtExam->status === 'draft' && $cbtExam->jumlah_soal > 0)
 <div style="margin-top:16px;text-align:center">
     <form method="POST" action="{{ route('guru.cbt.ajukan', $cbtExam->id) }}" style="display:inline">
@@ -134,7 +125,6 @@
     </form>
 </div>
 @endif
-
 @if(session('success'))
     <div style="position:fixed;bottom:20px;right:20px;background:var(--green);color:#fff;padding:14px 20px;border-radius:var(--radius-sm);font-weight:600;box-shadow:0 4px 12px rgba(0,0,0,0.15);z-index:999">
         <i class="fas fa-check-circle"></i> {{ session('success') }}

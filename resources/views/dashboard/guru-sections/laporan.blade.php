@@ -4,13 +4,10 @@
         ? \App\Models\LaporanMengajar::where('guru_id', $guruActive->id)->orderBy('tanggal', 'desc')->get()
         : collect();
 @endphp
-
 <div x-data="{
     tipe: 'harian',
     tanggal: '{{ date('Y-m-d') }}',
     catatan_umum: '',
-
-    // State Harian
     checklists: {
         modul_rpp: { status: 'ya', catatan: '' },
         media_siap: { status: 'ya', catatan: '' },
@@ -37,8 +34,6 @@
         strategi_perbaikan: '',
         rencana_pertemuan: ''
     },
-
-    // State Mingguan
     rekap_pembelajaran: [
         { hari: 'Senin', materi: '', kehadiran: '', ketuntasan: '', hots: '', catatan: '' },
         { hari: 'Selasa', materi: '', kehadiran: '', ketuntasan: '', hots: '', catatan: '' },
@@ -56,8 +51,6 @@
     analisis_kendala_mingguan: [],
     pemetaan_siswa_mingguan: [],
     tindak_lanjut: [],
-
-    // State Bulanan
     capaian_belajar_bulanan: [
         { elemen_cp: 'Pengetahuan', target: '', capaian: '', persentase: '', keterangan: '' },
         { elemen_cp: 'Keterampilan', target: '', capaian: '', persentase: '', keterangan: '' },
@@ -85,13 +78,10 @@
     pemetaan_masalah_jangka_menengah: [
         { masalah: '', program_strategis: '', target: '', evaluasi_berkala: '' }
     ],
-
     loadLaporan(tipe, tanggal, isi) {
         this.tipe = tipe;
         this.tanggal = tanggal;
-
         this.catatan_umum = '';
-
         if (typeof isi === 'object' && isi !== null) {
             this.catatan_umum = isi.catatan_umum || '';
             if (tipe === 'harian') {
@@ -119,26 +109,21 @@
         } else if (typeof isi === 'string') {
             this.catatan_umum = isi;
         }
-
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 }">
-
     <div class="content-header">
         <h1>Laporan Mengajar <span>Guru</span></h1>
         <div class="header-right">
             <div class="avatar blue">{{ strtoupper(substr($guruActive->nama ?? 'G', 0, 1)) }}</div>
         </div>
     </div>
-
-    <!-- Form Input Laporan -->
     <div class="card" style="margin-bottom:20px">
         <div class="card-header" style="background:var(--blue-bg);border-bottom:1px solid var(--border)">
             <h3 style="color:var(--blue)"><i class="fas fa-edit"></i> Form Laporan Mengajar Terstruktur</h3>
         </div>
         <form method="POST" action="{{ route('guru.laporan.store') }}" style="padding:15px">
             @csrf
-
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-bottom:15px">
                 <div class="form-group">
                     <label
@@ -159,7 +144,6 @@
                         </label>
                     </div>
                 </div>
-
                 <div class="form-group">
                     <label
                         style="display:block;font-size:13px;font-weight:600;color:var(--gray-500);margin-bottom:6px">Tanggal
@@ -168,12 +152,8 @@
                         style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:14px;height:40px">
                 </div>
             </div>
-
             <hr style="border:0;border-top:1px solid var(--border);margin:15px 0">
-
-            <!-- ================= HARIAN SECTION ================= -->
             <div x-show="tipe === 'harian'" style="display:flex;flex-direction:column;gap:20px">
-                <!-- Checklist Aspek Monitoring -->
                 <div>
                     <h4 style="font-size:14px;font-weight:700;color:var(--gray-700);margin-bottom:10px"><i
                             class="fas fa-check-double" style="color:var(--blue)"></i> 1. Aspek Monitoring Pembelajaran
@@ -237,8 +217,6 @@
                         </table>
                     </div>
                 </div>
-
-                <!-- Evaluasi Kendala Harian -->
                 <div>
                     <h4 style="font-size:14px;font-weight:700;color:var(--gray-700);margin-bottom:10px"><i
                             class="fas fa-exclamation-triangle" style="color:var(--orange)"></i> 2. Evaluasi Kendala
@@ -311,8 +289,6 @@
                         </template>
                     </div>
                 </div>
-
-                <!-- Pemetaan Masalah Siswa -->
                 <div>
                     <h4 style="font-size:14px;font-weight:700;color:var(--gray-700);margin-bottom:10px"><i
                             class="fas fa-user-tag" style="color:var(--teal)"></i> 3. Pemetaan Masalah Siswa (Bila
@@ -387,8 +363,6 @@
                         </template>
                     </div>
                 </div>
-
-                <!-- Refleksi Guru -->
                 <div>
                     <h4 style="font-size:14px;font-weight:700;color:var(--gray-700);margin-bottom:10px"><i
                             class="fas fa-brain" style="color:var(--purple)"></i> 4. Refleksi Guru</h4>
@@ -436,10 +410,7 @@
                     </div>
                 </div>
             </div>
-
-            <!-- ================= MINGGUAN SECTION ================= -->
             <div x-show="tipe === 'mingguan'" style="display:flex;flex-direction:column;gap:20px">
-                <!-- Rekap Pelaksanaan Pembelajaran -->
                 <div>
                     <h4 style="font-size:14px;font-weight:700;color:var(--gray-700);margin-bottom:10px"><i
                             class="fas fa-calendar-alt" style="color:var(--green)"></i> 1. Rekapitulasi Pelaksanaan
@@ -499,8 +470,6 @@
                         </table>
                     </div>
                 </div>
-
-                <!-- Evaluasi Akademik Pekanan -->
                 <div>
                     <h4 style="font-size:14px;font-weight:700;color:var(--gray-700);margin-bottom:10px"><i
                             class="fas fa-chart-line" style="color:var(--blue)"></i> 2. Evaluasi Akademik</h4>
@@ -551,8 +520,6 @@
                         </table>
                     </div>
                 </div>
-
-                <!-- Analisis Kendala Pekanan -->
                 <div>
                     <h4 style="font-size:14px;font-weight:700;color:var(--gray-700);margin-bottom:10px"><i
                             class="fas fa-exclamation-triangle" style="color:var(--orange)"></i> 3. Analisis Kendala
@@ -635,8 +602,6 @@
                         </template>
                     </div>
                 </div>
-
-                <!-- Pemetaan Siswa Bermasalah Pekanan -->
                 <div>
                     <h4 style="font-size:14px;font-weight:700;color:var(--gray-700);margin-bottom:10px"><i
                             class="fas fa-users-cog" style="color:var(--teal)"></i> 4. Pemetaan Siswa Pekanan (Bila
@@ -713,8 +678,6 @@
                         </template>
                     </div>
                 </div>
-
-                <!-- Tindak Lanjut Pekanan -->
                 <div>
                     <h4 style="font-size:14px;font-weight:700;color:var(--gray-700);margin-bottom:10px"><i
                             class="fas fa-clipboard-check" style="color:var(--purple)"></i> 5. Program Tindak Lanjut
@@ -779,10 +742,7 @@
                     </div>
                 </div>
             </div>
-
-            <!-- ================= BULANAN SECTION ================= -->
             <div x-show="tipe === 'bulanan'" style="display:flex;flex-direction:column;gap:20px">
-                <!-- Capaian Belajar Bulanan -->
                 <div>
                     <h4 style="font-size:14px;font-weight:700;color:var(--gray-700);margin-bottom:10px"><i
                             class="fas fa-chart-bar" style="color:var(--blue)"></i> 1. Capaian Belajar Bulanan</h4>
@@ -835,8 +795,6 @@
                         </table>
                     </div>
                 </div>
-
-                <!-- Evaluasi dan Kendala Bulanan -->
                 <div>
                     <h4 style="font-size:14px;font-weight:700;color:var(--gray-700);margin-bottom:10px"><i
                             class="fas fa-exclamation-triangle" style="color:var(--orange)"></i> 2. Evaluasi dan
@@ -893,8 +851,6 @@
                         </table>
                     </div>
                 </div>
-
-                <!-- Analisis Kategori Siswa Bulanan -->
                 <div>
                     <h4 style="font-size:14px;font-weight:700;color:var(--gray-700);margin-bottom:10px"><i
                             class="fas fa-users" style="color:var(--teal)"></i> 3. Analisis Kategori Siswa</h4>
@@ -939,8 +895,6 @@
                         </table>
                     </div>
                 </div>
-
-                <!-- Pemetaan Solusi Jangka Pendek & Menengah -->
                 <div>
                     <h4 style="font-size:14px;font-weight:700;color:var(--gray-700);margin-bottom:10px"><i
                             class="fas fa-business-time" style="color:var(--purple)"></i> 4. Pemetaan Solusi Jangka
@@ -985,7 +939,6 @@
                                 </div>
                             </div>
                         </div>
-
                         <div
                             style="border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px;background:#fafafa">
                             <strong style="font-size:12px;display:block;margin-bottom:8px;color:var(--gray-600)">Jangka
@@ -1031,8 +984,6 @@
                     </div>
                 </div>
             </div>
-
-            <!-- Catatan Umum / Fallback Input -->
             <div style="margin-top:20px">
                 <h4 style="font-size:13px;font-weight:700;color:var(--gray-500);margin-bottom:8px">Catatan Umum /
                     Keterangan Tambahan</h4>
@@ -1040,14 +991,11 @@
                     placeholder="Tuliskan catatan tambahan (atau isi teks laporan di sini jika Anda tidak ingin menggunakan form terstruktur)..."
                     style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:13px;line-height:1.5;font-family:var(--font)"></textarea>
             </div>
-
             <button type="submit" class="btn-login"
                 style="margin-top:20px;cursor:pointer;border:none;width:auto;padding:10px 24px"><i
                     class="fas fa-paper-plane"></i> Kirim Laporan Mengajar</button>
         </form>
     </div>
-
-    <!-- Riwayat Laporan Mengajar Guru -->
     <div class="card">
         <div class="card-header" style="background:#fcfcfc;border-bottom:1px solid var(--border)">
             <h3><i class="fas fa-history" style="color:var(--orange)"></i> Riwayat Laporan Mengajar Saya</h3>
@@ -1082,11 +1030,9 @@
                                     if (!empty($l->isi['refleksi']['kendala_terbesar'])) {
                                         $kList[] = "• [Refleksi] Kendala: {$l->isi['refleksi']['kendala_terbesar']}";
                                     }
-
                                     if (empty($kList)) {
                                         $kList[] = 'KBM Terlaksana Baik (Tidak ada kendala)';
                                     }
-
                                     if (!empty($l->isi['catatan_umum'])) {
                                         $kList[] = 'Catatan: ' . $l->isi['catatan_umum'];
                                     }
@@ -1110,7 +1056,6 @@
                                     }
                                     $isiTeks = implode("\n", $mList);
                                 } else {
-                                    // bulanan
                                     $bList = [];
                                     if (!empty($l->isi['capaian_belajar_bulanan'])) {
                                         foreach ($l->isi['capaian_belajar_bulanan'] as $c) {
@@ -1158,9 +1103,7 @@
             </table>
         </div>
     </div>
-
 </div>
-
 @if (session('success'))
     <div
         style="position:fixed;bottom:20px;right:20px;background:var(--green);color:#fff;padding:14px 20px;border-radius:var(--radius-sm);font-weight:600;box-shadow:0 4px 12px rgba(0,0,0,0.15);z-index:999">

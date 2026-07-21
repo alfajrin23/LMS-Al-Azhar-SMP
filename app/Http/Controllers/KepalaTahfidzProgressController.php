@@ -1,17 +1,13 @@
 <?php
-
 namespace App\Http\Controllers;
-
 use App\Models\Siswa;
 use App\Models\TahfidzProgress;
 use Illuminate\Http\Request;
-
 class KepalaTahfidzProgressController extends Controller
 {
     public function store(Request $request)
     {
         abort_unless($request->user()?->role === 'kepala_sekolah', 403);
-
         $data = $request->validate([
             'target_mode' => 'required|in:siswa,kelas,kelas_quran,semua',
             'siswa_id' => 'required_if:target_mode,siswa|nullable|exists:siswa,id',
@@ -27,11 +23,9 @@ class KepalaTahfidzProgressController extends Controller
             'status' => 'required|in:belum_mulai,berproses,lancar,perlu_murojaah',
             'catatan' => 'nullable|string|max:1000',
         ]);
-
         $query = Siswa::query()->with('user')->whereHas('user', function ($q) {
             $q->whereIn('role', ['siswa_sd', 'siswa_smp']);
         });
-
         if ($data['target_mode'] === 'siswa') {
             $query->where('id', $data['siswa_id']);
         } elseif ($data['target_mode'] === 'kelas') {
@@ -39,12 +33,10 @@ class KepalaTahfidzProgressController extends Controller
         } elseif ($data['target_mode'] === 'kelas_quran') {
             $query->where('kelas_quran_id', $data['kelas_quran_id']);
         }
-
         $siswaList = $query->get();
         if ($siswaList->isEmpty()) {
             return redirect()->back()->with('error', 'Tidak ada siswa yang cocok dengan target progress Tahfidz.');
         }
-
         $progressPercent = round((float) $data['progress_percent'], 2);
         $juzDihafal = isset($data['juz_dihafal'])
             ? (int) $data['juz_dihafal']
@@ -52,7 +44,6 @@ class KepalaTahfidzProgressController extends Controller
         $totalAyat = isset($data['total_ayat'])
             ? (int) $data['total_ayat']
             : min(6236, (int) round(($progressPercent / 100) * 6236));
-
         foreach ($siswaList as $siswa) {
             TahfidzProgress::updateOrCreate(
                 ['siswa_id' => $siswa->id],
@@ -72,7 +63,6 @@ class KepalaTahfidzProgressController extends Controller
                 ]
             );
         }
-
         return redirect()->to(route('dashboard', ['tab' => 'karya_tahfidz']))
             ->with('success', 'Progress Tahfidz berhasil diperbarui untuk ' . $siswaList->count() . ' siswa.');
     }

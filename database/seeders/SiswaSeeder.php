@@ -1,19 +1,13 @@
 <?php
-
 namespace Database\Seeders;
-
 use App\Models\Kelas;
 use App\Models\KelasQuran;
 use App\Models\Siswa;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
-
 class SiswaSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
         $kelasRegulerGroups = [
@@ -94,14 +88,12 @@ class SiswaSeeder extends Seeder
                 'Syakira Sausan Khairunnisa',
             ],
         ];
-
         $kelasBiasaMap = [];
         foreach ($kelasRegulerGroups as $namaKelas => $siswas) {
             foreach ($siswas as $namaSiswa) {
                 $kelasBiasaMap[$namaSiswa] = $namaKelas;
             }
         }
-
         $dataSiswaQuran = [
             'Imam Nafi’ bin Abdurrahman' => [
                 'jk' => 'L',
@@ -200,54 +192,42 @@ class SiswaSeeder extends Seeder
                 ],
             ],
         ];
-
         $quranNames = collect($dataSiswaQuran)->flatMap(fn ($group) => $group['siswa']);
         $regularNames = collect($kelasRegulerGroups)->flatten();
         $missingFromRegular = $quranNames->diff($regularNames);
         $missingFromQuran = $regularNames->diff($quranNames);
-
         if ($quranNames->count() !== 66 || $quranNames->unique()->count() !== 66) {
             throw new \RuntimeException('Data siswa SMP harus berisi 66 nama unik.');
         }
-
         if ($missingFromRegular->isNotEmpty() || $missingFromQuran->isNotEmpty()) {
             throw new \RuntimeException('Data kelas reguler dan kelas Quran SMP tidak sinkron.');
         }
-
         $sdSiswaIds = Siswa::query()
             ->whereHas('user', fn ($query) => $query->where('role', 'siswa_sd'))
             ->pluck('id');
-
         if ($sdSiswaIds->isNotEmpty()) {
             \App\Models\PengumpulanTugas::query()->whereIn('siswa_id', $sdSiswaIds)->delete();
             \App\Models\WorkbookJawaban::query()->whereIn('siswa_id', $sdSiswaIds)->delete();
             \App\Models\CbtJawaban::query()->whereIn('siswa_id', $sdSiswaIds)->delete();
             \App\Models\OlympiadJawaban::query()->whereIn('siswa_id', $sdSiswaIds)->delete();
-
             $sppIds = \App\Models\Spp::query()->whereIn('siswa_id', $sdSiswaIds)->pluck('id');
             if ($sppIds->isNotEmpty()) {
                 \App\Models\Pembayaran::query()->whereIn('spp_id', $sppIds)->delete();
                 \App\Models\Spp::query()->whereIn('id', $sppIds)->delete();
             }
         }
-
         User::query()->where('role', 'siswa_sd')->delete();
-
         Siswa::query()
             ->whereIn('nama', $quranNames->unique()->values())
             ->get()
             ->each(function (Siswa $siswa): void {
                 $siswa->forceFill(['nis' => 'TMP-' . $siswa->id])->save();
             });
-
         $nisCounter = 26001;
-
         foreach ($dataSiswaQuran as $namaKelasQuran => $grup) {
             $kelasQuranId = KelasQuran::query()->where('nama_kelas', $namaKelasQuran)->value('id');
-
             foreach ($grup['siswa'] as $namaSiswa) {
                 $email = strtolower(str_replace([' ', '\'', '’'], ['.', '', ''], $namaSiswa)) . '@alazharjayaindonesia.sch.id';
-
                 $user = User::updateOrCreate(
                     ['email' => $email],
                     [
@@ -256,11 +236,9 @@ class SiswaSeeder extends Seeder
                         'role' => 'siswa_smp',
                     ]
                 );
-
                 $kelasRegulerId = Kelas::query()
                     ->where('nama_kelas', $kelasBiasaMap[$namaSiswa])
                     ->value('id');
-
                 Siswa::updateOrCreate(
                     ['user_id' => $user->id],
                     [
@@ -272,7 +250,6 @@ class SiswaSeeder extends Seeder
                         'status' => 'aktif',
                     ]
                 );
-
                 $nisCounter++;
             }
         }

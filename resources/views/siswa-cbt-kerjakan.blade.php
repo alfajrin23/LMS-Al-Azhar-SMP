@@ -1,13 +1,10 @@
 @extends('layouts.app')
-
 @section('title', 'Kerjakan Ujian - LMS Al Azhar Jaya Indonesia')
-
 @section('sidebar')
     <li>
         <a href="{{ route('siswa.cbt.index') }}"><i class="fas fa-arrow-left"></i> Kembali</a>
     </li>
 @endsection
-
 @section('content')
 <div class="content-header">
     <div>
@@ -18,14 +15,12 @@
         <div class="avatar blue">{{ strtoupper(substr($siswa->nama, 0, 1)) }}</div>
     </div>
 </div>
-
 <div class="card" style="margin-bottom:16px;background:var(--orange-bg);border:1px solid var(--orange)">
     <div style="display:flex;align-items:center;gap:10px;padding:4px 0">
         <i class="fas fa-exclamation-triangle" style="color:var(--orange);font-size:18px"></i>
         <span style="font-size:13px;color:var(--text)">Bacalah soal dengan teliti sebelum menjawab. Jawaban akan dinilai secara otomatis untuk soal PG.</span>
     </div>
 </div>
-
 <form method="POST" action="{{ route('siswa.cbt.submit', $cbtExam->id) }}">
     @csrf
     @foreach($soals as $index => $soal)
@@ -36,7 +31,6 @@
         </div>
         <div style="padding:8px 0">
             <p style="font-size:15px;font-weight:500;margin-bottom:14px">{{ $soal->soal }}</p>
-
             @if($soal->tipe === 'pg')
                 @foreach(['a','b','c','d'] as $pil)
                 @php $pilihan = 'pilihan_' . $pil; @endphp
@@ -51,7 +45,6 @@
         </div>
     </div>
     @endforeach
-
     <div class="card" style="padding:16px 24px">
         <div style="display:flex;gap:12px;align-items:center;justify-content:space-between">
             <span style="font-size:13px;color:var(--gray-500)"><strong>{{ $soals->count() }}</strong> soal harus dijawab</span>
@@ -62,7 +55,6 @@
         </div>
     </div>
 </form>
-
 @if(session('success'))
     <div style="position:fixed;bottom:20px;right:20px;background:var(--green);color:#fff;padding:14px 20px;border-radius:var(--radius-sm);font-weight:600;box-shadow:0 4px 12px rgba(0,0,0,0.15);z-index:999">
         <i class="fas fa-check-circle"></i> {{ session('success') }}

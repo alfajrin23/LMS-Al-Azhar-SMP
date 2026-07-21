@@ -14,7 +14,6 @@
     .btn-rating.active:nth-of-type(3) { background: var(--blue) !important; border-color: var(--blue) !important; }
     .btn-rating.active:nth-of-type(4) { background: var(--green) !important; border-color: var(--green) !important; }
 </style>
-
 @php
     $statusBadge = fn($s) => $s === 'baru'
         ? '<span class="badge green light">Baru</span>'
@@ -31,13 +30,12 @@
         <div class="avatar blue">{{ strtoupper(substr($guru->nama, 0, 1)) }}</div>
     </div>
 </div>
-
 <div class="grid-2" style="margin-bottom:20px">
     <div class="card">
         <div class="card-header"><h3><i class="fas fa-plus" style="color:var(--green)"></i> Input Setoran Baru</h3></div>
-        <form method="POST" action="/guru/tahfidz" style="padding:4px 0" x-data="{ 
-            ayatMulai: 1, 
-            ayatSelesai: 1, 
+        <form method="POST" action="/guru/tahfidz" style="padding:4px 0" x-data="{
+            ayatMulai: 1,
+            ayatSelesai: 1,
             get ayatList() {
                 let list = [];
                 let start = parseInt(this.ayatMulai);
@@ -101,8 +99,6 @@
                     <input type="date" name="tanggal_berikutnya" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:14px;font-family:var(--font)">
                 </div>
             </div>
-
-            <!-- Detail Per Ayat Nilai -->
             <div style="border-top: 1px solid var(--border-light); margin-top: 16px; padding-top: 16px;" x-show="ayatList.length > 0">
                 <h4 style="font-size: 13px; font-weight: 700; margin-bottom: 12px; color: var(--gray-700)">Aspek Penilaian per Ayat</h4>
                 <div style="display:flex; flex-direction:column; gap:12px">
@@ -110,9 +106,7 @@
                         <div style="background:var(--gray-50); border:1px solid var(--border-light); padding:10px; border-radius:var(--radius-sm)">
                             <div style="font-weight:700; font-size:13px; color:var(--teal); margin-bottom:8px">Ayat <span x-text="ayat"></span></div>
                             <input type="hidden" :name="'ayat_nilai['+idx+'][nomor_ayat]'" :value="ayat">
-                            
                             <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:10px">
-                                <!-- Makhroj -->
                                 <div>
                                     <label style="display:block; font-size:11px; font-weight:600; color:var(--gray-500); margin-bottom:4px">Makhroj</label>
                                     <div style="display:flex; gap:4px" x-data="{ val: 3 }">
@@ -122,7 +116,6 @@
                                         </template>
                                     </div>
                                 </div>
-                                <!-- Tajwid -->
                                 <div>
                                     <label style="display:block; font-size:11px; font-weight:600; color:var(--gray-500); margin-bottom:4px">Tajwid</label>
                                     <div style="display:flex; gap:4px" x-data="{ val: 3 }">
@@ -132,7 +125,6 @@
                                         </template>
                                     </div>
                                 </div>
-                                <!-- Kelancaran -->
                                 <div>
                                     <label style="display:block; font-size:11px; font-weight:600; color:var(--gray-500); margin-bottom:4px">Kelancaran</label>
                                     <div style="display:flex; gap:4px" x-data="{ val: 3 }">
@@ -147,7 +139,6 @@
                     </template>
                 </div>
             </div>
-
             <div class="form-group" style="margin-bottom:16px; margin-top: 16px;">
                 <label style="display:block;font-size:13px;font-weight:600;color:var(--gray-500);margin-bottom:4px">Catatan (opsional)</label>
                 <textarea name="catatan_guru" rows="2" placeholder="Catatan untuk setoran ini..." style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:14px;font-family:var(--font);resize:vertical"></textarea>
@@ -155,7 +146,6 @@
             <button type="submit" class="btn-login" style="cursor:pointer;border:none"><i class="fas fa-save"></i> Simpan Setoran</button>
         </form>
     </div>
-
     <div class="card">
         <div class="card-header"><h3><i class="fas fa-chart-bar" style="color:var(--teal)"></i> Statistik Setoran Saya</h3></div>
         <div style="padding:4px 0">
@@ -168,7 +158,6 @@
         </div>
     </div>
 </div>
-
 <div x-data="{ subtab: 'riwayat' }">
     <style>
         .tab-btn {
@@ -188,7 +177,6 @@
             border-bottom: 2px solid var(--teal) !important;
         }
     </style>
-    
     <div style="display:flex; gap:10px; margin-bottom:14px; border-bottom:1px solid var(--border-light); padding-bottom:4px">
         <button type="button" @click="subtab = 'riwayat'" :class="subtab === 'riwayat' ? 'active' : ''" class="tab-btn">
             <i class="fas fa-history"></i> Riwayat Setoran Saya
@@ -205,8 +193,6 @@
             @endif
         </button>
     </div>
-    
-    <!-- Tab 1: Riwayat Setoran Saya -->
     <div x-show="subtab === 'riwayat'">
         <div class="card">
             <div class="card-header"><h3><i class="fas fa-list" style="color:var(--blue)"></i> Riwayat Setoran Saya</h3></div>
@@ -268,8 +254,6 @@
             </div>
         </div>
     </div>
-    
-    <!-- Tab 2: Butuh Penilai Kedua -->
     <div x-show="subtab === 'pembanding'">
         @php
             $setoranPembanding = \App\Models\TahfidzSetoran::where('guru_id', '!=', $guru->id)
@@ -310,8 +294,6 @@
                                 <button type="button" @click="showForm = true" class="btn-small outline" style="cursor:pointer; display:inline-flex; align-items:center; gap:4px">
                                     <i class="fas fa-edit"></i> Nilai
                                 </button>
-                                
-                                <!-- Modal Overlay Penilaian Kedua -->
                                 <div style="position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); display:flex; align-items:center; justify-content:center; z-index:9999; padding:20px" x-show="showForm" x-transition x-cloak>
                                     <div class="card" style="width:100%; max-width:600px; max-height:90vh; overflow-y:auto; background:var(--white); box-shadow:0 10px 25px rgba(0,0,0,0.2); padding:20px; border-radius:var(--radius); text-align:left">
                                         <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border-light); padding-bottom:10px; margin-bottom:15px">
@@ -321,7 +303,6 @@
                                         <p style="font-size:13px; color:var(--gray-500); margin-bottom:15px">
                                             Menilai setoran <strong>{{ $sp->siswa->nama }}</strong> untuk <strong>{{ $sp->surah }} Ayat {{ $sp->ayat_mulai }}-{{ $sp->ayat_selesai }}</strong>.
                                         </p>
-                                        
                                         <form method="POST" action="/guru/tahfidz/{{ $sp->id }}/nilai-pembanding">
                                             @csrf
                                             <div style="display:flex; flex-direction:column; gap:12px">
@@ -330,9 +311,7 @@
                                                     <div style="background:var(--gray-50); border:1px solid var(--border-light); padding:10px; border-radius:var(--radius-sm)">
                                                         <div style="font-weight:700; font-size:13px; color:var(--orange); margin-bottom:8px">Ayat {{ $ayat }}</div>
                                                         <input type="hidden" name="ayat_nilai[{{ $idx }}][nomor_ayat]" value="{{ $ayat }}">
-                                                        
                                                         <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:10px">
-                                                            <!-- Makhroj -->
                                                             <div>
                                                                 <label style="display:block; font-size:11px; font-weight:600; color:var(--gray-500); margin-bottom:4px">Makhroj</label>
                                                                 <div style="display:flex; gap:4px" x-data="{ val: 3 }">
@@ -342,7 +321,6 @@
                                                                     </template>
                                                                 </div>
                                                             </div>
-                                                            <!-- Tajwid -->
                                                             <div>
                                                                 <label style="display:block; font-size:11px; font-weight:600; color:var(--gray-500); margin-bottom:4px">Tajwid</label>
                                                                 <div style="display:flex; gap:4px" x-data="{ val: 3 }">
@@ -352,7 +330,6 @@
                                                                     </template>
                                                                 </div>
                                                             </div>
-                                                            <!-- Kelancaran -->
                                                             <div>
                                                                 <label style="display:block; font-size:11px; font-weight:600; color:var(--gray-500); margin-bottom:4px">Kelancaran</label>
                                                                 <div style="display:flex; gap:4px" x-data="{ val: 3 }">
@@ -386,7 +363,6 @@
         </div>
     </div>
 </div>
-
 @if(session('success'))
     <div style="position:fixed;bottom:20px;right:20px;background:var(--green);color:#fff;padding:14px 20px;border-radius:var(--radius-sm);font-weight:600;box-shadow:0 4px 12px rgba(0,0,0,0.15);z-index:999">
         <i class="fas fa-check-circle"></i> {{ session('success') }}

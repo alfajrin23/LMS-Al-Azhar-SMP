@@ -7,7 +7,6 @@
         ->with('mapel')
         ->latest()
         ->get();
-
     foreach ($exams as $exam) {
         $exam->sudah_dikerjakan = \App\Models\CbtJawaban::whereIn('cbt_soal_id', $exam->soals->pluck('id'))
             ->where('siswa_id', $siswa->id)
@@ -23,7 +22,6 @@
         <div class="avatar blue">{{ strtoupper(substr($siswa->nama, 0, 1)) }}</div>
     </div>
 </div>
-
 @forelse($exams as $exam)
 <div class="card" style="margin-bottom:14px">
     <div class="card-header">

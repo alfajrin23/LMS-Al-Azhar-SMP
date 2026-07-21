@@ -1,11 +1,8 @@
 <?php
-
 namespace App\Http\Controllers;
-
 use App\Models\Guru;
 use App\Models\LaporanMengajar;
 use Illuminate\Http\Request;
-
 class GuruLaporanController extends Controller
 {
     public function store(Request $request)
@@ -13,15 +10,12 @@ class GuruLaporanController extends Controller
         if (!str_starts_with($request->user()->role, 'guru')) {
             return redirect()->back()->with('error', 'Hanya guru yang bisa input laporan mengajar');
         }
-
         $guru = Guru::query()->where('user_id', $request->user()->id)->firstOrFail();
-
         $data = $request->validate([
             'tipe' => 'required|in:harian,mingguan,bulanan',
             'tanggal' => 'required|date',
             'isi' => 'required',
         ]);
-
         $isiData = $data['isi'];
         if (is_string($isiData)) {
             $decoded = json_decode($isiData, true);
@@ -53,7 +47,7 @@ class GuruLaporanController extends Controller
                         'pemetaan_siswa' => [],
                         'tindak_lanjut' => []
                     ];
-                } else { // bulanan
+                } else {
                     $isiData = [
                         'capaian_belajar_bulanan' => [
                             ['elemen_cp' => 'Umum', 'target' => '-', 'capaian' => '-', 'persentase' => '-', 'keterangan' => $data['isi']]
@@ -68,7 +62,6 @@ class GuruLaporanController extends Controller
                 }
             }
         }
-
         LaporanMengajar::updateOrCreate(
             [
                 'guru_id' => $guru->id,
@@ -79,7 +72,6 @@ class GuruLaporanController extends Controller
                 'isi' => $isiData,
             ]
         );
-
         return redirect()->back()->with('success', 'Laporan mengajar berhasil dikirim!');
     }
 }

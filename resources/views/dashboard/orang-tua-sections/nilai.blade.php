@@ -13,7 +13,6 @@
         <div class="avatar orange">{{ strtoupper(substr($ortu?->nama ?? $user->name, 0, 2)) }}</div>
     </div>
 </div>
-
 @foreach($anak as $a)
 @php
     $nilaiAnak = \App\Models\Nilai::where('siswa_id', $a->id)->with('mapel')->get();

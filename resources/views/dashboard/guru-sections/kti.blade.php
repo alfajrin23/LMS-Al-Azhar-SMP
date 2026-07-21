@@ -5,8 +5,6 @@
             <div class="avatar blue">{{ strtoupper(substr($guru->nama, 0, 1)) }}</div>
         </div>
     </div>
-
-    <!-- CARD 1: DAFTAR REVIEW DRAF KTI (PENDING) -->
     <div class="card" style="margin-bottom:20px">
         <div class="card-header">
             <h3><i class="fas fa-clipboard-check" style="color:var(--teal)"></i> Menunggu Persetujuan (Review Draf)</h3>
@@ -61,8 +59,6 @@
             </table>
         </div>
     </div>
-
-    <!-- CARD 2: DAFTAR PROGRESS KTI SISWA KELAS 9 -->
     <div class="card">
         <div class="card-header">
             <h3><i class="fas fa-users" style="color:var(--blue)"></i> Rekapitulasi Karya Tulis Ilmiah Kelas 9</h3>
@@ -105,7 +101,6 @@
                                 @else
                                     <span style="color:var(--gray-400); font-size:11px">Belum Dijadwalkan</span>
                                 @endif
-                                
                                 @if($ktiInfo && $currentKtiBab !== 'Selesai')
                                     <form action="{{ route('guru.kti.jadwal', $ktiInfo->id) }}" method="POST" style="margin-top:6px; display:flex; gap:4px">
                                         @csrf
@@ -158,22 +153,17 @@
             </table>
         </div>
     </div>
-
-    <!-- GRADE INPUT MODAL -->
     <div x-show="showGradeModal" class="modal-backdrop" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); display:flex; align-items:center; justify-content:center; z-index:9999; backdrop-filter:blur(4px)" x-cloak>
         <div @click.away="showGradeModal = false" style="background:white; border-radius:12px; width:100%; max-width:500px; padding:24px; box-shadow:0 10px 25px rgba(0,0,0,0.1); position:relative">
             <h3 style="margin-top:0; color:#1e293b; display:flex; align-items:center; gap:8px"><i class="fas fa-star" style="color:#ff922b"></i> Penilaian Ujian Sidang KTI</h3>
             <p style="font-size:13px; color:#64748b; margin-bottom:16px">Isi rincian nilai KTI siswa di bawah ini. Nilai Akhir akan dihitung otomatis oleh sistem.</p>
-            
             <form action="/guru/kti" method="POST">
                 @csrf
                 <input type="hidden" name="siswa_id" :value="selectedSiswaKti">
-                
                 <div class="form-group" style="margin-bottom:12px">
                     <label style="display:block; font-size:12px; font-weight:600; color:#64748b; margin-bottom:4px">Judul Karya Tulis Ilmiah</label>
                     <input type="text" name="judul_kti" x-model="ktiJudul" required placeholder="Masukkan judul KTI siswa..." style="width:100%; padding:8px 10px; border:1px solid #cbd5e1; border-radius:6px; font-size:14px">
                 </div>
-
                 <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:12px; margin-bottom:12px">
                     <div class="form-group">
                         <label style="display:block; font-size:12px; font-weight:600; color:#64748b; margin-bottom:4px">Bimbingan (30%)</label>
@@ -188,12 +178,10 @@
                         <input type="number" name="nilai_sidang" x-model="nilaiSidang" required min="0" max="100" placeholder="0-100" style="width:100%; padding:8px 10px; border:1px solid #cbd5e1; border-radius:6px; font-size:14px">
                     </div>
                 </div>
-
                 <div class="form-group" style="margin-bottom:16px">
                     <label style="display:block; font-size:12px; font-weight:600; color:#64748b; margin-bottom:4px">Catatan / Umpan Balik Guru</label>
                     <textarea name="catatan" x-model="catatan" placeholder="Tuliskan umpan balik atau apresiasi atas karya tulis..." style="width:100%; height:80px; padding:8px 10px; border:1px solid #cbd5e1; border-radius:6px; font-size:14px; font-family:inherit; resize:none"></textarea>
                 </div>
-
                 <div style="display:flex; justify-content:flex-end; gap:12px; margin-top:20px">
                     <button type="button" @click="showGradeModal = false" style="background:#f1f3f5; border:none; padding:10px 16px; border-radius:8px; cursor:pointer; font-weight:600; color:#475569">Batal</button>
                     <button type="submit" style="background:#ff922b; border:none; padding:10px 16px; border-radius:8px; cursor:pointer; font-weight:600; color:white"><i class="fas fa-save"></i> Simpan Penilaian</button>

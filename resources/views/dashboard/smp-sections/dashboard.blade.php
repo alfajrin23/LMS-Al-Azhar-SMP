@@ -51,7 +51,6 @@
         <span style="font-weight:600;font-size:14px">{{ explode(' ', $siswa->nama)[0] }}</span>
     </div>
 </div>
-
 @if (isset($remedialActive) && $remedialActive->count() > 0)
     @foreach ($remedialActive as $rem)
         @php
@@ -81,27 +80,21 @@
         </div>
     @endforeach
 @endif
-
 <div class="welcome-mini">
     <p><strong>Halo, {{ explode(' ', $siswa->nama)[0] }}!</strong> Kamu punya <strong>{{ $tugasDeadlineCount }}
             tugas</strong> mendekati deadline minggu ini. Ayo segera kerjakan!</p>
 </div>
-
 @php
     $todayDate = now()->format('Y-m-d');
     $yesterdayDate = now()->subDay()->format('Y-m-d');
-
-    // Karena format tanggal bisa berupa instance Carbon, kita format ke Y-m-d untuk pencocokan
     $absenHariIni = $kehadiran->first(function ($item) use ($todayDate) {
         return \Carbon\Carbon::parse($item->tanggal)->format('Y-m-d') === $todayDate;
     });
     $absenKemarin = $kehadiran->first(function ($item) use ($yesterdayDate) {
         return \Carbon\Carbon::parse($item->tanggal)->format('Y-m-d') === $yesterdayDate;
     });
-
     $statusHariIni = $absenHariIni ? ucfirst($absenHariIni->status) : 'Belum Ada Data';
     $statusKemarin = $absenKemarin ? ucfirst($absenKemarin->status) : 'Belum Ada Data';
-
     $colorMap = [
         'Hadir' => 'var(--green)',
         'Sakit' => 'var(--orange)',
@@ -110,16 +103,13 @@
         'Belum Ada Data' => 'var(--gray-400)',
     ];
 @endphp
-
 <div class="card" style="margin-bottom: 20px; padding: 20px; box-shadow: var(--shadow);">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
         <h3 style="font-size:16px; font-weight:700; color:var(--text); margin:0">
             <i class="fas fa-calendar-check" style="color:var(--teal); margin-right:8px;"></i> Rekap Kehadiran Harian
         </h3>
     </div>
-
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
-        <!-- Hari Ini -->
         <div
             style="background: var(--gray-50); padding: 16px; border-radius: var(--radius-sm); border: 1px solid var(--border-light); text-align: center;">
             <p style="font-size: 13px; color: var(--gray-500); margin-bottom: 8px; font-weight: 600;">Hari Ini
@@ -128,8 +118,6 @@
                 {{ $statusHariIni }}
             </div>
         </div>
-
-        <!-- Kemarin -->
         <div
             style="background: var(--gray-50); padding: 16px; border-radius: var(--radius-sm); border: 1px solid var(--border-light); text-align: center;">
             <p style="font-size: 13px; color: var(--gray-500); margin-bottom: 8px; font-weight: 600;">Kemarin
@@ -140,7 +128,6 @@
         </div>
     </div>
 </div>
-
 @if (!$sudahIsiKondisi)
     <div class="card"
         style="background: var(--white); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow); margin-bottom: 20px; border-left: 5px solid var(--blue)">
@@ -193,7 +180,6 @@
             @csrf
             <div
                 style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:20px; margin-bottom:20px">
-                <!-- Hubungan Guru-Siswa -->
                 <div
                     style="background:var(--gray-50); border:1px solid var(--border-light); padding:14px; border-radius:var(--radius-sm)">
                     <div
@@ -208,8 +194,6 @@
                         :style="'color: ' + (hubungan <= 2 ? 'var(--red)' : (hubungan == 3 ? 'var(--orange)' : 'var(--green)'))"
                         x-text="hubunganDesc"></div>
                 </div>
-
-                <!-- Kenyamanan -->
                 <div
                     style="background:var(--gray-50); border:1px solid var(--border-light); padding:14px; border-radius:var(--radius-sm)">
                     <div
@@ -224,8 +208,6 @@
                         :style="'color: ' + (nyaman <= 2 ? 'var(--red)' : (nyaman == 3 ? 'var(--orange)' : 'var(--green)'))"
                         x-text="nyamanDesc"></div>
                 </div>
-
-                <!-- Bantuan -->
                 <div
                     style="background:var(--gray-50); border:1px solid var(--border-light); padding:14px; border-radius:var(--radius-sm)">
                     <div
@@ -249,7 +231,6 @@
         </form>
     </div>
 @endif
-
 <div x-data="{ showQris: false }" class="card"
     style="margin-bottom: 20px; padding: 20px; box-shadow: var(--shadow); border-left: 5px solid var(--teal);">
     <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap: wrap; gap: 16px;">
@@ -265,8 +246,6 @@
             <i class="fas fa-qrcode" style="margin-right:6px"></i> Scan QRIS
         </button>
     </div>
-
-    <!-- Modal QRIS -->
     <div x-show="showQris"
         style="position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:9999;"
         x-transition x-cloak>
@@ -275,24 +254,18 @@
             <button @click="showQris = false"
                 style="position:absolute; top:12px; right:12px; background:none; border:none; font-size:20px; color:var(--gray-400); cursor:pointer;"><i
                     class="fas fa-times"></i></button>
-
             <h3 style="font-size:18px; font-weight:700; color:var(--text); margin-bottom:4px;">Infaq & Shodaqoh</h3>
             <p style="font-size:13px; color:var(--gray-500); margin-bottom:20px;">LMS Al Azhar Jaya Indonesia</p>
-
             <div
                 style="background:var(--white); padding:20px; border-radius:var(--radius-sm); border:2px dashed var(--border); margin:0 auto 20px; display:inline-block;">
-                <!-- Menggunakan Icon besar sebagai ilustrasi QR Code (bisa diganti img src nanti) -->
                 <i class="fas fa-qrcode" style="font-size:180px; color:var(--gray-800);"></i>
             </div>
-
             <p style="font-size:13px; color:var(--text); font-weight:700; margin:0 0 8px;">No. Rek BSI 7676003007</p>
             <p style="font-size:12px; color:var(--gray-500); line-height:1.5; margin-bottom:0;">Fitur dalam tahap
                 pengembangan</p>
         </div>
     </div>
 </div>
-
-
 <div class="performa-grid" style="margin-bottom:20px">
     <div class="performa-card">
         <div class="performa-icon teal"><i class="fas fa-calculator"></i></div>
@@ -310,14 +283,12 @@
         <div class="performa-label">Kehadiran</div>
     </div>
 </div>
-
 <div class="card" style="margin-bottom:20px">
     <div class="card-header">
         <h3><i class="fas fa-chart-bar" style="color:var(--teal)"></i> Grafik Nilai per Mapel</h3>
     </div>
     <canvas id="nilaiChart" width="400" height="160" style="max-height:160px;width:100%"></canvas>
 </div>
-
 <div class="grid-2" style="margin-bottom:20px">
     <div class="card">
         <div class="card-header">
@@ -366,7 +337,6 @@
         @endforelse
     </div>
 </div>
-
 <div class="grid-2" style="margin-bottom:20px">
     <div class="card">
         <div class="card-header">
@@ -424,7 +394,6 @@
         </ul>
     </div>
 </div>
-
 <div class="grid-2">
     <div class="card">
         <div class="card-header">
@@ -441,7 +410,6 @@
             <div style="padding:20px;text-align:center;color:var(--gray-400)">Tidak ada pengumuman</div>
         @endforelse
     </div>
-
     <div class="card" style="margin-top:20px; border-top: 4px solid var(--red);">
         <div class="card-header">
             <h3><i class="fas fa-gavel" style="color:var(--red)"></i> Tata Tertib Sekolah</h3>
@@ -477,7 +445,6 @@
         @endforelse
     </div>
 </div>
-
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const canvas = document.getElementById('nilaiChart');

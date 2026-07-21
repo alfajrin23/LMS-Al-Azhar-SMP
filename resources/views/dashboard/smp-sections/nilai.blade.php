@@ -50,25 +50,21 @@
         letter-spacing: 0.3px;
         display: inline-block;
     }
-
     .status-bagus-banget {
         background-color: #e6fffa;
         color: #047857;
         border: 1px solid #b2f5ea;
     }
-
     .status-bagus {
         background-color: #ebf8ff;
         color: #0284c7;
         border: 1px solid #bee3f8;
     }
-
     .status-perlu-belajar {
         background-color: #fffaf0;
         color: #dd6b20;
         border: 1px solid #feebc8;
     }
-
     .status-perlu-diulang {
         background-color: #fff5f5;
         color: #e53e3e;
@@ -103,7 +99,6 @@
                         <span class="rapor-nilai {{ $gradeColor($n->nilai) }}">{{ $n->nilai }}
                             ({{ $gradeLetter($n->nilai) }})</span>
                         <span class="status-badge {{ $status['class'] }}">{{ $status['label'] }}</span>
-
                         @if ($n->nilai_bahasa)
                             @if ($n->banding)
                                 @if ($n->banding->status === 'pending')
@@ -134,18 +129,14 @@
             @endforeach
         </div>
         @php
-            // Mengambil data nilai per tugas/bab riil dari database (tabel nilai & pengumpulan_tugas)
             $chartDataReal = [];
             foreach ($mapels as $m) {
                 $chartDataReal[$m->id] = [];
             }
-
-            // 1. Cek tabel nilai yang terkait dengan tugas (jika ada)
             $tugasNilai = \App\Models\Nilai::with(['tugas', 'mapel'])
                 ->where('siswa_id', $siswa->id)
                 ->whereNotNull('tugas_id')
                 ->get();
-
             foreach ($tugasNilai as $tn) {
                 if ($tn->tugas && $tn->mapel_id) {
                     $label =
@@ -157,20 +148,16 @@
                     ];
                 }
             }
-
-            // 2. Cek tabel pengumpulan_tugas yang sudah dinilai guru
             $pengumpulan = \App\Models\PengumpulanTugas::with('tugas.mapel')
                 ->where('siswa_id', $siswa->id)
                 ->whereNotNull('nilai')
                 ->get();
-
             foreach ($pengumpulan as $pg) {
                 if ($pg->tugas && $pg->tugas->mapel_id) {
                     $mId = $pg->tugas->mapel_id;
                     $label =
                         strlen($pg->tugas->judul) > 15 ? substr($pg->tugas->judul, 0, 15) . '...' : $pg->tugas->judul;
                     $color = $pg->tugas->tipe === 'ulangan' ? 'orange' : 'teal';
-
                     $exists = collect($chartDataReal[$mId])->contains('label', $label);
                     if (!$exists) {
                         $chartDataReal[$mId][] = [
@@ -219,8 +206,6 @@
             </div>
         </div>
     </div>
-
-    <!-- Modal Ajukan Banding Nilai -->
     <div x-show="showBandingModal" class="modal-backdrop"
         style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); display:flex; align-items:center; justify-content:center; z-index:9999; backdrop-filter:blur(4px)"
         x-cloak>
@@ -230,7 +215,6 @@
                     class="fas fa-balance-scale" style="color:#4f46e5"></i> Ajukan Banding Nilai</h3>
             <p style="font-size:13px; color:#64748b; margin-bottom:16px">Tuliskan alasan rasional mengapa nilai
                 pemahaman materi Anda harus ditinjau kembali oleh Guru mata pelajaran ini.</p>
-
             <form action="{{ route('siswa.banding.store') }}" method="POST">
                 @csrf
                 <input type="hidden" name="nilai_id" :value="activeNilaiId">
@@ -239,7 +223,6 @@
                     required minlength="5"
                     style="width:100%; height:120px; padding:12px; border:1px solid #cbd5e1; border-radius:8px; font-size:14px; font-family:inherit; resize:none; outline:none; transition:border-color 0.2s"
                     onfocus="this.style.borderColor='#4f46e5'" onblur="this.style.borderColor='#cbd5e1'"></textarea>
-
                 <div style="display:flex; justify-content:flex-end; gap:12px; margin-top:20px">
                     <button type="button" @click="showBandingModal = false"
                         style="background:#f1f3f5; border:none; padding:10px 16px; border-radius:8px; cursor:pointer; font-weight:600; color:#475569">Batal</button>

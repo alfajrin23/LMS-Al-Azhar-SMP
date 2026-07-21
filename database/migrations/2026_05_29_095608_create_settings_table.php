@@ -1,10 +1,8 @@
 <?php
-
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
-
 return new class extends Migration
 {
     public function up(): void
@@ -15,7 +13,6 @@ return new class extends Migration
             $table->text('value')->nullable();
             $table->timestamps();
         });
-
         DB::table('settings')->insert([
             ['key' => 'kkm_sd', 'value' => '70'],
             ['key' => 'kkm_smp', 'value' => '75'],
@@ -24,7 +21,6 @@ return new class extends Migration
             ['key' => 'alamat_sekolah', 'value' => 'Jl. Al Azhar No. 1, Bekasi'],
         ]);
     }
-
     public function down(): void
     {
         Schema::dropIfExists('settings');

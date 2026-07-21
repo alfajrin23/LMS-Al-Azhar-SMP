@@ -74,7 +74,6 @@
     </div>
     <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Sidebar toggle
         const sidebarToggle = document.getElementById('sidebarToggle');
         const sidebar = document.querySelector('.sidebar');
         const overlay = document.querySelector('.overlay');
@@ -90,8 +89,6 @@
                 this.classList.remove('show');
             });
         }
-
-        // Global search
         let searchTimeout;
         const searchInput = document.getElementById('globalSearch');
         const searchResults = document.getElementById('searchResults');

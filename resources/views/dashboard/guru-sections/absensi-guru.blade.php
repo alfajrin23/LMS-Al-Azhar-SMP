@@ -13,7 +13,6 @@
         <div class="avatar blue">{{ strtoupper(substr($guru->nama, 0, 1)) }}</div>
     </div>
 </div>
-
 <div class="grid-2" style="margin-bottom:20px">
     <div class="card">
         <div class="card-header">
@@ -52,7 +51,6 @@
             </div>
         </div>
     </div>
-    
     <div class="card">
         <div class="card-header">
             <h3><i class="fas fa-history" style="color:var(--blue)"></i> Riwayat Absensi (10 Hari Terakhir)</h3>

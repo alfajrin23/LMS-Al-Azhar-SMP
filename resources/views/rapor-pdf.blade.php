@@ -26,7 +26,6 @@
   <h1>{{ (isset($type) && $type === 'unggulan') ? 'RAPOR PROGRAM UNGGULAN' : 'RAPOR SEMESTER' }}</h1>
   <p>{{ setting('school_name') }} — Tahun Ajaran {{ setting('tahun_ajaran') }}</p>
 </div>
-
 <div class="section">
   <h2>Identitas Siswa</h2>
   <div class="bio-grid">
@@ -36,7 +35,6 @@
     <div><span class="label">Semester</span><br><strong>{{ $catatanWali?->semester ?? setting('semester_aktif') }}</strong></div>
   </div>
 </div>
-
 <div class="section">
   <h2>{{ (isset($type) && $type === 'unggulan') ? 'Nilai Program Unggulan' : 'Nilai Akademik' }}</h2>
   <table>
@@ -66,7 +64,6 @@
     </tbody>
   </table>
 </div>
-
 <div class="section">
   <h2>Kehadiran</h2>
   <div class="kehadiran-grid">
@@ -76,12 +73,10 @@
     <div>Alpha: <strong>{{ $totalAlpha }}</strong> Hari</div>
   </div>
 </div>
-
 <div class="section">
   <h2>Tahfidz</h2>
   <p>Total setoran tahfidz: <strong>{{ $tahfidz }} ayat</strong></p>
 </div>
-
 @if($catatanWali)
 <div class="section">
   <h2>Catatan Wali Kelas</h2>
@@ -89,7 +84,6 @@
   <p style="font-size:11px;color:#888;margin-top:4px">— {{ $catatanWali->guru->nama ?? 'Wali Kelas' }}</p>
 </div>
 @endif
-
 <div class="footer">
   Dicetak pada {{ now()->format('d M Y H:i') }} &mdash; {{ setting('school_name') }}
 </div>

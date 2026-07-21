@@ -9,7 +9,6 @@
         <div class="avatar orange">{{ strtoupper(substr($ortu?->nama ?? $user->name, 0, 2)) }}</div>
     </div>
 </div>
-
 @foreach($anak as $a)
 @php
     $tahfidzAnak = \App\Models\TahfidzSetoran::where('siswa_id', $a->id)->with('guru')->orderBy('tanggal', 'desc')->get();
@@ -25,7 +24,6 @@
         <span>Jadwal Setoran Berikutnya: <span style="font-weight:800">{{ \Carbon\Carbon::parse($jadwalBerikutnya)->isoFormat('D MMMM YYYY') }}</span></span>
     </div>
     @endif
-
     <div class="card" style="margin-bottom:20px">
         <div class="card-header"><h3><i class="fas fa-quran" style="color:var(--green)"></i> Progress Tahfidz — {{ $a->nama }}</h3></div>
         <div class="tahfidz-stats">
@@ -35,7 +33,6 @@
             <div class="tahfidz-stat"><span class="tahfidz-stat-number orange">{{ $tahfidzAnak->where('status', 'baru')->count() }}</span><span class="tahfidz-stat-label">Setoran Baru</span></div>
         </div>
     </div>
-
     <div class="card">
         <div class="card-header"><h3><i class="fas fa-list" style="color:var(--teal)"></i> Riwayat Setoran</h3></div>
         <div class="table-wrap">

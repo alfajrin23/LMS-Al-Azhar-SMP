@@ -1,7 +1,5 @@
 @extends('layouts.app')
-
 @section('title', 'Dashboard Kepala Sekolah - LMS Al Azhar Jaya Indonesia')
-
 @section('sidebar')
     <li :class="{ 'active': tab === 'dashboard' }" @click="tab = 'dashboard'">
         <label><i class="fas fa-th-large"></i> Dashboard</label>
@@ -40,23 +38,18 @@
         <label><i class="fas fa-file-contract"></i> Rapor Supervisi</label>
     </li>
 @endsection
-
 @section('content')
-
     <div x-show="tab === 'dashboard'">
         <div>
-            <!-- Custom CSS for interactive elements -->
             <style>
                 .score-row-card:hover {
                     transform: translateY(-2px);
                     background-color: var(--gray-50) !important;
                 }
-
                 .pulse-dot {
                     position: relative;
                     padding-right: 20px !important;
                 }
-
                 .pulse-dot::after {
                     content: '';
                     position: absolute;
@@ -69,22 +62,18 @@
                     transform: translateY(-50%);
                     animation: pulse-glow 1.5s infinite;
                 }
-
                 @keyframes pulse-glow {
                     0% {
                         box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
                     }
-
                     70% {
                         box-shadow: 0 0 0 6px rgba(239, 68, 68, 0);
                     }
-
                     100% {
                         box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
                     }
                 }
             </style>
-
             <div class="content-header">
                 <div>
                     <h1>Dashboard Kepala Sekolah</h1>
@@ -96,7 +85,6 @@
                     <div class="avatar teal">KS</div>
                 </div>
             </div>
-
             <div class="grid-4" style="margin-bottom:20px">
                 <div class="admin-stat-card">
                     <div class="asc-icon grad-teal"><i class="fas fa-user-graduate"></i></div>
@@ -131,10 +119,7 @@
                     </div>
                 </div>
             </div>
-
-            <!-- GRID: Nilai Besar Sekolah & Peringatan Kelas Gak Sehat -->
             <div class="grid-2" style="margin-bottom:20px">
-                <!-- 1. Ringkasan 3 Nilai Besar Sekolah -->
                 <div class="card" x-data="{
                     scores: [
                         { label: 'Akademik Nasional', val: {{ $akademikNasional ?? 0 }}, target: {{ $targetAkademik ?? 80 }}, trend: 'Evaluasi Otomatis', type: '{{ $typAkademik ?? 'up' }}', status: '{{ $stsAkademik ?? 'Sangat Baik' }}', color: '{{ $clrAkademik ?? 'var(--teal)' }}', desc: 'Rata-rata seluruh nilai akademik reguler (Nasional) dari seluruh siswa aktif.' },
@@ -143,7 +128,6 @@
                     ],
                     selectedScore: null
                 }">
-
                     <div class="card-header">
                         <h3><i class="fas fa-chart-line" style="color:var(--teal)"></i> Ringkasan 3 Nilai Besar Sekolah</h3>
                         <span class="badge light green" style="font-size:11px">{{ $semester ?? 'Semester Ganjil' }}</span>
@@ -173,7 +157,6 @@
                                         <span style="font-size: 11px; color: var(--gray-400);">/100</span>
                                     </div>
                                 </div>
-
                                 <div class="progress-wrap"
                                     style="margin: 0 0 4px 0; background: var(--gray-100); height: 6px; border-radius: 3px; overflow: hidden;">
                                     <div class="fill"
@@ -181,14 +164,12 @@
                                             '; height: 100%; border-radius: 3px; transition: width 0.5s;'">
                                     </div>
                                 </div>
-
                                 <div
                                     style="display: flex; justify-content: space-between; font-size: 11px; color: var(--gray-400);">
                                     <span>Target Kelulusan: <span x-text="sc.target"></span></span>
                                     <span style="font-weight: 600;" :style="'color: ' + sc.color"
                                         x-text="sc.status"></span>
                                 </div>
-
                                 <div x-show="selectedScore === i" x-transition
                                     style="margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border); font-size: 12px; color: var(--gray-600); line-height: 1.5;">
                                     <i class="fas fa-info-circle" :style="'color: ' + sc.color"></i> <span
@@ -198,8 +179,6 @@
                         </template>
                     </div>
                 </div>
-
-                <!-- 2. Peringatan Kelas "Gak Sehat" -->
                 <div class="card" x-data="{
                     alerts: {{ \Illuminate\Support\Js::from($kelasGakSehat ?? []) }},
                     showToast: false,
@@ -211,7 +190,6 @@
                             setTimeout(() => this.showToast = false, 4000);
                             return;
                         }
-                
                         fetch('{{ route('dashboard.pesan-wali') }}', {
                                 method: 'POST',
                                 headers: {
@@ -288,8 +266,6 @@
                             </div>
                         </template>
                     </div>
-
-                    <!-- Alert Toast -->
                     <div x-show="showToast" x-transition:enter="transition ease-out duration-300"
                         x-transition:enter-start="opacity-0 transform translate-y-2"
                         x-transition:enter-end="opacity-100 transform translate-y-0"
@@ -301,8 +277,6 @@
                     </div>
                 </div>
             </div>
-
-            <!-- GRID: Charts (Aktivitas Login & Distribusi Siswa) -->
             <div class="grid-2" style="margin-bottom:20px">
                 <div class="card">
                     <div class="card-header">
@@ -372,8 +346,6 @@
                     </div>
                 </div>
             </div>
-
-            <!-- 3. Ringkasan Skor Kinerja Guru -->
             <div class="card" style="margin-bottom:20px;" x-data="{
                 searchQuery: '',
                 filterTab: 'semua',
@@ -417,7 +389,6 @@
                 <div class="card-header"
                     style="flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between;">
                     <h3><i class="fas fa-trophy" style="color:var(--orange)"></i> Rapor Indeks Kinerja Guru</h3>
-
                     <div style="display: flex; gap: 8px; align-items: center;">
                         <div class="input-wrap"
                             style="padding: 6px 12px; display: flex; align-items: center; gap: 6px; width: 220px;">
@@ -425,7 +396,6 @@
                             <input type="text" x-model="searchQuery" placeholder="Cari guru..."
                                 style="border:none; outline:none; font-size:12px; font-family:var(--font); width:100%;">
                         </div>
-
                         <div
                             style="display: flex; background: var(--gray-100); border-radius: var(--radius-sm); padding: 2px;">
                             <button @click="filterTab = 'semua'" class="filter-btn"
@@ -444,7 +414,6 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="table-wrap" style="margin-top: 10px;">
                     <table>
                         <thead>
@@ -507,8 +476,6 @@
                         </tbody>
                     </table>
                 </div>
-
-                <!-- Assistance Toast -->
                 <div x-show="showToast" x-transition:enter="transition ease-out duration-300"
                     x-transition:enter-start="opacity-0 transform translate-y-2"
                     x-transition:enter-end="opacity-100 transform translate-y-0"
@@ -519,7 +486,6 @@
                     <i class="fas fa-check-circle"></i> <span x-text="toastMsg"></span>
                 </div>
             </div>
-
             <div class="card">
                 <div class="card-header">
                     <h3><i class="fas fa-history" style="color:var(--orange)"></i> Aktivitas Terbaru</h3><label
@@ -580,7 +546,6 @@
             </div>
         </div>
     </div>
-
     <div x-show="tab === 'siswa'">
         <div>
             <div class="content-header">
@@ -640,7 +605,6 @@
             </div>
         </div>
     </div>
-
     <div x-show="tab === 'guru'">
         <div>
             <div class="content-header">
@@ -700,7 +664,6 @@
             </div>
         </div>
     </div>
-
     <div x-show="tab === 'ortu'">
         <div>
             <div class="content-header">
@@ -760,7 +723,6 @@
             </div>
         </div>
     </div>
-
     <div x-show="tab === 'kelas'" x-data="{ jenisKelas: 'umum' }">
         <div>
             <div class="content-header">
@@ -820,7 +782,6 @@
                     </div>
                 </div>
             </div>
-
             <div class="card" x-show="jenisKelas === 'quran'">
                 <div class="table-wrap">
                     <table>
@@ -857,7 +818,6 @@
             </div>
         </div>
     </div>
-
     <div x-show="tab === 'siswa-form'">
         <div>
             <div class="content-header">
@@ -918,7 +878,6 @@
             </div>
         </div>
     </div>
-
     <div x-show="tab === 'guru-form'">
         <div>
             <div class="content-header">
@@ -977,7 +936,6 @@
             </div>
         </div>
     </div>
-
     <div x-show="tab === 'ortu-form'">
         <div>
             <div class="content-header">
@@ -1034,7 +992,6 @@
             </div>
         </div>
     </div>
-
     <div x-show="tab === 'kelas-form'">
         <div>
             <div class="content-header">
@@ -1077,7 +1034,6 @@
             </div>
         </div>
     </div>
-
     <div x-show="tab === 'siswa-detail'">
         <div>
             <div class="content-header">
@@ -1155,7 +1111,6 @@
             </div>
         </div>
     </div>
-
     <div x-show="tab === 'guru-detail'">
         <div>
             <div class="content-header">
@@ -1237,7 +1192,6 @@
             </div>
         </div>
     </div>
-
     <div x-show="tab === 'ortu-detail'">
         <div>
             <div class="content-header">
@@ -1281,7 +1235,6 @@
             </div>
         </div>
     </div>
-
     <div x-show="tab === 'kelas-detail'">
         <div>
             <div class="content-header">
@@ -1362,7 +1315,6 @@
             </div>
         </div>
     </div>
-
     <div x-show="tab === 'siswa-edit'">
         <div>
             <div class="content-header">
@@ -1424,8 +1376,6 @@
             </div>
         </div>
     </div>
-
-    <!-- KURIKULUM & KKM TAB -->
     <div x-show="tab === 'kurikulum'" x-data="{
         showToast: false,
         toastMsg: '',
@@ -1467,9 +1417,7 @@
                 <div class="avatar teal">KS</div>
             </div>
         </div>
-
         <div class="grid-2">
-            <!-- Card KKM -->
             <div class="card">
                 <div class="card-header">
                     <h3><i class="fas fa-sliders-h" style="color:var(--teal)"></i> Pengaturan Nilai Minimum (KKM)</h3>
@@ -1511,13 +1459,10 @@
                     <i class="fas fa-save"></i> Simpan Nilai KKM
                 </button>
             </div>
-
-            <!-- Card Pasangan Mapel -->
             <div class="card">
                 <div class="card-header">
                     <h3><i class="fas fa-link" style="color:var(--blue)"></i> Pasangan Mata Pelajaran (Bilingual)</h3>
                 </div>
-
                 <div
                     style="background: var(--blue-bg); padding: 12px; border-radius: var(--radius-sm); border: 1px solid var(--border-light); margin-bottom: 16px;">
                     <p style="font-size: 12px; color: var(--gray-600); line-height: 1.4;">
@@ -1525,7 +1470,6 @@
                         terintegrasi.
                     </p>
                 </div>
-
                 <div class="table-wrap" style="margin-bottom: 20px; max-height: 250px; overflow-y: auto;">
                     <table>
                         <thead>
@@ -1554,7 +1498,6 @@
                         </tbody>
                     </table>
                 </div>
-
                 <div style="border-top: 1px solid var(--border-light); padding-top: 16px;">
                     <h4 style="font-size: 12px; font-weight: 700; margin-bottom: 8px;">Tambah Hubungan Baru</h4>
                     <div style="display: flex; gap: 8px;">
@@ -1577,8 +1520,6 @@
                 </div>
             </div>
         </div>
-
-        <!-- Toast Alert -->
         <div x-show="showToast" x-transition:enter="transition ease-out duration-300"
             x-transition:enter-start="opacity-0 transform translate-y-2"
             x-transition:enter-end="opacity-100 transform translate-y-0"
@@ -1589,8 +1530,6 @@
             <i class="fas fa-check-circle"></i> <span x-text="toastMsg"></span>
         </div>
     </div>
-
-    <!-- ASESMEN & UJIAN TAB -->
     <div x-show="tab === 'asesmen'" x-data="{
         showToast: false,
         toastMsg: '',
@@ -1638,14 +1577,11 @@
                 <div class="avatar teal">KS</div>
             </div>
         </div>
-
         <div class="grid-2">
-            <!-- Card Bank Soal & Rakit Ujian -->
             <div class="card">
                 <div class="card-header">
                     <h3><i class="fas fa-cog" style="color:var(--teal)"></i> Perakitan Ujian Otomatis</h3>
                 </div>
-
                 <div style="display:flex; flex-direction:column; gap:12px;">
                     <div class="grid-2">
                         <div class="form-group" style="margin-bottom:0;">
@@ -1669,7 +1605,6 @@
                             </select>
                         </div>
                     </div>
-
                     <div class="form-group" style="margin-bottom:0;">
                         <label style="font-size: 11px; font-weight:700;">Jumlah Soal</label>
                         <div class="input-wrap"
@@ -1678,8 +1613,6 @@
                                 style="border:none; outline:none; width:100%; font-size:13px; font-family:var(--font);">
                         </div>
                     </div>
-
-                    <!-- Slider / Input Komposisi Soal -->
                     <div
                         style="background:var(--gray-50); padding:12px; border-radius:var(--radius-sm); border: 1px solid var(--border-light); display:flex; flex-direction:column; gap:8px;">
                         <span style="font-size:11px; font-weight:700; color:var(--gray-600);">Komposisi Soal (%)</span>
@@ -1706,7 +1639,6 @@
                             </div>
                         </div>
                     </div>
-
                     <button @click="generateExam()" class="btn-primary btn-small"
                         style="padding: 10px; width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; border-radius:8px;"
                         :disabled="isGenerating">
@@ -1715,8 +1647,6 @@
                         <span x-text="isGenerating ? 'Merakit Soal...' : 'Rakit Ujian Otomatis'"></span>
                     </button>
                 </div>
-
-                <!-- Preview Rakitan Soal -->
                 <div x-show="examAssembled"
                     style="margin-top:20px; border-top:1.5px dashed var(--border); padding-top:16px;" x-transition>
                     <h4 style="font-size: 13px; font-weight: 700; margin-bottom: 8px; color: var(--teal);"><i
@@ -1737,15 +1667,12 @@
                     </div>
                 </div>
             </div>
-
-            <!-- Card Cek Nilai Ketuker -->
             <div class="card">
                 <div class="card-header">
                     <h3><i class="fas fa-exclamation-triangle" style="color:var(--orange)"></i> Cek Nilai Tertukar
                         (Audit
                         Nilai)</h3>
                 </div>
-
                 <div
                     style="background: var(--orange-bg); padding: 12px; border-radius: var(--radius-sm); border: 1px solid var(--border-light); margin-bottom: 16px;">
                     <p style="font-size: 12px; color: var(--gray-600); line-height: 1.4;">
@@ -1753,7 +1680,6 @@
                         nilai guru.
                     </p>
                 </div>
-
                 <div class="table-wrap">
                     <table>
                         <thead>
@@ -1811,8 +1737,6 @@
                 </div>
             </div>
         </div>
-
-        <!-- Toast Alert -->
         <div x-show="showToast" x-transition:enter="transition ease-out duration-300"
             x-transition:enter-start="opacity-0 transform translate-y-2"
             x-transition:enter-end="opacity-100 transform translate-y-0"
@@ -1823,35 +1747,28 @@
             <i class="fas fa-check-circle"></i> <span x-text="toastMsg"></span>
         </div>
     </div>
-
     @php
         $guruReportsData = $guruReportsData ?? [];
-
         if (empty($guruReportsData)) {
             $teachersList = \App\Models\Guru::with('mapels')->get();
-
             foreach ($teachersList as $g) {
                 $today = now()->format('Y-m-d');
                 $startOfWeek = now()->startOfWeek()->format('Y-m-d');
                 $endOfWeek = now()->endOfWeek()->format('Y-m-d');
                 $startOfMonth = now()->startOfMonth()->format('Y-m-d');
                 $endOfMonth = now()->endOfMonth()->format('Y-m-d');
-
                 $hasHarian = \App\Models\LaporanMengajar::where('guru_id', $g->id)
                     ->where('tipe', 'harian')
                     ->where('tanggal', $today)
                     ->exists();
-
                 $hasMingguan = \App\Models\LaporanMengajar::where('guru_id', $g->id)
                     ->where('tipe', 'mingguan')
                     ->whereBetween('tanggal', [$startOfWeek, $endOfWeek])
                     ->exists();
-
                 $hasBulanan = \App\Models\LaporanMengajar::where('guru_id', $g->id)
                     ->where('tipe', 'bulanan')
                     ->whereBetween('tanggal', [$startOfMonth, $endOfMonth])
                     ->exists();
-
                 $allReports = \App\Models\LaporanMengajar::where('guru_id', $g->id)
                     ->orderBy('tanggal', 'desc')
                     ->get()
@@ -1884,11 +1801,9 @@
                                 if (!empty($l->isi['refleksi']['kendala_terbesar'])) {
                                     $kList[] = "• [Refleksi] Kendala: {$l->isi['refleksi']['kendala_terbesar']}";
                                 }
-
                                 if (empty($kList)) {
                                     $kList[] = 'KBM Terlaksana Baik (Tidak ada kendala)';
                                 }
-
                                 if (!empty($l->isi['catatan_umum'])) {
                                     $kList[] = 'Catatan: ' . $l->isi['catatan_umum'];
                                 }
@@ -1912,7 +1827,6 @@
                                 }
                                 $isiTeks = implode("\n", $mList);
                             } else {
-                                // bulanan
                                 $bList = [];
                                 if (!empty($l->isi['capaian_belajar_bulanan'])) {
                                     foreach ($l->isi['capaian_belajar_bulanan'] as $c) {
@@ -1929,7 +1843,6 @@
                         } else {
                             $isiTeks = $l->isi;
                         }
-
                         return [
                             'id' => $l->id,
                             'tipe' => ucfirst($l->tipe),
@@ -1937,7 +1850,6 @@
                             'isi' => $isiTeks,
                         ];
                     });
-
                 $classNames =
                     \App\Models\Jadwal::where('guru_id', $g->id)
                         ->with('kelas')
@@ -1946,7 +1858,6 @@
                         ->unique()
                         ->implode(', ') ?:
                     '—';
-
                 $guruReportsData[] = [
                     'id' => $g->id,
                     'nama' => $g->nama,
@@ -1959,7 +1870,6 @@
                 ];
             }
         }
-
         $materiListAdmin = \App\Models\Materi::with('guru', 'mapel', 'kelas')
             ->orderBy('created_at', 'desc')
             ->get()
@@ -1981,7 +1891,6 @@
         window.guruReportsData = @json($guruReportsData ?? []);
         window.materiAjarData = @json($materiAjarData ?? []);
     </script>
-    <!-- AUDIT & KINERJA GURU TAB -->
     <div x-show="tab === 'audit_guru'" x-data="{
         showAuditModal: false,
         selectedMateriId: null,
@@ -2007,8 +1916,7 @@
         calculatePerformance(guruName) {
             let rep = this.guruReports.find(x => x.nama === guruName);
             let mat = this.materiAjar.filter(x => x.guru === guruName);
-    
-            let score = 70; // Base score
+            let score = 70;
             if (rep) {
                 if (rep.harian === 'Lengkap') score += 10;
                 if (rep.mingguan === 'Lengkap') score += 10;
@@ -2030,9 +1938,7 @@
                 <div class="avatar teal">KS</div>
             </div>
         </div>
-
         <div class="grid-2" style="margin-bottom: 24px;">
-            <!-- Column 1: Laporan Mengajar -->
             <div class="card">
                 <div class="card-header">
                     <h3><i class="fas fa-clipboard-list" style="color:var(--teal)"></i> Kelengkapan Laporan Guru</h3>
@@ -2092,8 +1998,6 @@
                     </table>
                 </div>
             </div>
-
-            <!-- Column 2: Approve Materi Ajar -->
             <div class="card">
                 <div class="card-header">
                     <h3><i class="fas fa-check-double" style="color:var(--blue)"></i> Approve Materi Ajar Guru</h3>
@@ -2152,8 +2056,6 @@
                 </div>
             </div>
         </div>
-
-        <!-- Modal Audit Materi (Native Dialog) -->
         <style>
             dialog::backdrop {
                 background: rgba(0, 0, 0, 0.5);
@@ -2164,7 +2066,6 @@
             <h3 style="margin-top:0; font-size:18px">Compliance Audit Modul Ajar</h3>
             <p style="font-size:12px; color:var(--gray-500); margin-bottom:15px;">Berikan skor 1 sampai 5 untuk setiap
                 indikator mutu sesuai Kurikulum AFUSCHO.</p>
-
             <form :action="'/admin/materi/' + selectedMateriId + '/approve'" method="POST">
                 @csrf
                 <div style="margin-bottom: 10px;">
@@ -2188,9 +2089,6 @@
                 </div>
             </form>
         </dialog>
-
-
-        <!-- Detail Laporan Mengajar Guru (Dinamis via Alpine) -->
         <div x-show="selectedGuru" class="card" style="margin-bottom: 24px; border-left: 4px solid var(--blue)"
             x-transition>
             <div class="card-header" style="display:flex; justify-content:space-between; align-items:center">
@@ -2232,8 +2130,6 @@
                 </table>
             </div>
         </div>
-
-        <!-- Full width Rapor Kinerja Guru -->
         <div class="card">
             <div class="card-header">
                 <h3><i class="fas fa-trophy" style="color:var(--orange)"></i> Rapor Skor Kinerja Guru</h3>
@@ -2284,8 +2180,6 @@
                 </table>
             </div>
         </div>
-
-        <!-- Toast Alert -->
         <div x-show="showToast" x-transition:enter="transition ease-out duration-300"
             x-transition:enter-start="opacity-0 transform translate-y-2"
             x-transition:enter-end="opacity-100 transform translate-y-0"
@@ -2295,8 +2189,6 @@
             style="position: fixed; bottom: 24px; right: 24px; background: var(--teal); color: white; padding: 12px 24px; border-radius: var(--radius-sm); box-shadow: var(--shadow-lg); z-index: 9999; display: flex; align-items: center; gap: 8px;">
             <i class="fas fa-check-circle"></i> <span x-text="toastMsg"></span>
         </div>
-
-        <!-- Form Persetujuan Tersembunyi -->
         <form id="approve-materi-form" method="POST" style="display:none">
             @csrf
         </form>
@@ -2304,8 +2196,6 @@
             @csrf
         </form>
     </div>
-
-    <!-- KARYA TULIS & TAHFIDZ TAB -->
     <div x-show="tab === 'karya_tahfidz'" x-data="{
         showToast: false,
         toastMsg: '',
@@ -2350,9 +2240,7 @@
                 <div class="avatar teal">KS</div>
             </div>
         </div>
-
         <div class="grid-2">
-            <!-- Column 1: Sidang Karya Tulis -->
             <div class="card">
                 <div class="card-header">
                     <h3><i class="fas fa-file-signature" style="color:var(--teal)"></i> Jadwal Sidang Karya Tulis (Kelas
@@ -2363,8 +2251,6 @@
                             x-text="showForm ? 'Batal' : 'Tambah'"></span>
                     </button>
                 </div>
-
-                <!-- Form Tambah Jadwal -->
                 <div x-show="showForm"
                     style="background:var(--gray-50); border: 1px solid var(--border-light); border-radius: var(--radius-sm); padding:16px; margin-bottom: 16px;"
                     x-transition>
@@ -2430,7 +2316,6 @@
                         </button>
                     </div>
                 </div>
-
                 <div class="table-wrap">
                     <table>
                         <thead>
@@ -2469,8 +2354,6 @@
                     </table>
                 </div>
             </div>
-
-            <!-- Column 2: Progress Tahfidz -->
             <div class="card">
                 <div class="card-header">
                     <h3><i class="fas fa-quran" style="color:var(--blue)"></i> Progress Tahfidz Siswa</h3>
@@ -2480,7 +2363,6 @@
                             style="border:none; outline:none; width: 100%; font-size: 11px; font-family:var(--font);">
                     </div>
                 </div>
-
                 <form method="POST" action="{{ route('kepala.tahfidz-progress.store') }}"
                     style="background:var(--gray-50); border:1px solid var(--border-light); border-radius:var(--radius-sm); padding:14px; margin-bottom:16px;">
                     @csrf
@@ -2532,7 +2414,6 @@
                             </div>
                         </div>
                     </div>
-
                     <div class="grid-2" style="gap:10px; margin-bottom:10px;">
                         <div class="form-group" style="margin-bottom:0;">
                             <label style="font-size:11px; font-weight:700;">Surah Terakhir</label>
@@ -2549,7 +2430,6 @@
                             </div>
                         </div>
                     </div>
-
                     <div class="grid-2" style="gap:10px; margin-bottom:10px;">
                         <div class="form-group" style="margin-bottom:0;">
                             <label style="font-size:11px; font-weight:700;">Juz Dihafal</label>
@@ -2563,7 +2443,6 @@
                                 style="width:100%; border:1px solid var(--border-light); border-radius:4px; padding:7px; font-size:12px; font-family:var(--font);">
                         </div>
                     </div>
-
                     <div class="grid-2" style="gap:10px; margin-bottom:10px;">
                         <div class="form-group" style="margin-bottom:0;">
                             <label style="font-size:11px; font-weight:700;">Target</label>
@@ -2581,18 +2460,15 @@
                             </select>
                         </div>
                     </div>
-
                     <div class="form-group" style="margin-bottom:10px;">
                         <label style="font-size:11px; font-weight:700;">Catatan Kepala Sekolah</label>
                         <textarea name="catatan" rows="2" placeholder="Catatan singkat..."
                             style="width:100%; border:1px solid var(--border-light); border-radius:4px; padding:7px; font-size:12px; font-family:var(--font); resize:vertical;"></textarea>
                     </div>
-
                     <button type="submit" class="btn-small teal" style="border:none; padding:8px 14px; cursor:pointer;">
                         <i class="fas fa-save"></i> Simpan Progress
                     </button>
                 </form>
-
                 <div class="table-wrap">
                     <table>
                         <thead>
@@ -2654,8 +2530,6 @@
                 </div>
             </div>
         </div>
-
-        <!-- Toast Alert -->
         <div x-show="showToast" x-transition:enter="transition ease-out duration-300"
             x-transition:enter-start="opacity-0 transform translate-y-2"
             x-transition:enter-end="opacity-100 transform translate-y-0"
@@ -2666,11 +2540,9 @@
             <i class="fas fa-check-circle"></i> <span x-text="toastMsg"></span>
         </div>
     </div>
-
     <div x-show="tab === 'cbt'" x-data="{ selectedExam: null }">
         @include('dashboard.admin-sections.cbt-approval')
     </div>
-
     <div x-show="tab === 'pengaturan'">
         <div>
             <div class="content-header">
@@ -2704,9 +2576,7 @@
             </div>
         </div>
     </div>
-
     <div x-show="tab === 'rapor_supervisi'">
         @include('dashboard.kepala-sekolah-sections.rapor_supervisi')
     </div>
-
 @endsection

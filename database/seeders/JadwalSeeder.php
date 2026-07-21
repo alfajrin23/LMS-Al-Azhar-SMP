@@ -1,19 +1,14 @@
 <?php
-
 namespace Database\Seeders;
-
 use Illuminate\Database\Seeder;
 use App\Models\Jadwal;
 use App\Models\Kelas;
 use App\Models\Mapel;
 use App\Models\Guru;
-
 class JadwalSeeder extends Seeder
 {
     public function run(): void
     {
-        // === FORMAT PENGISIAN JADWAL PER KELAS ===
-        // Silakan isi array di bawah ini sesuai jadwal asli sekolah.
         $jadwalPerKelasSmp = [
             '7' => [
                 'Senin' => [
@@ -426,18 +421,14 @@ class JadwalSeeder extends Seeder
                 ],
             ],
         ];
-
-        // === LOGIKA SISTEM (JANGAN DIUBAH) ===
         $semuaJadwal = $jadwalPerKelasSmp ?? [];
         foreach ($semuaJadwal as $kodeKelas => $hariMap) {
             $kelas = Kelas::query()->where('nama_kelas', $kodeKelas)->orWhere('kode_kelas', $kodeKelas)->first();
-
             if ($kelas) {
                 foreach ($hariMap as $hari => $items) {
                     foreach ($items as $item) {
                         $mapel = Mapel::query()->where('kode', $item['mapel'])->first();
                         $guru = Guru::query()->where('nama', $item['guru'])->first();
-
                         if ($mapel && $guru) {
                             Jadwal::updateOrCreate(
                                 [
@@ -452,7 +443,6 @@ class JadwalSeeder extends Seeder
                                 ]
                             );
                         } else {
-                            // Mencetak peringatan ke terminal jika mapel atau guru tidak cocok/typo
                             $missing = [];
                             if (!$mapel) $missing[] = "Mapel '{$item['mapel']}'";
                             if (!$guru) $missing[] = "Guru '{$item['guru']}'";
@@ -467,4 +457,3 @@ class JadwalSeeder extends Seeder
         }
     }
 }
-

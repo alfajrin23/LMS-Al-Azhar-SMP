@@ -9,11 +9,9 @@
         <div class="avatar orange">{{ strtoupper(substr($ortu?->nama ?? $user->name, 0, 2)) }}</div>
     </div>
 </div>
-
 @php
     $hariIndo = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
 @endphp
-
 @foreach($anak as $a)
 @php
     $semuaJadwal = \App\Models\Jadwal::where('kelas_id', $a->kelas_id)

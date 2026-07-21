@@ -1,7 +1,5 @@
 @extends('layouts.app')
-
 @section('title', 'Dashboard Siswa SMP - LMS Al Azhar Jaya Indonesia')
-
 @section('sidebar')
     <li :class="{ 'active': tab === 'dashboard' }" @click="tab = 'dashboard'">
         <label><i class="fas fa-th-large"></i> Dashboard</label>
@@ -48,7 +46,6 @@
         </li>
     @endif
 @endsection
-
 @section('content')
     <div x-show="tab === 'dashboard'">
         @include('dashboard.smp-sections.dashboard')

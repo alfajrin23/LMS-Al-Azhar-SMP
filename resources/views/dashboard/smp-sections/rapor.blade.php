@@ -55,25 +55,21 @@
         letter-spacing: 0.3px;
         display: inline-block;
     }
-
     .status-bagus-banget {
         background-color: #e6fffa;
         color: #047857;
         border: 1px solid #b2f5ea;
     }
-
     .status-bagus {
         background-color: #ebf8ff;
         color: #0284c7;
         border: 1px solid #bee3f8;
     }
-
     .status-perlu-belajar {
         background-color: #fffaf0;
         color: #dd6b20;
         border: 1px solid #feebc8;
     }
-
     .status-perlu-diulang {
         background-color: #fff5f5;
         color: #e53e3e;
@@ -95,8 +91,6 @@
             <div class="avatar blue">{{ strtoupper(substr($siswa->nama, 0, 1)) }}</div>
         </div>
     </div>
-
-    <!-- Segmented Tab Switcher (Modern Design) -->
     <div
         style="display: flex; gap: 8px; margin-bottom: 20px; border-bottom: 2px solid var(--border-light); padding-bottom: 8px;">
         <button @click="activeRaporTab = 'sekolah'"
@@ -110,26 +104,21 @@
             <i class="fas fa-star" style="margin-right: 6px;"></i> Rapor Program Unggulan
         </button>
     </div>
-
-    <!-- Styling for the Tabs -->
     <style>
         .btn-tab-active {
             background-color: var(--teal);
             color: white;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
-
         .btn-tab-inactive {
             background-color: var(--bg-light, #f3f4f6);
             color: var(--gray-500);
         }
-
         .btn-tab-inactive:hover {
             background-color: var(--border-light);
             color: var(--gray-800);
         }
     </style>
-
     <div class="card" style="margin-bottom:20px">
         <div class="card-header">
             <h3><i class="fas fa-user-graduate" style="color:var(--teal)"></i> Identitas Siswa</h3>
@@ -149,7 +138,6 @@
             </div>
         </div>
     </div>
-
     <div style="margin-bottom: 20px;">
         <select x-model="subRapor" class="form-select" style="width: 100%; max-width: 300px; padding: 10px 14px; border-radius: 8px; border: 1px solid var(--border); font-weight: 600; color: var(--gray-700); background-color: var(--white); cursor: pointer;">
             <option value="quran">Rapot Quran</option>
@@ -157,18 +145,13 @@
             <option value="english">Rapot English</option>
         </select>
     </div>
-
-    <!-- Rapor Sekolah (Biasa) -->
     <div x-show="activeRaporTab === 'sekolah'">
-        <!-- Rapot Quran Sekolah -->
         <div x-show="subRapor === 'quran'" x-cloak>
             <div class="card" style="margin-bottom:20px; padding: 20px; text-align: center; color: var(--gray-500);">
                 <i class="fas fa-quran" style="font-size: 30px; margin-bottom: 12px; color: var(--teal);"></i><br>
                 Konten Rapot Quran Sekolah (Belum Tersedia)
             </div>
         </div>
-
-        <!-- Rapot Akademik Sekolah -->
         <div x-show="subRapor === 'akademik'">
             <div class="card" style="margin-bottom:20px">
                 <div class="card-header">
@@ -224,8 +207,6 @@
             </div>
             </div>
         </div>
-
-        <!-- Rapot English Sekolah -->
         <div x-show="subRapor === 'english'" x-cloak>
             <div class="card" style="margin-bottom:20px; padding: 20px; text-align: center; color: var(--gray-500);">
                 <i class="fas fa-language" style="font-size: 30px; margin-bottom: 12px; color: var(--purple);"></i><br>
@@ -233,18 +214,13 @@
             </div>
         </div>
     </div>
-
-    <!-- Rapor Program Unggulan -->
     <div x-show="activeRaporTab === 'unggulan'" x-cloak>
-        <!-- Rapot Quran Unggulan -->
         <div x-show="subRapor === 'quran'" x-cloak>
             <div class="card" style="margin-bottom:20px; padding: 20px; text-align: center; color: var(--gray-500);">
                 <i class="fas fa-quran" style="font-size: 30px; margin-bottom: 12px; color: var(--teal);"></i><br>
                 Konten Rapot Quran Unggulan (Belum Tersedia)
             </div>
         </div>
-
-        <!-- Rapot Akademik Unggulan -->
         <div x-show="subRapor === 'akademik'">
             <div class="card" style="margin-bottom:20px">
                 <div class="card-header">
@@ -296,8 +272,6 @@
             </div>
             </div>
         </div>
-
-        <!-- Rapot English Unggulan -->
         <div x-show="subRapor === 'english'" x-cloak>
             <div class="card" style="margin-bottom:20px; padding: 20px; text-align: center; color: var(--gray-500);">
                 <i class="fas fa-language" style="font-size: 30px; margin-bottom: 12px; color: var(--purple);"></i><br>
@@ -305,7 +279,6 @@
             </div>
         </div>
     </div>
-
     <div style="display:flex;gap:16px;flex-wrap:wrap">
         <div class="card" style="flex:1;min-width:200px">
             <div class="card-header">

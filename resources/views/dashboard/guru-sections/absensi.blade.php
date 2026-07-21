@@ -15,7 +15,6 @@
         <div class="avatar blue">{{ strtoupper(substr($guru->nama, 0, 1)) }}</div>
     </div>
 </div>
-
 <div class="grid-2" style="margin-bottom:20px">
     <div class="card">
         <div class="card-header"><h3><i class="fas fa-plus" style="color:var(--teal)"></i> Input Kehadiran</h3></div>
@@ -69,7 +68,6 @@
         </div>
     </div>
 </div>
-
 <div class="card">
     <div class="card-header"><h3><i class="fas fa-list" style="color:var(--blue)"></i> Riwayat Kehadiran (50 terakhir)</h3></div>
     <div class="table-wrap">
@@ -91,7 +89,6 @@
         </table>
     </div>
 </div>
-
 @if(session('success'))
     <div style="position:fixed;bottom:20px;right:20px;background:var(--green);color:#fff;padding:14px 20px;border-radius:var(--radius-sm);font-weight:600;box-shadow:0 4px 12px rgba(0,0,0,0.15);z-index:999">
         <i class="fas fa-check-circle"></i> {{ session('success') }}

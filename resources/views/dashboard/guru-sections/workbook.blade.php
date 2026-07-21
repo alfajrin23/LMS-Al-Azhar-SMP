@@ -15,7 +15,6 @@
         <div class="avatar blue">{{ strtoupper(substr($guru->nama, 0, 1)) }}</div>
     </div>
 </div>
-
 <div class="grid-2" style="margin-bottom:20px">
     <div class="card">
         <div class="card-header">
@@ -99,7 +98,6 @@
         </div>
     </div>
 </div>
-
 @foreach ($workbooks as $wb)
     <div class="card" style="margin-bottom:14px">
         <div class="card-header">
@@ -119,7 +117,6 @@
             @endif
             <span style="margin-left:12px"><i class="fas fa-question-circle"></i> {{ $wb->soals->count() }} soal</span>
         </div>
-
         <div x-show="selectedWorkbook == '{{ $wb->id }}'" x-transition
             style="margin-top:12px;border-top:1px solid var(--border-light);padding-top:16px">
             <h4 style="font-size:14px;font-weight:600;margin-bottom:12px"><i class="fas fa-plus-circle"
@@ -186,7 +183,6 @@
                     style="cursor:pointer;border:none;padding:8px 18px;font-size:13px"><i class="fas fa-save"></i>
                     Simpan Soal</button>
             </form>
-
             @if ($wb->soals->count() > 0)
                 <div style="margin-top:16px">
                     <h4 style="font-size:13px;font-weight:600;margin-bottom:8px">Daftar Soal
@@ -205,7 +201,6 @@
         </div>
     </div>
 @endforeach
-
 @if (session('success'))
     <div
         style="position:fixed;bottom:20px;right:20px;background:var(--green);color:#fff;padding:14px 20px;border-radius:var(--radius-sm);font-weight:600;box-shadow:0 4px 12px rgba(0,0,0,0.15);z-index:999">

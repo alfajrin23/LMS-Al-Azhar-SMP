@@ -20,8 +20,6 @@
         <div class="avatar blue">{{ strtoupper(substr($siswa->nama, 0, 1)) }}</div>
     </div>
     </div>
-
-    <!-- Dropdown Filter Tipe -->
     <div style="margin-bottom: 20px;">
         <select x-model="filterTipeWB" class="form-select" style="width: 100%; max-width: 300px; padding: 10px 14px; border-radius: 8px; border: 1px solid var(--border); font-weight: 600; color: var(--gray-700); background-color: var(--white); cursor: pointer;">
             <option value="semua">Semua Tipe</option>
@@ -30,7 +28,6 @@
             <option value="penugasan_di_rumah">Penugasan di Rumah</option>
         </select>
     </div>
-
     @forelse($workbooks as $wb)
     <div class="card" style="margin-bottom:14px" x-show="filterTipeWB === 'semua' || filterTipeWB === '{{ $wb->tipe }}'" x-transition>
     <div class="card-header">

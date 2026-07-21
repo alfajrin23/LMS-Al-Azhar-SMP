@@ -18,7 +18,6 @@
         <div class="avatar orange">{{ strtoupper(substr($ortu?->nama ?? $user->name, 0, 2)) }}</div>
     </div>
 </div>
-
 @foreach($anak as $a)
 @php
     $nilaiAnak = \App\Models\Nilai::where('siswa_id', $a->id)->with('mapel')->get();
@@ -42,14 +41,12 @@
             </div>
         </div>
     </div>
-
     <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:20px">
         <div class="att-item hadir" style="flex:1;min-width:100px"><div class="att-number">{{ $kehadiranAnak->where('status', 'hadir')->count() }}</div><div class="att-label">&#x2705; Hadir</div></div>
         <div class="att-item izin" style="flex:1;min-width:100px"><div class="att-number">{{ $kehadiranAnak->where('status', 'izin')->count() }}</div><div class="att-label">&#x26A0;&#xFE0F; Izin</div></div>
         <div class="att-item sakit" style="flex:1;min-width:100px"><div class="att-number">{{ $kehadiranAnak->where('status', 'sakit')->count() }}</div><div class="att-label">&#x274C; Sakit</div></div>
         <div class="att-item alpha" style="flex:1;min-width:100px"><div class="att-number">{{ $kehadiranAnak->where('status', 'alpha')->count() }}</div><div class="att-label">&#x274C; Alpha</div></div>
     </div>
-
     <div class="grid-2" style="margin-bottom:20px">
         <div class="card">
             <div class="card-header"><h3><i class="fas fa-file-invoice" style="color:var(--blue)"></i> Rapor Singkat</h3>
@@ -89,7 +86,6 @@
             @endforelse
         </div>
     </div>
-
     <div class="grid-2">
         <div class="card">
             <div class="card-header"><h3><i class="fas fa-quran" style="color:var(--green)"></i> Tahfidz</h3>

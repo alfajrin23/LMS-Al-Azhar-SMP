@@ -1,5 +1,3 @@
--- LMS Al Azhar SMP database dump
--- Source: database/database.sqlite
 PRAGMA foreign_keys=OFF;
 BEGIN TRANSACTION;
 

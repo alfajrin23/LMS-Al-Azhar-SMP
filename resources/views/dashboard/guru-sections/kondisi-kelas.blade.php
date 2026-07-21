@@ -1,5 +1,4 @@
 <style>
-    /* Stats & Indicator Styles */
     .indicator-card {
         background: var(--gray-50);
         padding: 16px;
@@ -7,7 +6,6 @@
         border: 1px solid var(--border-light);
         margin-bottom: 16px;
     }
-
     .indicator-title {
         font-size: 13px;
         font-weight: 700;
@@ -16,25 +14,21 @@
         letter-spacing: 0.5px;
         margin-bottom: 6px;
     }
-
     .indicator-value-row {
         display: flex;
         justify-content: space-between;
         align-items: baseline;
         margin-bottom: 10px;
     }
-
     .indicator-score {
         font-size: 28px;
         font-weight: 800;
         color: var(--teal);
     }
-
     .indicator-scale {
         font-size: 12px;
         color: var(--gray-400);
     }
-
     .indicator-bar-track {
         height: 8px;
         background: var(--gray-200);
@@ -42,19 +36,16 @@
         overflow: hidden;
         margin-bottom: 8px;
     }
-
     .indicator-bar-fill {
         height: 100%;
         border-radius: 4px;
         transition: width 0.5s ease-in-out;
     }
-
     .indicator-desc {
         font-size: 12px;
         font-weight: 600;
     }
 </style>
-
 <div class="content-header">
     <div>
         <h1>Kondisi Kelas (Hasil Survei Siswa)</h1>
@@ -65,14 +56,12 @@
         <div class="avatar blue">{{ strtoupper(substr($guru->nama, 0, 1)) }}</div>
     </div>
 </div>
-
 @if (session('success'))
     <div
         style="background: var(--green); color: white; padding: 14px 20px; border-radius: var(--radius-sm); font-weight: 600; margin-bottom: 20px; box-shadow: var(--shadow)">
         <i class="fas fa-check-circle"></i> {{ session('success') }}
     </div>
 @endif
-
 <div
     style="margin-bottom: 20px; background: var(--teal-bg); border: 1px solid var(--border-light); padding: 14px 18px; border-radius: var(--radius); display: flex; gap: 12px; align-items: center">
     <div style="font-size: 24px; color: var(--teal)"><i class="fas fa-info-circle"></i></div>
@@ -81,8 +70,6 @@
         siswa melalui dashboard mereka. Penilaian bersifat rahasia/anonim untuk mendorong kejujuran siswa.
     </div>
 </div>
-
-<!-- Grid Atas: Status Saat Ini & Grafik Tren -->
 <div id="kondisiKelasPanel" class="grid-2" style="margin-bottom:20px; display: grid; grid-template-columns: 1fr 1.5fr; gap: 20px;"
     x-data="{
         selectedKelasId: '',
@@ -102,13 +89,11 @@
             return 'var(--red)';
         }
     }">
-    <!-- Kiri: Status Kelas Saat Ini -->
     <div class="card"
         style="background: var(--white); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow); display: flex; flex-direction: column;">
         <div class="card-header" style="margin-bottom: 16px">
             <h3><i class="fas fa-heartbeat" style="color:var(--red)"></i> Status Kelas Terkini</h3>
         </div>
-
         <div
             style="margin-bottom: 20px; background: var(--gray-50); border: 1px solid var(--border-light); padding: 12px 14px; border-radius: var(--radius-sm); display: flex; flex-direction: column; align-items: center">
             <span
@@ -117,8 +102,6 @@
             <span style="font-size:15px; font-weight:800; margin-top:4px; text-align:center"
                 :style="'color: ' + statusColor" x-text="statusKelas"></span>
         </div>
-
-        <!-- Metrik 1: Hubungan -->
         <div class="indicator-card">
             <div class="indicator-title">Hubungan Guru-Siswa</div>
             <div class="indicator-value-row">
@@ -135,8 +118,6 @@
                 x-text="latestData.hubungan >= 4 ? 'Sangat Komunikatif' : (latestData.hubungan >= 3 ? 'Cukup Kondusif' : (latestData.hubungan > 0 ? 'Renggang / Kurang Terbuka' : 'Tidak Ada Data'))">
             </div>
         </div>
-
-        <!-- Metrik 2: Kenyamanan -->
         <div class="indicator-card">
             <div class="indicator-title">Kenyamanan Siswa</div>
             <div class="indicator-value-row">
@@ -154,8 +135,6 @@
                 x-text="latestData.nyaman >= 4 ? 'Aman & Nyaman' : (latestData.nyaman >= 3 ? 'Biasa / Cukup Nyaman' : (latestData.nyaman > 0 ? 'Ada Siswa Kurang Nyaman' : 'Tidak Ada Data'))">
             </div>
         </div>
-
-        <!-- Metrik 3: Bantuan -->
         <div class="indicator-card">
             <div class="indicator-title">Kemudahan Mencari Bantuan</div>
             <div class="indicator-value-row">
@@ -174,8 +153,6 @@
             </div>
         </div>
     </div>
-
-    <!-- Kanan: Tren & Grafik Kondisi Kelas -->
     <div class="card"
         style="background: var(--white); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow); display: flex; flex-direction: column;">
         <div class="card-header"
@@ -203,8 +180,6 @@
         </div>
     </div>
 </div>
-
-<!-- Bagian Bawah: Riwayat Pengisian -->
 <div class="card"
     style="background: var(--white); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow)">
     <div class="card-header" style="margin-bottom: 15px">
@@ -275,7 +250,6 @@
         </table>
     </div>
 </div>
-
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const historyData = @json($kondisiKelasHistory).map(item => ({
@@ -289,10 +263,7 @@
         const noDataEl = document.getElementById('noChartData');
         const canvas = document.getElementById('kondisiKelasChart');
         let chartInstance = null;
-
-        // Get this component's Alpine scope to update status cards.
         const gridEl = document.getElementById('kondisiKelasPanel');
-
         function getAlpineScope() {
             if (!gridEl) return null;
             if (window.Alpine && typeof window.Alpine.$data === 'function') {
@@ -300,15 +271,11 @@
             }
             return gridEl._x_dataStack ? gridEl._x_dataStack[0] : null;
         }
-
         function updateAlpineData(kelasId) {
             const alpineScope = getAlpineScope();
             if (!alpineScope) return;
-
-            // Cari data teranyar untuk kelas ini
             const classHistory = historyData.filter(item => item.kelas_id === String(kelasId))
-                .sort((a, b) => new Date(b.tanggal) - new Date(a.tanggal)); // Tanggal terbaru dulu
-
+                .sort((a, b) => new Date(b.tanggal) - new Date(a.tanggal));
             if (classHistory.length > 0) {
                 alpineScope.latestData = {
                     hubungan: parseFloat(classHistory[0].avg_hubungan),
@@ -323,17 +290,11 @@
                 };
             }
         }
-
         function renderChart(kelasId) {
-            // Update data panel kiri
             updateAlpineData(kelasId);
-
             if (!canvas || typeof Chart === 'undefined') return;
-
-            // Filter data berdasarkan kelas_id
             const filtered = historyData.filter(item => item.kelas_id === String(kelasId))
-                .sort((a, b) => new Date(a.tanggal) - new Date(b.tanggal)); // Urutkan tertua ke terbaru
-
+                .sort((a, b) => new Date(a.tanggal) - new Date(b.tanggal));
             if (filtered.length === 0) {
                 noDataEl.style.display = 'block';
                 canvas.style.display = 'none';
@@ -343,11 +304,8 @@
                 }
                 return;
             }
-
             noDataEl.style.display = 'none';
             canvas.style.display = 'block';
-
-            // Persiapkan data grafik
             const labels = filtered.map(item => {
                 const date = new Date(item.tanggal);
                 return date.toLocaleDateString('id-ID', {
@@ -358,11 +316,9 @@
             const dataHubungan = filtered.map(item => item.avg_hubungan);
             const dataNyaman = filtered.map(item => item.avg_nyaman);
             const dataBantuan = filtered.map(item => item.avg_bantuan);
-
             if (chartInstance) {
                 chartInstance.destroy();
             }
-
             chartInstance = new Chart(canvas.getContext('2d'), {
                 type: 'line',
                 data: {
@@ -370,7 +326,7 @@
                     datasets: [{
                             label: 'Hubungan Guru-Siswa',
                             data: dataHubungan,
-                            borderColor: '#4CAF7D', // var(--green)
+                            borderColor: '#4CAF7D',
                             backgroundColor: 'rgba(76, 175, 125, 0.1)',
                             borderWidth: 3,
                             tension: 0.3,
@@ -379,7 +335,7 @@
                         {
                             label: 'Kenyamanan Siswa',
                             data: dataNyaman,
-                            borderColor: '#7C3AED', // var(--purple)
+                            borderColor: '#7C3AED',
                             backgroundColor: 'rgba(124, 58, 237, 0.1)',
                             borderWidth: 3,
                             tension: 0.3,
@@ -388,7 +344,7 @@
                         {
                             label: 'Kemudahan Bantuan',
                             data: dataBantuan,
-                            borderColor: '#F59E0B', // var(--orange)
+                            borderColor: '#F59E0B',
                             backgroundColor: 'rgba(245, 158, 11, 0.1)',
                             borderWidth: 3,
                             tension: 0.3,
@@ -441,24 +397,18 @@
                 }
             });
         }
-
         if (kelasSelect) {
-            // Sinkronisasi Alpine scope dengan inisiasi dropdown
             const alpineScope = getAlpineScope();
             if (alpineScope) {
                 alpineScope.selectedKelasId = kelasSelect.value;
             }
-
             kelasSelect.addEventListener('change', function() {
                 renderChart(this.value);
             });
-
-            // Render awal
             if (kelasSelect.value) {
                 renderChart(kelasSelect.value);
             }
         }
-
         const sidebarMenu = document.querySelector('.sidebar-menu');
         if (sidebarMenu) {
             sidebarMenu.addEventListener('click', function() {

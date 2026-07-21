@@ -1,7 +1,5 @@
 @extends('layouts.app')
-
 @section('title', 'Dashboard Guru - LMS Al Azhar Jaya Indonesia')
-
 @section('sidebar')
     <li :class="{'active': tab === 'dashboard'}" @click="tab = 'dashboard'">
         <label><i class="fas fa-th-large"></i> Dashboard</label>
@@ -58,7 +56,6 @@
         <label><i class="fas fa-clipboard-list"></i> Laporan Mengajar</label>
     </li>
 @endsection
-
 @section('content')
     <div x-show="tab === 'dashboard'">
         @include('dashboard.guru-sections.dashboard')

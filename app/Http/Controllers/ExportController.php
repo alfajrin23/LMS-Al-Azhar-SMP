@@ -1,13 +1,10 @@
 <?php
-
 namespace App\Http\Controllers;
-
 use App\Models\Guru;
 use App\Models\Nilai;
 use App\Models\Siswa;
 use App\Models\User;
 use Illuminate\Http\Request;
-
 class ExportController extends Controller
 {
     public function nilaiCsv(Request $request)
@@ -15,24 +12,20 @@ class ExportController extends Controller
         if (!str_starts_with($request->user()->role, 'guru')) {
             return redirect()->back()->with('error', 'Akses ditolak');
         }
-
         $guru = $this->currentGuru($request);
         $siswaIds = Siswa::whereIn('kelas_id', function ($q) use ($guru) {
             $q->select('kelas_id')->from('jadwal')->where('guru_id', $guru->id);
         })->pluck('id');
         $mapelIds = $guru->mapels()->pluck('mapel.id');
-
         $nilai = Nilai::whereIn('siswa_id', $siswaIds)
             ->whereIn('mapel_id', $mapelIds)
             ->with('siswa', 'siswa.kelas', 'mapel')
             ->get();
-
         $filename = 'nilai_' . ($guru->mapels()->first()?->kode ?? 'guru') . '_' . now()->format('Ymd') . '.csv';
         $headers = [
             'Content-Type' => 'text/csv; charset=UTF-8',
             'Content-Disposition' => "attachment; filename=\"$filename\"",
         ];
-
         $callback = function () use ($nilai) {
             $handle = fopen('php://output', 'w');
             fprintf($handle, chr(0xEF) . chr(0xBB) . chr(0xBF));
@@ -49,14 +42,11 @@ class ExportController extends Controller
             }
             fclose($handle);
         };
-
         return response()->stream($callback, 200, $headers);
     }
-
     public function kepalaSiswa(Request $request)
     {
         $this->abortUnlessKepalaSekolah($request);
-
         $rows = Siswa::with('user', 'kelas', 'kelasQuran', 'orangTua.user')
             ->orderBy('nama')
             ->get()
@@ -73,14 +63,11 @@ class ExportController extends Controller
                 'Orang Tua Terhubung' => $siswa->orangTua->pluck('nama')->implode(', ') ?: '-',
                 'Status' => $siswa->status ?? 'aktif',
             ]);
-
         return $this->excelTable('daftar_siswa_' . now()->format('Ymd') . '.xls', 'Daftar Siswa', $rows);
     }
-
     public function kepalaGuru(Request $request)
     {
         $this->abortUnlessKepalaSekolah($request);
-
         $rows = Guru::with('user', 'mapels', 'jadwal.kelas')
             ->orderBy('nama')
             ->get()
@@ -94,21 +81,17 @@ class ExportController extends Controller
                 'Alamat' => $guru->alamat ?? '-',
                 'Status' => $guru->status ?? 'aktif',
             ]);
-
         return $this->excelTable('daftar_guru_' . now()->format('Ymd') . '.xls', 'Daftar Guru', $rows);
     }
-
     public function kepalaOrangTua(Request $request)
     {
         $this->abortUnlessKepalaSekolah($request);
-
         $rows = User::with('orangTua.siswa.kelas')
             ->where('role', 'orang_tua')
             ->orderBy('name')
             ->get()
             ->map(function ($user) {
                 $anak = $user->orangTua?->siswa ?? collect();
-
                 return [
                     'Nama Akun' => $user->name ?? '-',
                     'Nama Orang Tua' => $user->orangTua->nama ?? '-',
@@ -120,28 +103,23 @@ class ExportController extends Controller
                     'Status' => 'aktif',
                 ];
             });
-
         return $this->excelTable('daftar_orang_tua_' . now()->format('Ymd') . '.xls', 'Daftar Orang Tua', $rows);
     }
-
     private function abortUnlessKepalaSekolah(Request $request): void
     {
         abort_unless($request->user()?->role === 'kepala_sekolah', 403);
     }
-
     private function excelTable(string $filename, string $title, $rows)
     {
         $headers = [
             'Content-Type' => 'application/vnd.ms-excel; charset=UTF-8',
             'Content-Disposition' => "attachment; filename=\"$filename\"",
         ];
-
         return response()->stream(function () use ($title, $rows) {
             echo "\xEF\xBB\xBF";
             echo '<html><head><meta charset="UTF-8"></head><body>';
             echo '<table border="1">';
             echo '<tr><th colspan="' . max(1, count($rows->first() ?? [])) . '">' . e($title) . '</th></tr>';
-
             if ($rows->isEmpty()) {
                 echo '<tr><td>Tidak ada data</td></tr>';
             } else {
@@ -150,7 +128,6 @@ class ExportController extends Controller
                     echo '<th>' . e($heading) . '</th>';
                 }
                 echo '</tr>';
-
                 foreach ($rows as $row) {
                     echo '<tr>';
                     foreach ($row as $value) {
@@ -159,7 +136,6 @@ class ExportController extends Controller
                     echo '</tr>';
                 }
             }
-
             echo '</table></body></html>';
         }, 200, $headers);
     }

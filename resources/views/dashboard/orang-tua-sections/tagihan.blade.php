@@ -9,7 +9,6 @@
         <div class="avatar orange">{{ strtoupper(substr($ortu?->nama ?? $user->name, 0, 2)) }}</div>
     </div>
 </div>
-
 @foreach($anak as $a)
 @php
     $tagihanAnak = \App\Models\Spp::where('siswa_id', $a->id)->with('pembayarans')->orderBy('tahun', 'desc')->orderBy('bulan', 'desc')->get();
@@ -57,7 +56,6 @@
             </form>
         </div>
     </div>
-
     <div class="card">
         <div class="card-header"><h3><i class="fas fa-list" style="color:var(--blue)"></i> Riwayat Tagihan SPP</h3></div>
         <div class="table-wrap">

@@ -2,11 +2,11 @@
     $mapelList = \App\Models\Mapel::akademik()->get();
     $semuaSiswa = \App\Models\Siswa::with('kelas')->get();
 @endphp
-<div x-data="{ 
-    selectedSiswa: '', 
+<div x-data="{
+    selectedSiswa: '',
     selectedMapel: '',
-    jenisNilai: 'biasa', 
-    isBilingual: false, 
+    jenisNilai: 'biasa',
+    isBilingual: false,
     siswaList: @js($semuaSiswa),
     mapelList: @js($mapelList),
     updateBilingual() {
@@ -14,16 +14,12 @@
         const m = this.mapelList.find(x => x.id == this.selectedMapel);
         const isMathScience = m && (m.kode === 'MTK' || m.kode === 'IPA');
         const isKelasUnggulan = s && s.kelas && s.kelas.nama_kelas.endsWith('A');
-        
         if (s && s.kelas) {
             this.jenisNilai = isKelasUnggulan ? 'unggulan' : 'biasa';
         }
-        
-        // Auto-check bilingual if it is Math/Science in class A
         this.isBilingual = isMathScience && isKelasUnggulan;
     }
 }" x-init="$watch('selectedSiswa', () => updateBilingual()); $watch('selectedMapel', () => updateBilingual())">
-
     <div class="content-header">
         <h1>Nilai</h1>
         <div class="header-right">
@@ -31,7 +27,6 @@
             <div class="avatar blue">{{ strtoupper(substr($guru->nama, 0, 1)) }}</div>
         </div>
     </div>
-
     <div class="grid-2" style="margin-bottom:20px">
         <div class="card">
             <div class="card-header"><h3><i class="fas fa-plus" style="color:var(--teal)"></i> Input / Edit Nilai</h3></div>
@@ -100,7 +95,6 @@
             </div>
         </div>
     </div>
-
     <div class="card">
         <div class="card-header"><h3><i class="fas fa-chart-bar" style="color:var(--blue)"></i> Rekap Nilai per Kelas</h3>
             <div style="display:flex;gap:8px">
@@ -140,7 +134,6 @@
             </table>
         </div>
     </div>
-
     @if($guru->mapels->pluck('kode')->contains('ING'))
     <div class="card" style="margin-top:20px">
         <div class="card-header">
@@ -196,8 +189,6 @@
         </div>
     </div>
     @endif
-
-    <!-- Daftar Remedial Siswa Aktif -->
     <div class="card" style="margin-top:20px">
         <div class="card-header">
             <h3><i class="fas fa-exclamation-circle" style="color:var(--red)"></i> Daftar Remedial Siswa Aktif</h3>
@@ -246,8 +237,6 @@
             </table>
         </div>
     </div>
-
-    <!-- Daftar Banding Nilai (Bilingual) -->
     <div class="card" style="margin-top:20px">
         <div class="card-header">
             <h3><i class="fas fa-balance-scale" style="color:var(--indigo)"></i> Pengajuan Banding Nilai Bilingual</h3>
@@ -274,7 +263,7 @@
                             <td>{{ $b->siswa->kelas->nama_kelas ?? '-' }}</td>
                             <td>{{ $b->nilai->mapel->nama_mapel }}</td>
                             <td>
-                                <span style="font-weight:700">{{ $b->nilai->nilai }}</span> 
+                                <span style="font-weight:700">{{ $b->nilai->nilai }}</span>
                                 <span style="font-size:11px;color:var(--indigo)">(Eng: {{ $b->nilai->nilai_bahasa }})</span>
                             </td>
                             <td style="max-width:250px; font-style:italic; font-size:13px; color:var(--gray-500)">"{{ $b->alasan_siswa }}"</td>
@@ -310,9 +299,7 @@
             </table>
         </div>
     </div>
-
 </div>
-
 @if(session('success'))
     <div style="position:fixed;bottom:20px;right:20px;background:var(--green);color:#fff;padding:14px 20px;border-radius:var(--radius-sm);font-weight:600;box-shadow:0 4px 12px rgba(0,0,0,0.15);z-index:999">
         <i class="fas fa-check-circle"></i> {{ session('success') }}

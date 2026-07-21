@@ -1,18 +1,12 @@
 <?php
-
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
-
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
-        // Convert old text data to valid JSON first
         DB::table('laporan_mengajars')->get()->each(function ($laporan) {
             if (!is_null($laporan->isi)) {
                 json_decode($laporan->isi);
@@ -25,15 +19,10 @@ return new class extends Migration
                 }
             }
         });
-
         Schema::table('laporan_mengajars', function (Blueprint $table) {
             $table->json('isi')->change();
         });
     }
-
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::table('laporan_mengajars', function (Blueprint $table) {

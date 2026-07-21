@@ -1,6 +1,5 @@
 @php
     $days = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat'];
-    // Ambil semua rentang jam unik dari jadwal siswa ini
     $jamHeaders = $semuaJadwal->map(function($j) {
         return substr($j->jam_mulai, 0, 5) . ' - ' . substr($j->jam_selesai, 0, 5);
     })->unique()->sort()->values();

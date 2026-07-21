@@ -1,11 +1,8 @@
 <?php
-
 namespace App\Http\Controllers;
-
 use App\Models\Guru;
 use App\Models\KehadiranGuru;
 use Illuminate\Http\Request;
-
 class GuruKehadiranController extends Controller
 {
     public function store(Request $request)
@@ -13,17 +10,13 @@ class GuruKehadiranController extends Controller
         if ($request->user()->role !== 'guru') {
             return redirect()->back()->with('error', 'Akses ditolak');
         }
-
         $guru = Guru::where('user_id', $request->user()->id)->firstOrFail();
         $tanggal = now()->format('Y-m-d');
-        
         $kehadiran = KehadiranGuru::firstOrCreate(
             ['guru_id' => $guru->id, 'tanggal' => $tanggal],
             ['status' => 'belum_absen']
         );
-
         $action = $request->input('action');
-
         if ($action === 'masuk') {
             if ($kehadiran->waktu_masuk) {
                 return redirect()->back()->with('error', 'Anda sudah absen masuk hari ini.');
@@ -45,7 +38,6 @@ class GuruKehadiranController extends Controller
             ]);
             return redirect()->back()->with('success', 'Berhasil absen pulang!');
         }
-
         return redirect()->back()->with('error', 'Aksi tidak valid.');
     }
 }

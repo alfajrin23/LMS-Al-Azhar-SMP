@@ -1,7 +1,5 @@
 @extends('layouts.app')
-
 @section('title', 'Workbook Bank Soal - LMS Al Azhar Jaya Indonesia')
-
 @section('sidebar')
     <li :class="{'active': tab === 'workbook'}" @click="tab = 'workbook'">
         <label><i class="fas fa-book"></i> Workbook</label>
@@ -10,7 +8,6 @@
         <a href="{{ route('dashboard') }}"><i class="fas fa-arrow-left"></i> Kembali</a>
     </li>
 @endsection
-
 @section('content')
 <div x-data="{ tab: 'workbook' }">
     <div x-show="tab === 'workbook'">
@@ -23,7 +20,6 @@
                 <div class="avatar blue">{{ strtoupper(substr($siswa->nama, 0, 1)) }}</div>
             </div>
         </div>
-
         @forelse($workbooks as $wb)
         <div class="card" style="margin-bottom:14px">
             <div class="card-header">

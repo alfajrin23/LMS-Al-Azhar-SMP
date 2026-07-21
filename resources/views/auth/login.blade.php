@@ -1,13 +1,10 @@
 <x-guest-layout>
-    <!-- Google Fonts Embed for Fredoka, Patrick Hand, and Plus Jakarta Sans -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
         href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&family=Patrick+Hand&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap"
         rel="stylesheet">
-
     <style>
-        /* Base styles */
         html,
         body {
             margin: 0 !important;
@@ -15,18 +12,14 @@
             height: 100vh !important;
             overflow: hidden !important;
         }
-
         .uni-login-page,
         .uni-login-page * {
             box-sizing: border-box;
         }
-
-        /* Desktop input field base styling */
         .uni-input-group {
             position: relative;
             margin-bottom: 20px;
         }
-
         .uni-label {
             position: absolute;
             left: 16px;
@@ -41,7 +34,6 @@
             pointer-events: none;
             transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
-
         .uni-input-field {
             width: 100%;
             padding: 13px 40px 13px 16px;
@@ -54,20 +46,16 @@
             font-family: inherit;
             transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
         }
-
         .uni-input-field:hover {
             border-color: #FF7A60;
             background: #ffffff;
         }
-
         .uni-input-field:focus {
             border-color: #FF7A60;
             background: #ffffff;
             box-shadow: 0 4px 12px rgba(255, 122, 96, 0.08), 0 0 0 4px rgba(255, 122, 96, 0.12);
             transform: translateY(-1px);
         }
-
-        /* Dynamic Floating Label Logic */
         .uni-input-field:focus~.uni-label,
         .uni-input-field:not(:placeholder-shown)~.uni-label {
             top: -9px;
@@ -78,22 +66,16 @@
             font-weight: 600;
             color: #FF7A60;
         }
-
-        /* Red Border on Input Error */
         .uni-input-field.input-error {
             border-color: #ef4444 !important;
             background: #fffef2 !important;
         }
-
         .uni-input-field.input-error:focus {
             box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.12) !important;
         }
-
         .uni-input-field.input-error~.uni-label {
             color: #ef4444 !important;
         }
-
-        /* Interactive helper tip badge */
         .tester-tip-badge {
             background: rgba(38, 186, 155, 0.08);
             border: 1px dashed rgba(38, 186, 155, 0.3);
@@ -110,8 +92,6 @@
             gap: 8px;
             line-height: 1.4;
         }
-
-        /* Header block styling */
         .uni-header-block {
             display: flex;
             align-items: center;
@@ -120,7 +100,6 @@
             gap: 15px;
             width: 100%;
         }
-
         .uni-header-title {
             font-family: 'Fredoka', sans-serif;
             font-size: 38px;
@@ -130,7 +109,6 @@
             padding: 0;
             line-height: 1.1;
         }
-
         .uni-header-subtitle {
             font-family: 'Patrick Hand', cursive;
             font-size: 28px;
@@ -142,21 +120,18 @@
             line-height: 1.1;
             transition: opacity 0.25s ease;
         }
-
         .uni-logo-wrapper {
             display: flex;
             align-items: center;
             justify-content: flex-end;
             flex-shrink: 0;
         }
-
         .uni-logo-wrapper img {
             height: 75px;
             width: auto;
             object-fit: contain;
             mix-blend-mode: multiply;
         }
-
         .principal-feature {
             width: 100%;
             max-width: 560px;
@@ -167,7 +142,6 @@
             justify-content: center;
             gap: 18px;
         }
-
         .principal-photo-frame {
             width: min(58%, 340px);
             aspect-ratio: 853 / 1280;
@@ -178,7 +152,6 @@
             box-shadow: 0 24px 55px rgba(0, 66, 55, 0.26);
             animation: principalFloat 6s ease-in-out infinite;
         }
-
         .principal-photo {
             display: block;
             width: 100%;
@@ -186,7 +159,6 @@
             object-fit: cover;
             object-position: center center;
         }
-
         .principal-tagline {
             position: relative;
             max-width: 560px;
@@ -200,12 +172,10 @@
             text-shadow: 0 3px 14px rgba(0, 0, 0, 0.24);
             animation: taglineGlow 4s ease-in-out infinite;
         }
-
         .principal-tagline strong {
             color: #ffe082;
             font-weight: 800;
         }
-
         .principal-tagline::after {
             content: "";
             position: absolute;
@@ -219,44 +189,34 @@
             background-size: 200% 100%;
             animation: taglineLine 3.8s linear infinite;
         }
-
         @keyframes principalFloat {
-
             0%,
             100% {
                 transform: translateY(0);
             }
-
             50% {
                 transform: translateY(-8px);
             }
         }
-
         @keyframes taglineGlow {
-
             0%,
             100% {
                 opacity: 0.9;
                 text-shadow: 0 3px 14px rgba(0, 0, 0, 0.24);
             }
-
             50% {
                 opacity: 1;
                 text-shadow: 0 4px 18px rgba(255, 224, 130, 0.32), 0 3px 14px rgba(0, 0, 0, 0.24);
             }
         }
-
         @keyframes taglineLine {
             0% {
                 background-position: 0% 50%;
             }
-
             100% {
                 background-position: 200% 50%;
             }
         }
-
-        /* Premium Buttons UX style */
         .uni-submit-btn {
             width: 100%;
             padding: 13px;
@@ -273,17 +233,14 @@
             box-shadow: 0 4px 12px rgba(255, 122, 96, 0.15);
             outline: none;
         }
-
         .uni-submit-btn:hover {
             background: #f96347;
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(255, 122, 96, 0.3);
         }
-
         .uni-submit-btn:active {
             transform: translateY(0);
         }
-
         .uni-google-btn {
             width: 100%;
             padding: 13px;
@@ -303,18 +260,15 @@
             font-family: inherit;
             outline: none;
         }
-
         .uni-google-btn:hover {
             border-color: #cbd5e1;
             background: #f8fafc;
             transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
         }
-
         .uni-google-btn:active {
             transform: translateY(0);
         }
-
         .uni-role-btn {
             padding: 10px;
             border: 1.5px solid #e2e8f0;
@@ -329,17 +283,13 @@
             text-align: center;
             outline: none;
         }
-
         .uni-role-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04);
         }
-
         .uni-role-btn:active {
             transform: translateY(0);
         }
-
-        /* Custom Coral Checkbox UI */
         .uni-checkbox-container {
             display: flex;
             align-items: center;
@@ -350,7 +300,6 @@
             position: relative;
             font-size: 12.5px;
         }
-
         .uni-checkbox-input {
             position: absolute;
             opacity: 0;
@@ -358,7 +307,6 @@
             height: 0;
             width: 0;
         }
-
         .uni-checkbox-checkmark {
             height: 16px;
             width: 16px;
@@ -369,26 +317,21 @@
             display: inline-block;
             position: relative;
         }
-
         .uni-checkbox-container:hover .uni-checkbox-input~.uni-checkbox-checkmark {
             border-color: #FF7A60;
         }
-
         .uni-checkbox-input:checked~.uni-checkbox-checkmark {
             background-color: #FF7A60;
             border-color: #FF7A60;
         }
-
         .uni-checkbox-checkmark:after {
             content: "";
             position: absolute;
             display: none;
         }
-
         .uni-checkbox-input:checked~.uni-checkbox-checkmark:after {
             display: block;
         }
-
         .uni-checkbox-container .uni-checkbox-checkmark:after {
             left: 4.5px;
             top: 1.5px;
@@ -398,28 +341,21 @@
             border-width: 0 2px 2px 0;
             transform: rotate(45deg);
         }
-
-        /* SPA Form transition animation */
         .form-fade-container {
             position: relative;
             width: 100%;
         }
-
         .form-view {
             transition: opacity 0.3s ease, transform 0.3s ease;
             width: 100%;
         }
-
-        /* Mobile & Tablet Responsive Override */
         @media (max-width: 1024px) {
-
             html,
             body {
                 overflow: hidden !important;
                 height: 100vh !important;
                 height: 100dvh !important;
             }
-
             .uni-login-page {
                 height: 100vh !important;
                 height: 100dvh !important;
@@ -428,11 +364,9 @@
                 overflow: hidden !important;
                 background: #2ebe9f;
             }
-
             .uni-bg-curve {
                 display: none !important;
             }
-
             .uni-container {
                 flex-direction: column !important;
                 height: 100vh !important;
@@ -446,7 +380,6 @@
                 margin: 0 !important;
                 max-width: 100% !important;
             }
-
             .uni-left {
                 flex: none !important;
                 height: 150px !important;
@@ -456,7 +389,6 @@
                 background: #2ebe9f;
                 overflow: visible !important;
             }
-
             .uni-left>img {
                 display: block !important;
                 width: auto !important;
@@ -465,7 +397,6 @@
                 transform: translateY(20px) !important;
                 z-index: 10 !important;
             }
-
             .uni-left .principal-feature {
                 max-width: 100% !important;
                 margin-left: 0 !important;
@@ -474,7 +405,6 @@
                 transform: translateY(18px) !important;
                 z-index: 10 !important;
             }
-
             .uni-left .principal-photo-frame {
                 width: 86px !important;
                 aspect-ratio: 1 / 1 !important;
@@ -482,7 +412,6 @@
                 border-width: 3px !important;
                 box-shadow: 0 8px 22px rgba(0, 66, 55, 0.22) !important;
             }
-
             .uni-left .principal-photo {
                 display: block !important;
                 width: 100% !important;
@@ -492,7 +421,6 @@
                 object-fit: cover !important;
                 object-position: center 38% !important;
             }
-
             .uni-left .principal-tagline {
                 width: min(100%, 300px) !important;
                 max-width: calc(100vw - 72px) !important;
@@ -501,12 +429,10 @@
                 line-height: 1.35 !important;
                 overflow: visible !important;
             }
-
             .uni-left .principal-tagline::after {
                 width: 92px !important;
                 height: 2px !important;
             }
-
             .uni-right {
                 flex: 1 !important;
                 background: #ffffff !important;
@@ -523,7 +449,6 @@
                 max-width: 100vw !important;
                 overflow: hidden !important;
             }
-
             .uni-form-wrapper {
                 margin-top: 0 !important;
                 max-width: min(350px, calc(100vw - 48px)) !important;
@@ -533,7 +458,6 @@
                 display: flex !important;
                 flex-direction: column !important;
             }
-
             .form-fade-container {
                 flex: 1 !important;
                 display: flex !important;
@@ -541,11 +465,9 @@
                 width: 100% !important;
                 min-width: 0 !important;
             }
-
             .form-view {
                 display: none !important;
             }
-
             .form-view.active-view {
                 display: flex !important;
                 flex: 1 !important;
@@ -553,35 +475,27 @@
                 width: 100% !important;
                 min-width: 0 !important;
             }
-
             .uni-footer-link {
                 margin-top: auto !important;
                 padding-top: 15px !important;
                 margin-bottom: 0 !important;
             }
-
             .uni-header-block {
                 margin-bottom: 8px !important;
                 gap: 12px !important;
             }
-
             .uni-logo-wrapper img {
                 height: 48px !important;
             }
-
             .uni-header-title {
                 font-size: 24px !important;
             }
-
             .uni-header-subtitle {
                 font-size: 15px !important;
             }
-
-            /* Underline Inputs style for mobile view */
             .uni-input-group {
                 margin-bottom: 14px !important;
             }
-
             .uni-label {
                 position: absolute !important;
                 left: 0 !important;
@@ -595,7 +509,6 @@
                 margin-bottom: 0 !important;
                 background: transparent !important;
             }
-
             .uni-input-field {
                 border: none !important;
                 border-bottom: 1.5px solid #e2e8f0 !important;
@@ -604,71 +517,59 @@
                 background: transparent !important;
                 font-size: 14px !important;
             }
-
             .uni-input-field:focus {
                 border-bottom-color: #FF7A60 !important;
                 box-shadow: none !important;
                 transform: none !important;
             }
-
             .uni-input-field-active {
                 border: none !important;
                 border-bottom: 1.5px solid #FF7A60 !important;
                 background: transparent !important;
                 box-shadow: none !important;
             }
-
             .uni-input-icon {
                 right: 0 !important;
                 top: 50% !important;
                 transform: translateY(-50%) !important;
             }
-
             .uni-form-wrapper form button[type="submit"] {
                 padding: 8px !important;
                 margin-bottom: 6px !important;
                 font-size: 14px !important;
             }
-
             .uni-form-wrapper form button[type="button"] {
                 padding: 8px !important;
                 margin-bottom: 6px !important;
                 font-size: 13px !important;
             }
-
             .tester-tip-badge {
                 padding: 4px 8px !important;
                 margin-bottom: 6px !important;
                 font-size: 9px !important;
             }
-
             .uni-remember-row {
                 margin-bottom: 8px !important;
                 gap: 12px !important;
                 min-width: 0 !important;
             }
-
             .uni-remember-row a {
                 flex-shrink: 0 !important;
                 font-size: 11px !important;
                 white-space: nowrap !important;
             }
-
             .uni-checkbox-container {
                 min-width: 0 !important;
                 white-space: nowrap !important;
             }
-
             .uni-role-selector {
                 margin-bottom: 8px !important;
                 width: 100% !important;
                 min-width: 0 !important;
             }
-
             .uni-role-selector>div {
                 grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
             }
-
             .uni-role-btn {
                 padding: 4px !important;
                 font-size: 10px !important;
@@ -677,21 +578,17 @@
                 text-overflow: ellipsis !important;
                 white-space: nowrap !important;
             }
-
             .uni-google-btn {
                 margin-bottom: 10px !important;
                 padding: 8px !important;
                 font-size: 13px !important;
             }
-
             .uni-header-text {
                 padding-left: 6px !important;
             }
         }
     </style>
-
     <div class="uni-login-page" style="overflow: hidden; height: 100vh; max-height: 100vh; position: relative;">
-        <!-- Background Curve SVG -->
         <div class="uni-bg-curve"
             style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none;">
             <svg id="visual" viewBox="0 0 900 600" width="100%" height="100%" preserveAspectRatio="none"
@@ -702,11 +599,8 @@
                     fill="#2ebe9f" stroke-linecap="round" stroke-linejoin="miter"></path>
             </svg>
         </div>
-
-        <!-- Main Split Container -->
         <div class="uni-container"
             style="font-family: 'Plus Jakarta Sans', sans-serif; height: 100vh; display: flex; align-items: center;">
-            <!-- Left Section: Green area -->
             <div class="uni-left"
                 style="flex: 1.4; display: flex; align-items: center; justify-content: center; padding-left: 0; height: 100%; z-index: 5;">
                 <div class="principal-feature">
@@ -720,14 +614,10 @@
                     </p>
                 </div>
             </div>
-
-            <!-- Right Section: White area -->
             <div class="uni-right"
                 style="flex: 0.6; display: flex; align-items: center; justify-content: flex-end; padding-right: 40px; z-index: 5;">
                 <div class="uni-form-wrapper"
                     style="width: 100%; max-width: 350px; display: flex; flex-direction: column; margin-top: 100px;">
-
-                    <!-- Header Teks & Logo Row -->
                     <div class="uni-header-block">
                         <div class="uni-header-text" style="text-align: left; line-height: 1.1; flex: 1;">
                             <div class="uni-header-title">Welcome</div>
@@ -737,12 +627,8 @@
                             <img src="{{ asset('afuscho-logo.png') }}" alt="AFUSCHO Bilingual School Logo">
                         </div>
                     </div>
-
                     <div class="form-fade-container">
-
-                        <!-- LOGIN VIEW -->
                         <div id="login-view" class="form-view active-view">
-                            <!-- Quick Testing Tip Badge -->
                             <div class="tester-tip-badge">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                     stroke-width="2" stroke="currentColor"
@@ -752,18 +638,14 @@
                                 </svg>
                                 Tip: Pilih role di bawah untuk mengisi data demo!
                             </div>
-
                             @if (session('status'))
                                 <div
                                     style="color: #10b981; font-size: 12px; margin-bottom: 12px; text-align: center; font-weight: 500;">
                                     {{ session('status') }}
                                 </div>
                             @endif
-
                             <form method="POST" action="{{ route('login') }}" id="login-form">
                                 @csrf
-
-                                <!-- Email Input -->
                                 <div class="uni-input-group">
                                     <input type="email" id="email" name="email" placeholder=" "
                                         value="{{ old('email') }}" required autofocus
@@ -776,8 +658,6 @@
                                             {{ $message }}</div>
                                     @enderror
                                 </div>
-
-                                <!-- Password Input -->
                                 <div class="uni-input-group" style="position: relative;">
                                     <input id="password" type="password" name="password" placeholder=" " required
                                         class="uni-input-field @error('password') input-error @enderror">
@@ -797,8 +677,6 @@
                                             {{ $message }}</div>
                                     @enderror
                                 </div>
-
-                                <!-- Remember Me & Recovery Password Row -->
                                 <div class="uni-remember-row"
                                     style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
                                     <label class="uni-checkbox-container">
@@ -812,8 +690,6 @@
                                             Password</a>
                                     @endif
                                 </div>
-
-                                <!-- Role Selector (2x2 Grid) -->
                                 <div class="uni-role-selector" style="margin-bottom: 20px;">
                                     <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px;">
                                         <button type="button" onclick="selectRole('admin')" id="role-admin"
@@ -836,13 +712,9 @@
                                     </div>
                                     <input type="hidden" name="role" id="selected-role" value="siswa">
                                 </div>
-
-                                <!-- Login Button -->
                                 <button type="submit" id="login-submit-btn" class="uni-submit-btn">
                                     Login
                                 </button>
-
-                                <!-- Google Sign In Button -->
                                 <button type="button" class="uni-google-btn">
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"
                                         style="width: 18px; height: 18px;">
@@ -858,8 +730,6 @@
                                     Sign in with Google
                                 </button>
                             </form>
-
-                            <!-- Footer Link -->
                             <div class="uni-footer-link" style="text-align: center; font-size: 13px; color: #94a3b8;">
                                 Don't have an account yet? <a href="{{ route('register') }}"
                                     onclick="toggleAuthPage(event, 'register')"
@@ -867,13 +737,9 @@
                                     Up</a>
                             </div>
                         </div>
-
-                        <!-- REGISTER VIEW -->
                         <div id="register-view" class="form-view" style="display: none; opacity: 0;">
                             <form method="POST" action="{{ route('register') }}" id="register-form">
                                 @csrf
-
-                                <!-- Name Input -->
                                 <div class="uni-input-group">
                                     <input type="text" id="name" name="name" placeholder=" "
                                         value="{{ old('name') }}" required
@@ -886,8 +752,6 @@
                                             {{ $message }}</div>
                                     @enderror
                                 </div>
-
-                                <!-- Email Input -->
                                 <div class="uni-input-group">
                                     <input type="email" id="register_email" name="email" placeholder=" "
                                         value="{{ old('email') }}" required
@@ -900,8 +764,6 @@
                                             {{ $message }}</div>
                                     @enderror
                                 </div>
-
-                                <!-- Password Input -->
                                 <div class="uni-input-group" style="position: relative;">
                                     <input id="register_password" type="password" name="password" placeholder=" "
                                         required class="uni-input-field @error('password') input-error @enderror">
@@ -922,8 +784,6 @@
                                             {{ $message }}</div>
                                     @enderror
                                 </div>
-
-                                <!-- Confirm Password Input -->
                                 <div class="uni-input-group" style="position: relative;">
                                     <input id="password_confirmation" type="password" name="password_confirmation"
                                         placeholder=" " required class="uni-input-field">
@@ -940,14 +800,10 @@
                                         </svg>
                                     </button>
                                 </div>
-
-                                <!-- Register Button -->
                                 <button type="submit" id="register-submit-btn" class="uni-submit-btn"
                                     style="margin-top: 8px;">
                                     Register
                                 </button>
-
-                                <!-- Google Sign Up Button -->
                                 <button type="button" class="uni-google-btn">
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"
                                         style="width: 18px; height: 18px;">
@@ -963,8 +819,6 @@
                                     Sign up with Google
                                 </button>
                             </form>
-
-                            <!-- Footer Link -->
                             <div class="uni-footer-link"
                                 style="text-align: center; font-size: 13px; color: #94a3b8; margin-bottom: 20px;">
                                 Already registered? <a href="{{ route('login') }}"
@@ -972,21 +826,15 @@
                                     style="color: #FF7A60; text-decoration: none; font-weight: 700; margin-left: 4px;">Login</a>
                             </div>
                         </div>
-
                     </div>
-
                 </div>
             </div>
         </div>
     </div>
-
-    <!-- Auth switching, visibility toggles & UX logic -->
     <script>
-        // Password visibility toggle
         function togglePasswordVisibility(inputId, iconId) {
             const input = document.getElementById(inputId);
             const eyeIcon = document.getElementById(iconId);
-
             if (input.type === 'password') {
                 input.type = 'text';
                 eyeIcon.innerHTML = `
@@ -999,8 +847,6 @@
                 `;
             }
         }
-
-        // Select demo role
         function selectRole(role) {
             document.getElementById('selected-role').value = role;
             const roles = ['admin', 'kepala_sekolah', 'guru', 'siswa'];
@@ -1019,20 +865,13 @@
                 }
             });
         }
-
-        // SPA Page Switcher Logic
         function toggleAuthPage(event, viewName) {
             if (event) event.preventDefault();
-
             const loginView = document.getElementById('login-view');
             const registerView = document.getElementById('register-view');
             const subtitle = document.getElementById('uni-subtitle');
-
-            // Update browser URL instantly
             const newPath = viewName === 'register' ? '/register' : '/login';
             window.history.pushState({}, '', newPath);
-
-            // Transition out/in
             if (viewName === 'register') {
                 subtitle.style.opacity = '0';
                 loginView.style.opacity = '0';
@@ -1063,35 +902,27 @@
                 }, 200);
             }
         }
-
-        // Double submit prevention
         document.getElementById('login-form').addEventListener('submit', function() {
             const submitBtn = document.getElementById('login-submit-btn');
             submitBtn.disabled = true;
             submitBtn.style.opacity = '0.7';
             submitBtn.innerText = 'Logging in...';
         });
-
         document.getElementById('register-form').addEventListener('submit', function() {
             const submitBtn = document.getElementById('register-submit-btn');
             submitBtn.disabled = true;
             submitBtn.style.opacity = '0.7';
             submitBtn.innerText = 'Registering...';
         });
-
-        // Initialize based on URL path
         window.addEventListener('DOMContentLoaded', () => {
             const path = window.location.pathname;
             if (path.includes('register')) {
                 toggleAuthPage(null, 'register');
             } else {
                 toggleAuthPage(null, 'login');
-                // Select default role 'siswa' for login autofill
                 selectRole('siswa');
             }
         });
-
-        // Listen for browser Back/Forward navigation
         window.addEventListener('popstate', () => {
             const path = window.location.pathname;
             if (path.includes('register')) {

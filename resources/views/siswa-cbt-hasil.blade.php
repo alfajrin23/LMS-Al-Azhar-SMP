@@ -1,13 +1,10 @@
 @extends('layouts.app')
-
 @section('title', 'Hasil Ujian - LMS Al Azhar Jaya Indonesia')
-
 @section('sidebar')
     <li>
         <a href="{{ route('siswa.cbt.index') }}"><i class="fas fa-arrow-left"></i> Kembali</a>
     </li>
 @endsection
-
 @section('content')
 <div class="content-header">
     <div>
@@ -18,7 +15,6 @@
         <div class="avatar blue">{{ strtoupper(substr($siswa->nama, 0, 1)) }}</div>
     </div>
 </div>
-
 <div class="grid-3" style="margin-bottom:20px">
     <div class="stat-card centered">
         <div class="stat-icon-wrap teal"><i class="fas fa-check-circle"></i></div>
@@ -36,7 +32,6 @@
         <div class="stat-label">Essay (Menunggu Nilai)</div>
     </div>
 </div>
-
 <div class="card">
     <div class="card-header">
         <h3><i class="fas fa-list" style="color:var(--teal)"></i> Detail Jawaban</h3>
@@ -109,7 +104,6 @@
         </table>
     </div>
 </div>
-
 <div style="margin-top:20px;text-align:center">
     <a href="{{ route('siswa.cbt.index') }}" class="btn-login" style="text-decoration:none;width:auto;padding:10px 32px;display:inline-block;border:none;cursor:pointer"><i class="fas fa-arrow-left"></i> Kembali</a>
 </div>

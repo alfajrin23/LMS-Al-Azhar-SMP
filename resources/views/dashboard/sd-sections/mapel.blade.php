@@ -13,7 +13,6 @@
     <div class="card">
         <div class="card-header"><h3><i class="fas fa-book" style="color:var(--red)"></i> {{ $m->nama_mapel }}</h3></div>
         <p style="font-size:13px;color:var(--gray-500);margin-bottom:8px">Kode: {{ $m->kode }}</p>
-        
         @if($materiSiswa->count() > 0)
         <div style="margin-top:12px;border-top:1px solid var(--border-light);padding-top:10px">
             <span style="font-size:11px;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:0.5px">Materi Ajar &amp; Modul</span>

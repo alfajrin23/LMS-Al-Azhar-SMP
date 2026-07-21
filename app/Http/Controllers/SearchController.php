@@ -1,13 +1,10 @@
 <?php
-
 namespace App\Http\Controllers;
-
 use App\Models\Guru;
 use App\Models\Jadwal;
 use App\Models\Siswa;
 use App\Models\Tugas;
 use Illuminate\Http\Request;
-
 class SearchController extends Controller
 {
     public function search(Request $request)
@@ -16,11 +13,8 @@ class SearchController extends Controller
         if (strlen($q) < 2) {
             return response()->json([]);
         }
-
         $results = collect();
-
         $role = $request->user()->role;
-
         if ($role === 'admin' || $role === 'kepala_sekolah') {
             $results = $results->concat(
                 Siswa::where('nama', 'like', "%{$q}%")->limit(5)->get()
@@ -68,7 +62,6 @@ class SearchController extends Controller
                     ->map(fn($s) => ['type' => 'Siswa', 'label' => $s->nama, 'url' => '#'])
             );
         }
-
         return response()->json($results->take(10)->values());
     }
 }

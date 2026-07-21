@@ -1,7 +1,5 @@
 <?php
-
 namespace App\Http\Controllers;
-
 use App\Models\CatatanWali;
 use App\Models\Kehadiran;
 use App\Models\Nilai;
@@ -9,14 +7,12 @@ use App\Models\Siswa;
 use App\Models\TahfidzSetoran;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
-
 class RaporController extends Controller
 {
     public function pdf(Request $request)
     {
         $user = $request->user();
         $role = $user->role;
-
         if (in_array($role, ['siswa_sd', 'siswa_smp'])) {
             $siswa = $user->siswa;
         } elseif ($role === 'orang_tua') {
@@ -29,7 +25,6 @@ class RaporController extends Controller
         } else {
             return redirect()->back()->with('error', 'Akses ditolak');
         }
-
         $kelas = $siswa->kelas;
         $type = $request->query('type', 'biasa');
         if (!in_array($type, ['biasa', 'unggulan'])) {
@@ -48,13 +43,11 @@ class RaporController extends Controller
         $totalAlpha = $kehadiran->where('status', 'alpha')->count();
         $tahfidz = TahfidzSetoran::where('siswa_id', $siswa->id)->sum('jumlah_ayat');
         $kkm = str_contains($kelas?->nama_kelas ?? '', 'SD') ? setting('kkm_sd') : setting('kkm_smp');
-
         $pdf = Pdf::loadView('rapor-pdf', compact(
             'siswa', 'kelas', 'nilai', 'rata', 'catatanWali',
             'kehadiran', 'totalHadir', 'totalSakit', 'totalIzin', 'totalAlpha',
             'tahfidz', 'kkm', 'type'
         ));
-
         return $pdf->download('rapor-' . $siswa->nama . '.pdf');
     }
 }

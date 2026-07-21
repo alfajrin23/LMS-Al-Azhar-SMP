@@ -21,7 +21,6 @@
         default => 'fa-file',
     };
 @endphp
-
 <div x-data="{
     isEdit: false,
     actionUrl: '{{ route('guru.materi.store') }}',
@@ -50,16 +49,13 @@
         this.deskripsi = '';
     }
 }">
-
     <div class="content-header">
         <h1>Kelola &amp; Upload Materi</h1>
         <div class="header-right">
             <div class="avatar blue">{{ strtoupper(substr($guru->nama, 0, 1)) }}</div>
         </div>
     </div>
-
     <div class="grid-2" style="margin-bottom:20px">
-        <!-- Form Upload / Edit -->
         <div class="card">
             <div class="card-header">
                 <h3>
@@ -145,8 +141,6 @@
                     style="background:var(--gray-300); color:var(--text); border:none; cursor:pointer; margin-left:8px">Batal</button>
             </form>
         </div>
-
-        <!-- Indikator Checklist Syarat -->
         <div class="card">
             <div class="card-header">
                 <h3><i class="fas fa-clipboard-check" style="color:var(--teal)"></i> Syarat Kelengkapan Materi</h3>
@@ -191,8 +185,6 @@
             </div>
         </div>
     </div>
-
-    <!-- Table Daftar Materi -->
     <div class="card">
         <div class="card-header">
             <h3><i class="fas fa-folder-open" style="color:var(--teal)"></i> Daftar Materi &amp; Kelengkapan Syarat
@@ -293,16 +285,13 @@
             </table>
         </div>
     </div>
-
 </div>
-
 @if (session('success'))
     <div
         style="position:fixed;bottom:20px;right:20px;background:var(--green);color:#fff;padding:14px 20px;border-radius:var(--radius-sm);font-weight:600;box-shadow:0 4px 12px rgba(0,0,0,0.15);z-index:999">
         <i class="fas fa-check-circle"></i> {{ session('success') }}
     </div>
 @endif
-
 @if (session('error'))
     <div
         style="position:fixed;bottom:20px;right:20px;background:var(--red);color:#fff;padding:14px 20px;border-radius:var(--radius-sm);font-weight:600;box-shadow:0 4px 12px rgba(0,0,0,0.15);z-index:999">

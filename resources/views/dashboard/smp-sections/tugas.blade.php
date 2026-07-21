@@ -60,7 +60,6 @@
         </table>
     </div>
 </div>
-
 @if($pengumpulanSaya->isNotEmpty())
 <div class="card" style="margin-top:16px">
     <div class="card-header"><h3><i class="fas fa-history" style="color:var(--teal)"></i> Tugas yang Sudah Dikumpulkan</h3></div>
@@ -94,8 +93,6 @@
     </div>
 </div>
 @endif
-
-{{-- Modal Kumpulkan Tugas --}}
 <div x-show="showKumpul" style="position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:1000;display:flex;align-items:center;justify-content:center" x-cloak>
     <div style="background:white;border-radius:12px;padding:24px;width:90%;max-width:500px;box-shadow:0 8px 32px rgba(0,0,0,0.2)">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">

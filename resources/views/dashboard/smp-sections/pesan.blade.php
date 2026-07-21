@@ -5,7 +5,6 @@
         <div class="avatar blue">{{ strtoupper(substr($siswa->nama, 0, 1)) }}</div>
     </div>
 </div>
-
 <div x-show="showTulisPesan" class="card" style="margin-bottom:16px">
     <div class="card-header">
         <h3><i class="fas fa-paper-plane" style="color:var(--teal)"></i> Kirim Pesan ke Guru</h3>
@@ -35,7 +34,6 @@
             style="cursor:pointer;border:none;background:var(--gray-300);color:var(--text);margin-left:8px">Batal</button>
     </form>
 </div>
-
 <div class="card">
     <div class="card-header">
         <h3><i class="fas fa-inbox" style="color:var(--blue)"></i> Kotak Masuk</h3>
@@ -69,7 +67,6 @@
         </table>
     </div>
 </div>
-
 <div x-show="showReplyForm" class="card" style="margin-bottom:16px">
     <div class="card-header">
         <h3><i class="fas fa-reply" style="color:var(--blue)"></i> Balas Pesan — <span x-text="replyTo"></span></h3>

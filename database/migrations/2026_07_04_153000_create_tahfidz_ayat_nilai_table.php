@@ -1,14 +1,9 @@
 <?php
-
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('tahfidz_ayat_nilai', function (Blueprint $table) {
@@ -20,15 +15,9 @@ return new class extends Migration
             $table->tinyInteger('tajwid');
             $table->tinyInteger('kelancaran');
             $table->timestamps();
-
-            // Seorang guru hanya bisa menilai satu ayat sekali saja untuk satu setoran
             $table->unique(['tahfidz_setoran_id', 'guru_id', 'nomor_ayat'], 'tahfidz_ayat_nilai_unique');
         });
     }
-
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('tahfidz_ayat_nilai');

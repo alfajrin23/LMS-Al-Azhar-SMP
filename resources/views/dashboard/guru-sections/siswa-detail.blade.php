@@ -1,26 +1,19 @@
 @php
     $detailSiswa = \App\Models\Siswa::with('kelas')->find($selectedSiswa?->id);
-
     $nilaiSiswa = \App\Models\Nilai::where('siswa_id', $detailSiswa?->id)->with('mapel')->get();
-
     $tahfidzSiswa = \App\Models\TahfidzSetoran::where('siswa_id', $detailSiswa?->id)
         ->with('guru')
         ->orderBy('tanggal', 'desc')
         ->get();
-
     $kehadiranSiswa = \App\Models\Kehadiran::where('siswa_id', $detailSiswa?->id)
         ->orderBy('tanggal', 'desc')
         ->take(30)
         ->get();
-
     $catatanSiswa = \App\Models\CatatanWali::where('siswa_id', $detailSiswa?->id)->latest()->first();
-
     $badgeSiswa = \App\Models\Badge::with(['siswa' => fn($q) => $q->where('siswa_id', $detailSiswa?->id)])
         ->get()
         ->filter(fn($b) => $b->siswa->isNotEmpty());
-
     $gradeColor = fn($v) => $v >= 90 ? 'grade-A' : ($v >= 80 ? 'grade-B' : 'grade-C');
-
     $gradeLetter = fn($v) => $v >= 90
         ? 'A'
         : ($v >= 85
@@ -32,12 +25,10 @@
                     : ($v >= 70
                         ? 'B-'
                         : 'C'))));
-
     $rataNilai = round($nilaiSiswa->avg('nilai'), 1);
     $totalHadir = $kehadiranSiswa->where('status', 'hadir')->count();
     $rataTahfidz = round($tahfidzSiswa->avg('nilai') ?? 0);
 @endphp
-
 <div class="content-header">
     <div>
         <h1>Detail Siswa</h1>
@@ -50,7 +41,6 @@
         <div class="avatar blue">{{ strtoupper(substr($guru->nama, 0, 1)) }}</div>
     </div>
 </div>
-
 <div class="card" style="margin-bottom:20px">
     <div class="card-header">
         <h3><i class="fas fa-user-graduate" style="color:var(--teal)"></i> Biodata Siswa</h3>
@@ -76,7 +66,6 @@
         </div>
     </div>
 </div>
-
 <div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:20px">
     <div class="card" style="flex:2;min-width:300px">
         <div class="card-header">
@@ -173,7 +162,6 @@
             </div>
         </div>
     </div>
-
     <div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:20px">
         <div class="card" style="flex:1;min-width:300px">
             <div class="card-header">
@@ -205,7 +193,6 @@
             @endforelse
         </div>
     </div>
-
     @if ($tahfidzSiswa->count() > 0)
         <div class="card">
             <div class="card-header">

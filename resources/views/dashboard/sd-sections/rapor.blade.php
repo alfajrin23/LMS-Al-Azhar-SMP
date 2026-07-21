@@ -68,22 +68,18 @@
             <div class="avatar blue">{{ strtoupper(substr($siswa->nama, 0, 1)) }}</div>
         </div>
     </div>
-
-    <!-- Segmented Tab Switcher (Modern Design) -->
     <div style="display: flex; gap: 8px; margin-bottom: 20px; border-bottom: 2px solid var(--border-light); padding-bottom: 8px;">
-        <button @click="activeRaporTab = 'sekolah'" 
+        <button @click="activeRaporTab = 'sekolah'"
                 :class="activeRaporTab === 'sekolah' ? 'btn-tab-active' : 'btn-tab-inactive'"
                 style="padding: 8px 16px; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; transition: all 0.2s;">
             <i class="fas fa-school" style="margin-right: 6px;"></i> Rapor Sekolah
         </button>
-        <button @click="activeRaporTab = 'unggulan'" 
+        <button @click="activeRaporTab = 'unggulan'"
                 :class="activeRaporTab === 'unggulan' ? 'btn-tab-active' : 'btn-tab-inactive'"
                 style="padding: 8px 16px; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; transition: all 0.2s;">
             <i class="fas fa-star" style="margin-right: 6px;"></i> Rapor Program Unggulan
         </button>
     </div>
-
-    <!-- Styling for the Tabs -->
     <style>
         .btn-tab-active {
             background-color: var(--blue);
@@ -99,7 +95,6 @@
             color: var(--gray-800);
         }
     </style>
-
     <div class="card" style="margin-bottom:20px">
         <div class="card-header"><h3><i class="fas fa-user-graduate" style="color:var(--blue)"></i> Identitas Siswa</h3></div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:4px 0">
@@ -109,7 +104,6 @@
             <div><span style="font-size:12px;color:var(--gray-400)">Semester</span><div style="font-weight:600">{{ $catatanWali?->semester ?? setting('semester_aktif') }}</div></div>
         </div>
     </div>
-
     <div style="margin-bottom: 20px;">
         <select x-model="subRapor" class="form-select" style="width: 100%; max-width: 300px; padding: 10px 14px; border-radius: 8px; border: 1px solid var(--border); font-weight: 600; color: var(--gray-700); background-color: var(--white); cursor: pointer;">
             <option value="quran">Rapot Quran</option>
@@ -117,18 +111,13 @@
             <option value="english">Rapot English</option>
         </select>
     </div>
-
-    <!-- Rapor Sekolah (Biasa) -->
     <div x-show="activeRaporTab === 'sekolah'">
-        <!-- Rapot Quran -->
         <div x-show="subRapor === 'quran'" x-cloak>
             <div class="card" style="margin-bottom:20px; padding: 20px; text-align: center; color: var(--gray-500);">
                 <i class="fas fa-quran" style="font-size: 30px; margin-bottom: 12px; color: var(--blue);"></i><br>
                 Konten Rapot Quran Sekolah (Belum Tersedia)
             </div>
         </div>
-
-        <!-- Rapot Akademik -->
         <div x-show="subRapor === 'akademik'" class="card" style="margin-bottom:20px">
             <div class="card-header"><h3><i class="fas fa-file-invoice" style="color:var(--orange)"></i> Nilai Akademik Sekolah</h3></div>
             <div class="table-wrap">
@@ -150,7 +139,6 @@
                 <div><span style="font-size:12px;color:var(--gray-400)">Status</span><div style="font-size:20px;font-weight:700;color:var(--blue)">{{ $rataSekolah >= setting('kkm_sd') ? 'LULUS' : 'TIDAK LULUS' }}</div></div>
             </div>
         </div>
-        <!-- Rapot English -->
         <div x-show="subRapor === 'english'" x-cloak>
             <div class="card" style="margin-bottom:20px; padding: 20px; text-align: center; color: var(--gray-500);">
                 <i class="fas fa-language" style="font-size: 30px; margin-bottom: 12px; color: var(--orange);"></i><br>
@@ -158,8 +146,6 @@
             </div>
         </div>
     </div>
-
-    <!-- Rapor Program Unggulan -->
     <div x-show="activeRaporTab === 'unggulan'" x-cloak>
         <div class="card" style="margin-bottom:20px">
             <div class="card-header"><h3><i class="fas fa-star" style="color:var(--orange)"></i> Nilai Program Unggulan</h3></div>
@@ -182,7 +168,6 @@
             </div>
         </div>
     </div>
-
     <div style="display:flex;gap:16px;flex-wrap:wrap">
         <div class="card" style="flex:1;min-width:200px">
             <div class="card-header"><h3><i class="fas fa-star" style="color:var(--orange)"></i> Catatan Wali Kelas</h3></div>

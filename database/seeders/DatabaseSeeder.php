@@ -1,7 +1,5 @@
 <?php
-
 namespace Database\Seeders;
-
 use App\Models\Kelas;
 use App\Models\Mapel;
 use App\Models\Siswa;
@@ -27,7 +25,6 @@ use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Carbon;
-
 class DatabaseSeeder extends Seeder
 {
     public function run(): void
@@ -40,9 +37,6 @@ class DatabaseSeeder extends Seeder
             MapelSeeder::class,
             JadwalSeeder::class,
         ]);
-
-
-        // === USER & ORANG TUA ===
         $user = User::firstOrCreate(
             ['email' => 'sari.rohmah@email.com'],
             ['name' => 'Ibu Sari Rahmawati', 'password' => Hash::make('password123'), 'role' => 'orang_tua']
@@ -51,20 +45,14 @@ class DatabaseSeeder extends Seeder
             ['user_id' => $user->id],
             ['nama' => 'Ibu Sari Rahmawati']
         );
-
-        // === USER: ADMIN ===
         User::firstOrCreate(
             ['email' => 'admin@alazharjayaindonesia.sch.id'],
             ['name' => 'Admin Sekolah', 'password' => Hash::make('password123'), 'role' => 'admin']
         );
-
-        // === USER: KEPALA SEKOLAH ===
         User::firstOrCreate(
             ['email' => 'kepala@alazharjayaindonesia.sch.id'],
             ['name' => 'Kepala Sekolah', 'password' => Hash::make('password123'), 'role' => 'kepala_sekolah']
         );
-
-        // === KUMPULKAN ID UNTUK SEEDING ===
         $siswas = \App\Models\Siswa::all();
         $mapels = \App\Models\Mapel::whereNotIn('nama_mapel', ['Istirahat', 'Dzuhur Time', 'Ashar Time', 'Upacara / Flash', 'Upacara / PAS Mantap', 'Dhuha Time', 'Apel, Dhuha & Muroja\'ah', 'Upacara / Pentas Seni', 'Qailullah', 'Sholat dan Makan', 'Pulang / Penjemputan Orang Tua', 'Snack Time', 'Transisi / Pindah ke Kelas', 'Shalat Ashar', 'Shalat Ashar dan Dzikir', 'Kegiatan Pramuka', 'Ekskul'])->get();
         $kelas = \App\Models\Kelas::all();
@@ -72,14 +60,10 @@ class DatabaseSeeder extends Seeder
         $adminUser = User::query()->where('role', 'admin')->first();
         $guruUser = User::query()->where('role', 'guru')->first();
         $siswaUser = User::query()->where('role', 'siswa_smp')->first();
-
-        // Helpers untuk mencegah error array key
         $randomSiswa = fn() => $siswas->random()->id;
         $randomMapel = fn() => $mapels->random()->id;
         $randomKelas = fn() => $kelas->random()->id;
         $randomGuru = fn() => $gurus->random()->id;
-
-        // === TUGAS ===
         $tugasData = [
             ['judul' => 'Tugas Praktek Sholat', 'tipe' => 'tugas', 'deadline' => '2026-04-02'],
             ['judul' => 'PR Persamaan Linear', 'tipe' => 'tugas', 'deadline' => '2026-04-05'],
@@ -96,9 +80,6 @@ class DatabaseSeeder extends Seeder
                 ['mapel_id' => $randomMapel(), 'kelas_id' => $randomKelas(), 'guru_id' => $randomGuru(), 'tipe' => $td['tipe'], 'tanggal_deadline' => $td['deadline']]
             );
         }
-
-        // === NILAI ===
-        // Beri nilai random untuk setiap siswa dan mapel (Ambil 5 mapel saja per siswa agar tidak terlalu berat)
         foreach ($siswas as $siswa) {
             foreach ($mapels->take(5) as $mapel) {
                 Nilai::firstOrCreate(
@@ -107,14 +88,12 @@ class DatabaseSeeder extends Seeder
                 );
             }
         }
-
-        // === KEHADIRAN ===
         $statusDistribution = ['hadir' => 90, 'sakit' => 3, 'izin' => 3, 'alpha' => 4];
         $date = Carbon::create(2026, 3, 1);
-        $end = Carbon::create(2026, 3, 10); // 10 hari saja
+        $end = Carbon::create(2026, 3, 10);
         while ($date->lte($end)) {
             if ($date->isWeekday()) {
-                foreach ($siswas->take(10) as $siswa) { // Sample 10 siswa
+                foreach ($siswas->take(10) as $siswa) {
                     $pick = 'hadir';
                     $rand = rand(1, 100);
                     $cum = 0;
@@ -133,8 +112,6 @@ class DatabaseSeeder extends Seeder
             }
             $date->addDay();
         }
-
-        // === CATATAN WALI KELAS ===
         $catatanSamples = [
             'Ananda adalah siswa yang rajin dan memiliki semangat belajar tinggi.',
             'Ananda memiliki potensi besar di bidang agama. Pertahankan!',
@@ -147,8 +124,6 @@ class DatabaseSeeder extends Seeder
                 ['catatan' => collect($catatanSamples)->random(), 'created_by' => $randomGuru()]
             );
         }
-
-        // === TAHFIDZ SETORAN ===
         foreach ($siswas->take(10) as $siswa) {
             for ($i = 0; $i < 3; $i++) {
                 TahfidzSetoran::create([
@@ -164,8 +139,6 @@ class DatabaseSeeder extends Seeder
                 ]);
             }
         }
-
-        // === PENGUMUMAN ===
         $pengumumanData = [
             ['judul' => 'Libur Hari Raya Nyepi', 'konten' => 'Sekolah libur pada tanggal 30 Maret 2026.', 'tanggal' => '2026-03-25'],
             ['judul' => 'Pesantren Kilat Ramadhan', 'konten' => 'Kegiatan pesantren kilat akan diadakan pada minggu kedua April.', 'tanggal' => '2026-03-20'],
@@ -178,16 +151,12 @@ class DatabaseSeeder extends Seeder
                 );
             }
         }
-
-        // === PESAN ===
         if ($guruUser && $siswaUser) {
             Pesan::firstOrCreate(
                 ['pengirim_id' => $guruUser->id, 'penerima_id' => $siswaUser->id, 'subjek' => 'PR Matematika'],
                 ['isi' => 'Jangan lupa kumpulkan PR besok!']
             );
         }
-
-        // === BADGES ===
         $badgeData = [
             ['nama' => 'Rajin Belajar', 'deskripsi' => 'Aktif 30 hari berturut-turut', 'icon' => '⭐'],
             ['nama' => 'Juara Quiz', 'deskripsi' => 'Nilai quiz di atas 90', 'icon' => '🎯'],
@@ -201,15 +170,11 @@ class DatabaseSeeder extends Seeder
                 ['deskripsi' => $bd['deskripsi'], 'icon' => $bd['icon']]
             )->id;
         }
-
-        // === SISWA BADGE ===
         foreach ($siswas->take(5) as $siswa) {
             SiswaBadge::firstOrCreate(
                 ['siswa_id' => $siswa->id, 'badge_id' => collect($badgeIdsArray)->random()]
             );
         }
-
-        // === WORKBOOKS ===
         $wbData = [
             ['judul' => 'Latihan Soal Matematika Bab 5', 'tipe' => 'penugasan_di_rumah', 'soals' => [
                 ['soal' => 'Berapakah hasil dari 25 × 4?', 'a' => '80', 'b' => '100', 'c' => '120', 'd' => '90', 'benar' => 'b', 'bobot' => 1],
@@ -229,7 +194,7 @@ class DatabaseSeeder extends Seeder
                     ['workbook_id' => $wbModel->id, 'nomor' => $i + 1],
                     [
                         'soal' => $s['soal'],
-                        'tipe' => $s['tipe'] ?? 'pg', // menggunakan valid enum (pg / essay)
+                        'tipe' => $s['tipe'] ?? 'pg',
                         'pilihan_a' => $s['a'] ?? null,
                         'pilihan_b' => $s['b'] ?? null,
                         'pilihan_c' => $s['c'] ?? null,
@@ -240,8 +205,6 @@ class DatabaseSeeder extends Seeder
                 );
             }
         }
-
-        // === SPP & PEMBAYARAN ===
         $bulanSekarang = (int)now()->format('m');
         $tahunSekarang = (int)now()->format('Y');
         foreach ($siswas->take(3) as $siswa) {
@@ -258,13 +221,9 @@ class DatabaseSeeder extends Seeder
                 }
             }
         }
-
-        // === LOG AKTIVITAS ===
         if ($adminUser) {
             LogAktivitas::firstOrCreate(['deskripsi' => 'Login admin dashboard'], ['user_id' => $adminUser->id, 'tipe' => 'User', 'created_at' => now()]);
         }
-
-        // === PENGATURAN ===
         $pengaturanData = [
             ['key' => 'nama_sekolah', 'value' => 'SMPIT Al Azhar Jaya Indonesia'],
             ['key' => 'tahun_ajaran', 'value' => '2025/2026'],
@@ -275,7 +234,6 @@ class DatabaseSeeder extends Seeder
         foreach ($pengaturanData as $pd) {
             Pengaturan::firstOrCreate(['key' => $pd['key']], ['value' => $pd['value']]);
         }
-
         $this->command->info('Database seeded successfully!');
     }
 }

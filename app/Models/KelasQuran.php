@@ -1,10 +1,7 @@
 <?php
-
 namespace App\Models;
-
 use App\Models\Siswa;
 use Illuminate\Database\Eloquent\Model;
-
 class KelasQuran extends Model
 {
     protected $table = "kelas_quran";
@@ -14,7 +11,6 @@ class KelasQuran extends Model
         'kategori',
         'tingkat'
     ];
-
     public function siswa()
     {
         return $this->hasMany(Siswa::class);

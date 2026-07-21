@@ -1,11 +1,8 @@
 <?php
-
 namespace App\Http\Controllers;
-
 use App\Models\CbtExam;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-
 class AdminCbtController extends Controller
 {
     public function index()
@@ -16,7 +13,6 @@ class AdminCbtController extends Controller
             ->get();
         return view('dashboard.admin-sections.cbt-approval', compact('exams'));
     }
-
     public function approve(CbtExam $cbtExam)
     {
         $cbtExam->update([
@@ -27,7 +23,6 @@ class AdminCbtController extends Controller
         ]);
         return redirect()->back()->with('success', 'Ujian disetujui!');
     }
-
     public function reject(Request $request, CbtExam $cbtExam)
     {
         $data = $request->validate(['catatan_reject' => 'required|string|max:1000']);

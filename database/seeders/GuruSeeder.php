@@ -1,13 +1,10 @@
 <?php
-
 namespace Database\Seeders;
-
 use Illuminate\Database\Seeder;
 use App\Models\Guru;
 use App\Models\User;
 use App\Models\Mapel;
 use Illuminate\Support\Facades\Hash;
-
 class GuruSeeder extends Seeder
 {
     public function run(): void
@@ -21,21 +18,17 @@ class GuruSeeder extends Seeder
             'Irnika Widiyan Dini, S.Li' => ['Bahasa Inggris'],
             'Ajeng Putyri Aryantika, S.Pd' => ['Matematika'],
             'Nurhayati, S.Ag' => ['Aqidah', 'Pendidikan Agama Islam', 'Fiqh'],
-            // Guru Piket
             'Sri Wanti Maulani, S.Pd' => [],
             'Khairunisa' => [],
             'Ai Sunariah, S.Pd' => [],
         ];
-
         $sdGuru = Guru::query()->where('nama', 'Guru Pendamping SD')->first();
         if ($sdGuru) {
             $fallbackGuruId = Guru::query()
                 ->where('id', '!=', $sdGuru->id)
                 ->value('id');
-
             \App\Models\Tugas::query()->where('guru_id', $sdGuru->id)->delete();
             \App\Models\Jadwal::query()->where('guru_id', $sdGuru->id)->delete();
-
             if ($fallbackGuruId) {
                 \App\Models\CatatanWali::query()
                     ->where('created_by', $sdGuru->id)
@@ -53,15 +46,11 @@ class GuruSeeder extends Seeder
                     ->where('guru_id', $sdGuru->id)
                     ->update(['guru_id' => $fallbackGuruId]);
             }
-
             $sdGuru->user?->delete();
         }
-
         $nipCounter = 1001;
-
         foreach ($gurus as $namaGuru => $mapels) {
             $email = strtolower(str_replace([' ', ',', '.'], ['', '', ''], $namaGuru)) . '@alazharjayaindonesia.sch.id';
-
             $user = User::updateOrCreate(
                 ['email' => $email],
                 [
@@ -70,7 +59,6 @@ class GuruSeeder extends Seeder
                     'role' => 'guru'
                 ]
             );
-
             $guru = Guru::updateOrCreate(
                 ['user_id' => $user->id],
                 [
@@ -79,10 +67,7 @@ class GuruSeeder extends Seeder
                     'status' => 'aktif'
                 ]
             );
-
             $nipCounter++;
-
-            // Sync Mapels via pivot table
             $mapelIds = [];
             foreach ($mapels as $namaMapel) {
                 $mapel = Mapel::query()->where('nama_mapel', $namaMapel)->first();

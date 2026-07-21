@@ -1,10 +1,7 @@
 <?php
-
 namespace Database\Seeders;
-
 use Illuminate\Database\Seeder;
 use App\Models\Mapel;
-
 class MapelSeeder extends Seeder
 {
     public function run(): void
@@ -36,8 +33,6 @@ class MapelSeeder extends Seeder
             ['nama' => 'Apel, Dhuha & Muroja\'ah', 'kode' => 'ADM'],
             ['nama' => 'Shalat Ashar dan Dzikir', 'kode' => 'ASHR_DZK'],
             ['nama' => 'Ekskul', 'kode' => 'EKS'],
-            
-            // Mapel tambahan/operasional
             ['nama' => 'Dhuha Time', 'kode' => 'DHUHA'],
             ['nama' => 'Upacara / Pentas Seni', 'kode' => 'UPCR'],
             ['nama' => 'Qailullah', 'kode' => 'QAIL'],
@@ -54,7 +49,6 @@ class MapelSeeder extends Seeder
             ['nama' => 'Pendidikan Kewarganegaraan', 'kode' => 'PKN'],
             ['nama' => 'Shalat Ashar', 'kode' => 'ASHR'],
         ];
-
         foreach ($mapels as $mapel) {
             Mapel::updateOrCreate(
                 ['nama_mapel' => $mapel['nama']],

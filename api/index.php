@@ -1,23 +1,19 @@
 <?php
-
 function set_default_env(string $key, string $value): void
 {
     if (getenv($key) !== false || isset($_ENV[$key]) || isset($_SERVER[$key])) {
         return;
     }
-
     putenv($key.'='.$value);
     $_ENV[$key] = $value;
     $_SERVER[$key] = $value;
 }
-
 function force_env(string $key, string $value): void
 {
     putenv($key.'='.$value);
     $_ENV[$key] = $value;
     $_SERVER[$key] = $value;
 }
-
 force_env('APP_ENV', 'production');
 set_default_env('APP_KEY', 'base64:A0HS5iKNXPcJ73zKN2m00AudKedDw4Zk3mUB0pPHXuQ=');
 force_env('APP_DEBUG', 'false');
@@ -35,7 +31,6 @@ force_env('APP_EVENTS_CACHE', '/tmp/storage/framework/cache/events.php');
 force_env('APP_PACKAGES_CACHE', '/tmp/storage/framework/cache/packages.php');
 force_env('APP_ROUTES_CACHE', '/tmp/storage/framework/cache/routes.php');
 force_env('APP_SERVICES_CACHE', '/tmp/storage/framework/cache/services.php');
-
 foreach ([
     '/tmp/storage/app',
     '/tmp/storage/app/public',
@@ -49,23 +44,18 @@ foreach ([
         mkdir($directory, 0777, true);
     }
 }
-
 $sourceDatabase = __DIR__.'/../database/database.sqlite';
 $runtimeDatabase = '/tmp/database.sqlite';
 $runtimeDatabaseVersion = '/tmp/database.sqlite.version';
-
 if (file_exists($sourceDatabase)) {
     $sourceDatabaseVersion = filesize($sourceDatabase).':'.filemtime($sourceDatabase);
     $currentDatabaseVersion = file_exists($runtimeDatabaseVersion)
         ? trim((string) file_get_contents($runtimeDatabaseVersion))
         : null;
 }
-
 if (file_exists($sourceDatabase) && (! file_exists($runtimeDatabase) || $currentDatabaseVersion !== $sourceDatabaseVersion)) {
     copy($sourceDatabase, $runtimeDatabase);
     file_put_contents($runtimeDatabaseVersion, $sourceDatabaseVersion);
 }
-
 $_SERVER['SCRIPT_NAME'] = '/index.php';
-
 require __DIR__.'/../public/index.php';

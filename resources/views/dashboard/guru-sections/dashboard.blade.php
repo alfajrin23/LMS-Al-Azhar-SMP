@@ -16,7 +16,6 @@
         <div class="avatar blue">{{ $inits }}</div>
     </div>
 </div>
-
 <div class="quick-action">
     <label @click="tab='tugas'" class="quick-action-item" style="cursor:pointer">
         <span class="qa-icon">&#x1F4DD;</span><span class="qa-label">Buat Tugas</span>
@@ -31,7 +30,6 @@
         <span class="qa-icon">&#x1F4C5;</span><span class="qa-label">Jadwal</span>
     </label>
 </div>
-
 <div class="grid-4" style="margin-bottom:20px">
     <div class="stat-card centered">
         <div class="stat-icon-wrap teal"><i class="fas fa-chalkboard"></i></div>
@@ -54,7 +52,6 @@
         <div class="stat-label">Ulangan Aktif</div>
     </div>
 </div>
-
 <div class="grid-2" style="margin-bottom:20px">
     <div class="card">
         <div class="card-header">
@@ -78,7 +75,6 @@
             </table>
         </div>
     </div>
-
     <div>
         <div class="card" style="margin-bottom:16px">
             <div class="card-header">
@@ -103,7 +99,6 @@
                 <div style="padding:20px;text-align:center;color:var(--gray-400)">Belum ada tugas</div>
             @endforelse
         </div>
-
         <div class="card">
             <div class="card-header">
                 <h3><i class="fas fa-calendar-alt" style="color:var(--blue)"></i> Kalender Akademik</h3>
@@ -140,7 +135,6 @@
         </div>
     </div>
 </div>
-
 <div class="card">
     <div class="card-header">
         <h3><i class="fas fa-inbox" style="color:var(--blue)"></i> Pesan Masuk</h3>

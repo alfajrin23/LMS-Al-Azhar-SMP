@@ -1,7 +1,5 @@
 @extends('layouts.app')
-
 @section('title', 'Dashboard Orang Tua - LMS Al Azhar Jaya Indonesia')
-
 @section('sidebar')
     <li :class="{'active': tab === 'dashboard'}" @click="tab = 'dashboard'">
         <label><i class="fas fa-th-large"></i> Dashboard</label>
@@ -25,7 +23,6 @@
         <label><i class="fas fa-envelope"></i> Buku Penghubung</label>
     </li>
 @endsection
-
 @section('content')
     <div x-show="tab === 'dashboard'" x-init="childId = childId || {{ $anak->first()?->id ?? 'null' }}">
         @include('dashboard.orang-tua-sections.dashboard')
@@ -48,7 +45,6 @@
     <div x-show="tab === 'pesan'">
         @include('dashboard.orang-tua-sections.pesan')
     </div>
-
     @if(session('success'))
         <div style="position:fixed;bottom:20px;right:20px;background:var(--green);color:#fff;padding:14px 20px;border-radius:var(--radius-sm);font-weight:600;box-shadow:0 4px 12px rgba(0,0,0,0.15);z-index:999">
             <i class="fas fa-check-circle"></i> {{ session('success') }}

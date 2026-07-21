@@ -33,7 +33,6 @@
         <div class="avatar blue">{{ strtoupper(substr($guru->nama, 0, 1)) }}</div>
     </div>
 </div>
-
 <div class="grid-2" style="margin-bottom:20px">
     <div class="card">
         <div class="card-header">
@@ -140,7 +139,6 @@
         </div>
     </div>
 </div>
-
 <div x-data="{ selectedTugasId: null }">
     <div style="display:flex;gap:8px;margin-bottom:16px">
         <select x-model="filterKelasVal" class="form-select"
@@ -157,7 +155,6 @@
             <option value="ulangan">Ulangan</option>
         </select>
     </div>
-
     <div class="card" style="margin-bottom:16px">
         <div class="card-header">
             <h3><i class="fas fa-tasks" style="color:var(--orange)"></i> Tugas Aktif</h3>
@@ -264,8 +261,6 @@
             </table>
         </div>
     </div>
-
-    {{-- Panel Detail Pengumpulan --}}
     <div x-show="selectedTugasId" class="card"
         style="margin-top:16px;border:2px solid var(--blue);border-radius:var(--radius-md)">
         @foreach ($tugas as $t)
@@ -353,7 +348,6 @@
         @endforeach
     </div>
 </div>
-
 @if (session('success'))
     <div
         style="position:fixed;bottom:20px;right:20px;background:var(--green);color:#fff;padding:14px 20px;border-radius:var(--radius-sm);font-weight:600;box-shadow:0 4px 12px rgba(0,0,0,0.15);z-index:999">

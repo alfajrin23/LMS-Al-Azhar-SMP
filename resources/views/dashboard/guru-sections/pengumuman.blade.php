@@ -5,7 +5,6 @@
         <div class="avatar blue">{{ strtoupper(substr($guru->nama, 0, 1)) }}</div>
     </div>
 </div>
-
 <div x-show="showTulisPesan" class="card" style="margin-bottom:16px">
     <div class="card-header"><h3><i class="fas fa-bullhorn" style="color:var(--teal)"></i> Buat Pengumuman Baru</h3></div>
     <form method="POST" action="{{ route('guru.pengumuman.store') }}" style="padding:4px 0">
@@ -31,7 +30,6 @@
         <button type="button" @click="showTulisPesan = false" class="btn-login" style="cursor:pointer;border:none;background:var(--gray-300);color:var(--text);margin-left:8px">Batal</button>
     </form>
 </div>
-
 <div class="card">
     <div class="card-header"><h3><i class="fas fa-bullhorn" style="color:var(--orange)"></i> Pengumuman Sekolah</h3></div>
     @forelse($pengumuman as $p)

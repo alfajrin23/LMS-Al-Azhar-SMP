@@ -1,7 +1,5 @@
 @extends('layouts.app')
-
 @section('title', 'Dashboard Admin - LMS Al Azhar Jaya Indonesia')
-
 @section('sidebar')
     <li :class="{ 'active': tab === 'dashboard' }" @click="tab = 'dashboard'">
         <label><i class="fas fa-th-large"></i> Dashboard</label>
@@ -19,9 +17,7 @@
         <label><i class="fas fa-school"></i> Kelas</label>
     </li>
 @endsection
-
 @section('content')
-
     <div x-show="tab === 'dashboard'">
         <div>
             <div class="content-header">
@@ -194,7 +190,6 @@
             </div>
         </div>
     </div>
-
     <div x-show="tab === 'siswa'">
         <div>
             <div class="content-header">
@@ -249,7 +244,6 @@
             </div>
         </div>
     </div>
-
     <div x-show="tab === 'guru'">
         <div>
             <div class="content-header">
@@ -304,7 +298,6 @@
             </div>
         </div>
     </div>
-
     <div x-show="tab === 'ortu'">
         <div>
             <div class="content-header">
@@ -359,7 +352,6 @@
             </div>
         </div>
     </div>
-
     <div x-show="tab === 'kelas'" x-data="{ jenisKelas: 'umum' }">
         <div>
             <div class="content-header">
@@ -416,7 +408,6 @@
                     </div>
                 </div>
             </div>
-            
             <div class="card" x-show="jenisKelas === 'quran'">
                 <div class="table-wrap">
                     <table>
@@ -453,7 +444,6 @@
             </div>
         </div>
     </div>
-
     <div x-show="tab === 'siswa-form'">
         <div>
             <div class="content-header">
@@ -573,7 +563,6 @@
             </div>
         </div>
     </div>
-
     <div x-show="tab === 'guru-form'">
         <div>
             <div class="content-header">
@@ -626,7 +615,6 @@
             </div>
         </div>
     </div>
-
     <div x-show="tab === 'ortu-form'">
         <div>
             <div class="content-header">
@@ -678,7 +666,6 @@
             </div>
         </div>
     </div>
-
     <div x-show="tab === 'kelas-form'">
         <div>
             <div class="content-header">
@@ -719,7 +706,6 @@
             </div>
         </div>
     </div>
-
     <div x-show="tab === 'siswa-detail'">
         <div>
             <div class="content-header">
@@ -795,7 +781,6 @@
             </div>
         </div>
     </div>
-
     <div x-show="tab === 'guru-detail'">
         <div>
             <div class="content-header">
@@ -875,7 +860,6 @@
             </div>
         </div>
     </div>
-
     <div x-show="tab === 'ortu-detail'">
         <div>
             <div class="content-header">
@@ -915,7 +899,6 @@
             </div>
         </div>
     </div>
-
     <div x-show="tab === 'kelas-detail'">
         <div>
             <div class="content-header">
@@ -993,7 +976,6 @@
             </div>
         </div>
     </div>
-
     <div x-show="tab === 'siswa-edit'">
         <div>
             <div class="content-header">
@@ -1049,5 +1031,4 @@
             </div>
         </div>
     </div>
-
 @endsection

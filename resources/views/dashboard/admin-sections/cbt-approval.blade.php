@@ -13,7 +13,6 @@
         <div class="avatar teal">AD</div>
     </div>
 </div>
-
 @if($exams && $exams->count() > 0)
 <div class="card">
     <div class="card-header"><h3><i class="fas fa-laptop" style="color:var(--blue)"></i> Daftar Pengajuan Ujian</h3></div>
@@ -88,7 +87,6 @@
     </div>
 </div>
 @endif
-
 @if(session('success'))
     <div style="position:fixed;bottom:20px;right:20px;background:var(--green);color:#fff;padding:14px 20px;border-radius:var(--radius-sm);font-weight:600;box-shadow:0 4px 12px rgba(0,0,0,0.15);z-index:999">
         <i class="fas fa-check-circle"></i> {{ session('success') }}

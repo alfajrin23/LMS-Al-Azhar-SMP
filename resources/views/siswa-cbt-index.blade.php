@@ -1,7 +1,5 @@
 @extends('layouts.app')
-
 @section('title', 'Ujian CBT - LMS Al Azhar Jaya Indonesia')
-
 @section('sidebar')
     <li :class="{'active': tab === 'cbt'}" @click="tab = 'cbt'">
         <label><i class="fas fa-laptop"></i> Ujian CBT</label>
@@ -10,7 +8,6 @@
         <a href="{{ route('dashboard') }}"><i class="fas fa-arrow-left"></i> Kembali</a>
     </li>
 @endsection
-
 @section('content')
 <div x-data="{ tab: 'cbt' }">
     <div x-show="tab === 'cbt'">
@@ -23,7 +20,6 @@
                 <div class="avatar blue">{{ strtoupper(substr($siswa->nama, 0, 1)) }}</div>
             </div>
         </div>
-
         @forelse($exams as $exam)
         <div class="card" style="margin-bottom:14px">
             <div class="card-header">
