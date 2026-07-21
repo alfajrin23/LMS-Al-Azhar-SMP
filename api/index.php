@@ -36,6 +36,10 @@ force_env('APP_PACKAGES_CACHE', '/tmp/storage/framework/cache/packages.php');
 force_env('APP_ROUTES_CACHE', '/tmp/storage/framework/cache/routes.php');
 force_env('APP_SERVICES_CACHE', '/tmp/storage/framework/cache/services.php');
 
+if (($_GET['__debug'] ?? null) === '1') {
+    force_env('APP_DEBUG', 'true');
+}
+
 foreach ([
     '/tmp/storage/app',
     '/tmp/storage/app/public',
