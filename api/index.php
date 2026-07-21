@@ -11,23 +11,30 @@ function set_default_env(string $key, string $value): void
     $_SERVER[$key] = $value;
 }
 
-set_default_env('APP_ENV', 'production');
+function force_env(string $key, string $value): void
+{
+    putenv($key.'='.$value);
+    $_ENV[$key] = $value;
+    $_SERVER[$key] = $value;
+}
+
+force_env('APP_ENV', 'production');
 set_default_env('APP_KEY', 'base64:A0HS5iKNXPcJ73zKN2m00AudKedDw4Zk3mUB0pPHXuQ=');
-set_default_env('APP_DEBUG', 'false');
+force_env('APP_DEBUG', 'false');
 set_default_env('APP_URL', 'https://'.(getenv('VERCEL_URL') ?: 'lms-al-azhar-sd.vercel.app'));
-set_default_env('LOG_CHANNEL', 'stderr');
-set_default_env('CACHE_STORE', 'array');
-set_default_env('SESSION_DRIVER', 'cookie');
-set_default_env('QUEUE_CONNECTION', 'sync');
-set_default_env('DB_CONNECTION', 'sqlite');
-set_default_env('DB_DATABASE', '/tmp/database.sqlite');
-set_default_env('LARAVEL_STORAGE_PATH', '/tmp/storage');
-set_default_env('VIEW_COMPILED_PATH', '/tmp/storage/framework/views');
-set_default_env('APP_CONFIG_CACHE', '/tmp/storage/framework/cache/config.php');
-set_default_env('APP_EVENTS_CACHE', '/tmp/storage/framework/cache/events.php');
-set_default_env('APP_PACKAGES_CACHE', '/tmp/storage/framework/cache/packages.php');
-set_default_env('APP_ROUTES_CACHE', '/tmp/storage/framework/cache/routes.php');
-set_default_env('APP_SERVICES_CACHE', '/tmp/storage/framework/cache/services.php');
+force_env('LOG_CHANNEL', 'stderr');
+force_env('CACHE_STORE', 'array');
+force_env('SESSION_DRIVER', 'cookie');
+force_env('QUEUE_CONNECTION', 'sync');
+force_env('DB_CONNECTION', 'sqlite');
+force_env('DB_DATABASE', '/tmp/database.sqlite');
+force_env('LARAVEL_STORAGE_PATH', '/tmp/storage');
+force_env('VIEW_COMPILED_PATH', '/tmp/storage/framework/views');
+force_env('APP_CONFIG_CACHE', '/tmp/storage/framework/cache/config.php');
+force_env('APP_EVENTS_CACHE', '/tmp/storage/framework/cache/events.php');
+force_env('APP_PACKAGES_CACHE', '/tmp/storage/framework/cache/packages.php');
+force_env('APP_ROUTES_CACHE', '/tmp/storage/framework/cache/routes.php');
+force_env('APP_SERVICES_CACHE', '/tmp/storage/framework/cache/services.php');
 
 foreach ([
     '/tmp/storage/app',
@@ -56,6 +63,8 @@ if (parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) === '/_runtime-check
     echo json_encode([
         'php' => PHP_VERSION,
         'app_key_set' => getenv('APP_KEY') !== false,
+        'session_driver' => getenv('SESSION_DRIVER'),
+        'cache_store' => getenv('CACHE_STORE'),
         'db_connection' => getenv('DB_CONNECTION'),
         'db_database' => getenv('DB_DATABASE'),
         'source_database_exists' => file_exists($sourceDatabase),
