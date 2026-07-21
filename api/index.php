@@ -52,9 +52,18 @@ foreach ([
 
 $sourceDatabase = __DIR__.'/../database/database.sqlite';
 $runtimeDatabase = '/tmp/database.sqlite';
+$runtimeDatabaseVersion = '/tmp/database.sqlite.version';
 
-if (! file_exists($runtimeDatabase) && file_exists($sourceDatabase)) {
+if (file_exists($sourceDatabase)) {
+    $sourceDatabaseVersion = filesize($sourceDatabase).':'.filemtime($sourceDatabase);
+    $currentDatabaseVersion = file_exists($runtimeDatabaseVersion)
+        ? trim((string) file_get_contents($runtimeDatabaseVersion))
+        : null;
+}
+
+if (file_exists($sourceDatabase) && (! file_exists($runtimeDatabase) || $currentDatabaseVersion !== $sourceDatabaseVersion)) {
     copy($sourceDatabase, $runtimeDatabase);
+    file_put_contents($runtimeDatabaseVersion, $sourceDatabaseVersion);
 }
 
 $_SERVER['SCRIPT_NAME'] = '/index.php';

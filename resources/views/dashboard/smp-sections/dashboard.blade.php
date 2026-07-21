@@ -285,6 +285,7 @@
                 <i class="fas fa-qrcode" style="font-size:180px; color:var(--gray-800);"></i>
             </div>
 
+            <p style="font-size:13px; color:var(--text); font-weight:700; margin:0 0 8px;">No. Rek BSI 7676003007</p>
             <p style="font-size:12px; color:var(--gray-500); line-height:1.5; margin-bottom:0;">Fitur dalam tahap
                 pengembangan</p>
         </div>
