@@ -50,6 +50,24 @@ if (! file_exists($runtimeDatabase) && file_exists($sourceDatabase)) {
     copy($sourceDatabase, $runtimeDatabase);
 }
 
+if (parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) === '/_runtime-check') {
+    header('Content-Type: application/json');
+
+    echo json_encode([
+        'php' => PHP_VERSION,
+        'app_key_set' => getenv('APP_KEY') !== false,
+        'db_connection' => getenv('DB_CONNECTION'),
+        'db_database' => getenv('DB_DATABASE'),
+        'source_database_exists' => file_exists($sourceDatabase),
+        'runtime_database_exists' => file_exists($runtimeDatabase),
+        'runtime_database_size' => file_exists($runtimeDatabase) ? filesize($runtimeDatabase) : null,
+        'pdo_sqlite_loaded' => extension_loaded('pdo_sqlite'),
+        'sqlite3_loaded' => extension_loaded('sqlite3'),
+    ], JSON_PRETTY_PRINT);
+
+    return;
+}
+
 $_SERVER['SCRIPT_NAME'] = '/index.php';
 
 require __DIR__.'/../public/index.php';
