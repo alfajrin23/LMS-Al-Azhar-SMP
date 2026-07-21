@@ -3,8 +3,8 @@
 !.env.example
 .git
 .vercel
-node_modules
-vendor
+/node_modules
+/vendor
 storage/logs/*
 storage/framework/cache/*
 storage/framework/sessions/*
