@@ -12,11 +12,15 @@ function set_default_env(string $key, string $value): void
 }
 
 set_default_env('APP_ENV', 'production');
+set_default_env('APP_KEY', 'base64:A0HS5iKNXPcJ73zKN2m00AudKedDw4Zk3mUB0pPHXuQ=');
 set_default_env('APP_DEBUG', 'false');
+set_default_env('APP_URL', 'https://'.(getenv('VERCEL_URL') ?: 'lms-al-azhar-sd.vercel.app'));
 set_default_env('LOG_CHANNEL', 'stderr');
 set_default_env('CACHE_STORE', 'array');
 set_default_env('SESSION_DRIVER', 'cookie');
 set_default_env('QUEUE_CONNECTION', 'sync');
+set_default_env('DB_CONNECTION', 'sqlite');
+set_default_env('DB_DATABASE', '/tmp/database.sqlite');
 set_default_env('LARAVEL_STORAGE_PATH', '/tmp/storage');
 set_default_env('VIEW_COMPILED_PATH', '/tmp/storage/framework/views');
 set_default_env('APP_CONFIG_CACHE', '/tmp/storage/framework/cache/config.php');
@@ -37,6 +41,13 @@ foreach ([
     if (! is_dir($directory)) {
         mkdir($directory, 0777, true);
     }
+}
+
+$sourceDatabase = __DIR__.'/../database/database.sqlite';
+$runtimeDatabase = '/tmp/database.sqlite';
+
+if (! file_exists($runtimeDatabase) && file_exists($sourceDatabase)) {
+    copy($sourceDatabase, $runtimeDatabase);
 }
 
 $_SERVER['SCRIPT_NAME'] = '/index.php';
