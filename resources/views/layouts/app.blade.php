@@ -41,10 +41,23 @@
                     if(te) te.remove();
                 }, 5000);
             </script>
-            <aside class="sidebar">
-                <div style="display:flex;align-items:center;padding:0 20px 12px;border-bottom:1px solid var(--border-light);margin-bottom:8px">
-                    <button class="hamburger d-md-none" id="sidebarToggle" type="button" style="display:none">
-                        <span></span><span></span><span></span>
+            <header class="mobile-header">
+                <button class="mobile-menu-toggle" id="sidebarToggle" type="button" aria-controls="dashboardSidebar" aria-expanded="false" aria-label="Buka menu navigasi">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="mobile-header-brand">
+                    <i class="fas fa-graduation-cap"></i>
+                    <span>LMS Al Azhar Jaya</span>
+                </div>
+            </header>
+            <aside class="sidebar" id="dashboardSidebar" aria-label="Menu utama">
+                <div class="sidebar-mobile-head">
+                    <div>
+                        <strong>Menu</strong>
+                        <span>SMPIT Al Azhar Jaya Indonesia</span>
+                    </div>
+                    <button class="sidebar-close" id="sidebarClose" type="button" aria-label="Tutup menu">
+                        <i class="fas fa-times"></i>
                     </button>
                 </div>
                 <div class="brand">
@@ -75,20 +88,49 @@
     <script>
     document.addEventListener('DOMContentLoaded', function() {
         const sidebarToggle = document.getElementById('sidebarToggle');
-        const sidebar = document.querySelector('.sidebar');
+        const sidebarClose = document.getElementById('sidebarClose');
+        const sidebar = document.getElementById('dashboardSidebar') || document.querySelector('.sidebar');
         const overlay = document.querySelector('.overlay');
+
+        function openSidebar() {
+            if (!sidebar) return;
+            sidebar.classList.add('sidebar-mobile', 'is-open');
+            if (overlay) overlay.classList.add('show');
+            document.body.classList.add('sidebar-open');
+            if (sidebarToggle) sidebarToggle.setAttribute('aria-expanded', 'true');
+        }
+
+        function closeSidebar() {
+            if (!sidebar) return;
+            sidebar.classList.remove('sidebar-mobile', 'is-open');
+            if (overlay) overlay.classList.remove('show');
+            document.body.classList.remove('sidebar-open');
+            if (sidebarToggle) sidebarToggle.setAttribute('aria-expanded', 'false');
+        }
+
         if (sidebarToggle) {
             sidebarToggle.addEventListener('click', function() {
-                sidebar.classList.toggle('sidebar-mobile');
-                if (overlay) overlay.classList.toggle('show');
+                if (sidebar && sidebar.classList.contains('is-open')) {
+                    closeSidebar();
+                } else {
+                    openSidebar();
+                }
             });
         }
-        if (overlay) {
-            overlay.addEventListener('click', function() {
-                sidebar.classList.remove('sidebar-mobile');
-                this.classList.remove('show');
+        if (sidebarClose) sidebarClose.addEventListener('click', closeSidebar);
+        if (overlay) overlay.addEventListener('click', closeSidebar);
+        if (sidebar) {
+            sidebar.addEventListener('click', function(e) {
+                const isMobile = window.matchMedia('(max-width: 768px)').matches;
+                if (isMobile && e.target.closest('.sidebar-menu a, .sidebar-menu label')) closeSidebar();
             });
         }
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeSidebar();
+        });
+        window.addEventListener('resize', function() {
+            if (!window.matchMedia('(max-width: 768px)').matches) closeSidebar();
+        });
         let searchTimeout;
         const searchInput = document.getElementById('globalSearch');
         const searchResults = document.getElementById('searchResults');
