@@ -4,22 +4,39 @@
         <label @click="showTulisPesan = !showTulisPesan" class="header-btn primary" style="cursor:pointer"><i class="fas fa-envelope"></i> Pesan Baru</label>
         <select x-model="childId" class="child-select">
             @foreach($anak as $a)
-            <option value="{{ $a->id }}">{{ $a->nama }} &mdash; {{ $a->kelas->nama_kelas ?? 'N/A' }}</option>
+                <option value="{{ $a->id }}">{{ $a->nama }} - {{ $a->kelas->nama_kelas ?? 'N/A' }}</option>
             @endforeach
         </select>
         <div class="avatar orange">{{ strtoupper(substr($ortu?->nama ?? $user->name, 0, 2)) }}</div>
     </div>
 </div>
+
 <div x-show="showTulisPesan" class="card" style="margin-bottom:16px">
     <div class="card-header"><h3><i class="fas fa-paper-plane" style="color:var(--teal)"></i> Kirim Pesan ke Guru</h3></div>
     <form method="POST" action="{{ route('ortu.pesan.store') }}" style="padding:4px 0">
         @csrf
         <div class="form-group" style="margin-bottom:12px">
+            <label style="display:block;font-size:13px;font-weight:600;color:var(--gray-500);margin-bottom:4px">Siswa Terkait</label>
+            <select name="siswa_id" required class="form-select" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:13px;font-family:var(--font);background:var(--white)">
+                @foreach($anak as $a)
+                    <option value="{{ $a->id }}">{{ $a->nama }} - {{ $a->kelas->nama_kelas ?? 'N/A' }}</option>
+                @endforeach
+            </select>
+        </div>
+        <div class="form-group" style="margin-bottom:12px">
             <label style="display:block;font-size:13px;font-weight:600;color:var(--gray-500);margin-bottom:4px">Tujuan</label>
             <select name="penerima_id" required class="form-select" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:13px;font-family:var(--font);background:var(--white)">
                 <option value="">Pilih Guru</option>
                 @foreach($daftarGuru as $g)
-                <option value="{{ $g->user_id }}">{{ $g->nama }} — {{ $g->mapel->nama_mapel ?? 'Mapel' }}</option>
+                    <option value="{{ $g->user_id }}">{{ $g->nama }} - {{ $g->mapel->nama_mapel ?? $g->mapels->first()?->nama_mapel ?? 'Mapel' }}</option>
+                @endforeach
+            </select>
+        </div>
+        <div class="grid-2" style="gap:10px;margin-bottom:12px">
+            <input type="text" name="subjek" required placeholder="Subjek" style="padding:9px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:13px;font-family:var(--font)">
+            <select name="kategori" class="form-select" style="padding:9px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:13px;font-family:var(--font);background:var(--white)">
+                @foreach(['Akademik','Kehadiran','Sikap','Tugas','Tahsin/Tahfidz','Informasi Sekolah','Lainnya'] as $kategori)
+                    <option value="{{ $kategori }}">{{ $kategori }}</option>
                 @endforeach
             </select>
         </div>
@@ -31,28 +48,42 @@
         <button type="button" @click="showTulisPesan = false" class="btn-login" style="cursor:pointer;border:none;background:var(--gray-300);color:var(--text);margin-left:8px">Batal</button>
     </form>
 </div>
+
 <div class="grid-2">
     <div class="card">
-        <div class="card-header"><h3><i class="fas fa-envelope" style="color:var(--blue)"></i> Pesan dari Guru</h3></div>
+        <div class="card-header"><h3><i class="fas fa-envelope" style="color:var(--blue)"></i> Buku Penghubung</h3></div>
         @forelse($pesanGuru as $p)
-        <div class="msg-item" style="padding:10px 0;border-bottom:1px solid var(--border-light)">
-            <div class="msg-sender" style="font-size:13px;font-weight:600">{{ $p->pengirim->name ?? 'Guru' }} <span style="color:var(--gray-400);font-weight:400">&mdash; {{ $p->created_at->format('d M Y H:i') }}</span></div>
-            <div class="msg-preview" style="font-size:12px;color:var(--gray-500);margin-top:4px">{{ $p->isi }}</div>
-        </div>
+            <div class="msg-item" style="padding:10px 0;border-bottom:1px solid var(--border-light)">
+                <div class="msg-sender" style="font-size:13px;font-weight:600">{{ $p->pengirim->name ?? 'Guru' }} <span style="color:var(--gray-400);font-weight:400">- {{ $p->created_at->format('d M Y H:i') }}</span></div>
+                <div style="font-size:12px;color:var(--gray-500);margin-top:4px"><strong>{{ $p->subjek ?? 'Buku Penghubung' }}</strong> - {{ $p->kategori ?? 'Lainnya' }} - {{ $p->siswa->nama ?? '-' }}</div>
+                <div class="msg-preview" style="font-size:12px;color:var(--gray-500);margin-top:4px">{{ $p->isi }}</div>
+                @if($p->siswa_id)
+                    <form method="POST" action="{{ route('ortu.pesan.store') }}" style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap">
+                        @csrf
+                        <input type="hidden" name="penerima_id" value="{{ $p->pengirim_id }}">
+                        <input type="hidden" name="siswa_id" value="{{ $p->siswa_id }}">
+                        <input type="hidden" name="parent_message_id" value="{{ $p->id }}">
+                        <input type="hidden" name="subjek" value="{{ $p->subjek }}">
+                        <input type="hidden" name="kategori" value="{{ $p->kategori }}">
+                        <input type="text" name="isi" required placeholder="Balas pesan" style="flex:1;min-width:180px;padding:7px;border:1px solid var(--border);border-radius:4px">
+                        <button class="btn-small outline" style="cursor:pointer"><i class="fas fa-reply"></i> Balas</button>
+                    </form>
+                @endif
+            </div>
         @empty
-        <p style="padding:12px;color:var(--gray-400);font-size:13px">Belum ada pesan dari guru.</p>
+            <p style="padding:12px;color:var(--gray-400);font-size:13px">Belum ada pesan dari guru.</p>
         @endforelse
     </div>
     <div class="card">
         <div class="card-header"><h3><i class="fas fa-bullhorn" style="color:var(--orange)"></i> Pengumuman</h3></div>
         @forelse($pengumuman as $p)
-        <div class="ann-item" style="padding:10px 0;border-bottom:1px solid var(--border-light)">
-            <div class="ann-date" style="font-size:11px;color:var(--gray-400)">{{ $p->created_at->format('d M Y') }}</div>
-            <div class="ann-title" style="font-size:13px;font-weight:600;margin-top:2px">{{ $p->judul }}</div>
-            <div class="ann-desc" style="font-size:12px;color:var(--gray-500);margin-top:4px">{{ $p->konten }}</div>
-        </div>
+            <div class="ann-item" style="padding:10px 0;border-bottom:1px solid var(--border-light)">
+                <div class="ann-date" style="font-size:11px;color:var(--gray-400)">{{ $p->created_at->format('d M Y') }}</div>
+                <div class="ann-title" style="font-size:13px;font-weight:600;margin-top:2px">{{ $p->judul }}</div>
+                <div class="ann-desc" style="font-size:12px;color:var(--gray-500);margin-top:4px">{{ $p->konten }}</div>
+            </div>
         @empty
-        <p style="padding:12px;color:var(--gray-400);font-size:13px">Belum ada pengumuman.</p>
+            <p style="padding:12px;color:var(--gray-400);font-size:13px">Belum ada pengumuman.</p>
         @endforelse
     </div>
 </div>

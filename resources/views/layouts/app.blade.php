@@ -41,25 +41,17 @@
                     if(te) te.remove();
                 }, 5000);
             </script>
-            <header class="mobile-header">
-                <button class="mobile-menu-toggle" id="sidebarToggle" type="button" aria-controls="dashboardSidebar" aria-expanded="false" aria-label="Buka menu navigasi">
-                    <i class="fas fa-bars"></i>
+            <header class="mobile-topbar">
+                <button class="hamburger" id="sidebarToggle" type="button" aria-label="Buka menu" aria-controls="dashboardSidebar" aria-expanded="false">
+                    <span></span><span></span><span></span>
                 </button>
-                <div class="mobile-header-brand">
-                    <i class="fas fa-graduation-cap"></i>
-                    <span>LMS Al Azhar Jaya</span>
+                <div class="mobile-topbar-brand">
+                    <strong>LMS Al Azhar Jaya</strong>
+                    <span>SMPIT Al Azhar Jaya Indonesia</span>
                 </div>
             </header>
-            <aside class="sidebar" id="dashboardSidebar" aria-label="Menu utama">
-                <div class="sidebar-mobile-head">
-                    <div>
-                        <strong>Menu</strong>
-                        <span>SMPIT Al Azhar Jaya Indonesia</span>
-                    </div>
-                    <button class="sidebar-close" id="sidebarClose" type="button" aria-label="Tutup menu">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
+
+            <aside class="sidebar" id="dashboardSidebar">
                 <div class="brand">
                     <h2><i class="fas fa-graduation-cap"></i>LMS Al Azhar Jaya</h2>
                     <p>SMPIT Al Azhar Jaya Indonesia</p>
@@ -88,49 +80,43 @@
     <script>
     document.addEventListener('DOMContentLoaded', function() {
         const sidebarToggle = document.getElementById('sidebarToggle');
-        const sidebarClose = document.getElementById('sidebarClose');
-        const sidebar = document.getElementById('dashboardSidebar') || document.querySelector('.sidebar');
+        const sidebar = document.querySelector('.sidebar');
         const overlay = document.querySelector('.overlay');
-
-        function openSidebar() {
+        const sidebarMenu = document.querySelector('.sidebar-menu');
+        const isMobile = () => window.matchMedia('(max-width: 768px)').matches;
+        const closeSidebar = () => {
             if (!sidebar) return;
-            sidebar.classList.add('sidebar-mobile', 'is-open');
-            if (overlay) overlay.classList.add('show');
-            document.body.classList.add('sidebar-open');
-            if (sidebarToggle) sidebarToggle.setAttribute('aria-expanded', 'true');
-        }
-
-        function closeSidebar() {
-            if (!sidebar) return;
-            sidebar.classList.remove('sidebar-mobile', 'is-open');
+            sidebar.classList.remove('sidebar-mobile');
             if (overlay) overlay.classList.remove('show');
-            document.body.classList.remove('sidebar-open');
             if (sidebarToggle) sidebarToggle.setAttribute('aria-expanded', 'false');
-        }
+            document.body.classList.remove('sidebar-open');
+        };
 
-        if (sidebarToggle) {
+        if (sidebarToggle && sidebar) {
             sidebarToggle.addEventListener('click', function() {
-                if (sidebar && sidebar.classList.contains('is-open')) {
-                    closeSidebar();
-                } else {
-                    openSidebar();
-                }
+                const isOpen = sidebar.classList.toggle('sidebar-mobile');
+                if (overlay) overlay.classList.toggle('show', isOpen);
+                this.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+                document.body.classList.toggle('sidebar-open', isOpen);
             });
         }
-        if (sidebarClose) sidebarClose.addEventListener('click', closeSidebar);
-        if (overlay) overlay.addEventListener('click', closeSidebar);
-        if (sidebar) {
-            sidebar.addEventListener('click', function(e) {
-                const isMobile = window.matchMedia('(max-width: 768px)').matches;
-                if (isMobile && e.target.closest('.sidebar-menu a, .sidebar-menu label')) closeSidebar();
+        if (overlay) {
+            overlay.addEventListener('click', closeSidebar);
+        }
+        if (sidebarMenu) {
+            sidebarMenu.addEventListener('click', function(e) {
+                if (isMobile() && e.target.closest('a, label, button')) {
+                    closeSidebar();
+                }
             });
         }
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') closeSidebar();
         });
         window.addEventListener('resize', function() {
-            if (!window.matchMedia('(max-width: 768px)').matches) closeSidebar();
+            if (!isMobile()) closeSidebar();
         });
+
         let searchTimeout;
         const searchInput = document.getElementById('globalSearch');
         const searchResults = document.getElementById('searchResults');

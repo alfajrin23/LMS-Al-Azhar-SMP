@@ -5,6 +5,7 @@
     $surahTerakhir = $tahfidzSetoran->first()?->surah ?? '-';
     $surahBaru = $tahfidzSetoran->where('status', 'baru')->count();
     $setoranBulanIni = $tahfidzSetoran->where('tanggal', '>=', now()->startOfMonth())->count();
+
     $totalAyatBaru = $tahfidzSetoran->where('status', 'baru')->sum('jumlah_ayat');
     $juzDihafal = min(30, floor($totalAyatBaru / 208));
     $juzSaatIni = min(30, $juzDihafal + 1);
@@ -17,6 +18,7 @@
         $percentHafalan = min(100, round((float) $progressKepala->progress_percent, 1));
         $surahTerakhir = $progressKepala->surah ?: $surahTerakhir;
     }
+
     $grades = ['grade-A', 'grade-B', 'grade-C', 'grade-D', 'grade-E'];
     $gradeColor = function($v) {
         if ($v >= 90) return 'grade-A';
@@ -34,6 +36,7 @@
         if ($s === 'baru') return '<span class="badge blue light">Baru</span>';
         return '<span class="badge orange">Murojaah</span>';
     };
+
     $minggu = [];
     for ($i = 4; $i >= 1; $i--) {
         $start = now()->subWeeks($i)->startOfWeek();
@@ -96,15 +99,39 @@
         <span style="font-weight:600;font-size:14px">{{ explode(' ', $siswa->nama)[0] }}</span>
     </div>
 </div>
+
 @php
     $jadwalBerikutnya = $tahfidzSetoran->whereNotNull('tanggal_berikutnya')->first()?->tanggal_berikutnya;
 @endphp
+
 @if($jadwalBerikutnya)
 <div style="background:#e6fcf5; border:1px solid #c3fae8; color:#0ca678; padding:14px 18px; border-radius:8px; margin-bottom:20px; display:flex; align-items:center; gap:10px; font-weight:600; font-size:14px">
     <i class="fas fa-calendar-alt" style="font-size:18px"></i>
     <span>Jadwal Setoran Berikutnya: <span style="font-weight:800">{{ \Carbon\Carbon::parse($jadwalBerikutnya)->isoFormat('D MMMM YYYY') }}</span></span>
 </div>
 @endif
+
+<div class="card" style="margin-bottom:20px">
+    <div class="card-header"><h3><i class="fas fa-book-reader" style="color:var(--teal)"></i> Ringkasan Quran</h3></div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;font-size:13px">
+        <div><span style="color:var(--gray-400)">Tingkat UMMI</span><div style="font-weight:800">{{ $progressKepala?->tingkat_ummi ?? '-' }}</div></div>
+        <div><span style="color:var(--gray-400)">Posisi Tilawah</span><div style="font-weight:800">{{ $progressKepala?->posisi_tilawah ?? '-' }}</div></div>
+        <div><span style="color:var(--gray-400)">Hafalan Terakhir</span><div style="font-weight:800">{{ $progressKepala?->hafalan_terakhir ?? $surahTerakhir }}</div></div>
+        <div><span style="color:var(--gray-400)">Predikat</span><div style="font-weight:800">{{ $progressKepala?->predikat ?? '-' }}</div></div>
+        <div><span style="color:var(--gray-400)">Kelancaran</span><div style="font-weight:700">{{ $progressKepala?->kelancaran ?? '-' }}</div></div>
+        <div><span style="color:var(--gray-400)">Tajwid</span><div style="font-weight:700">{{ $progressKepala?->tajwid ?? '-' }}</div></div>
+        <div><span style="color:var(--gray-400)">Makhroj</span><div style="font-weight:700">{{ $progressKepala?->makhroj ?? '-' }}</div></div>
+        <div><span style="color:var(--gray-400)">Adab</span><div style="font-weight:700">{{ $progressKepala?->adab ?? '-' }}</div></div>
+        <div><span style="color:var(--gray-400)">Target Berikutnya</span><div style="font-weight:700">{{ $progressKepala?->target_berikutnya ?? $progressKepala?->target_deskripsi ?? '-' }}</div></div>
+        <div><span style="color:var(--gray-400)">Pertemuan Berikutnya</span><div style="font-weight:700">{{ $progressKepala?->tanggal_pertemuan_berikutnya?->format('d M Y') ?? '-' }}</div></div>
+        <div><span style="color:var(--gray-400)">Setoran Terakhir</span><div style="font-weight:700">{{ $tahfidzSetoran->first()?->tanggal?->format('d M Y') ?? '-' }}</div></div>
+        <div><span style="color:var(--gray-400)">Kehadiran Quran</span><div style="font-weight:700">{{ $progressKepala?->status ? ucfirst(str_replace('_', ' ', $progressKepala->status)) : '-' }}</div></div>
+    </div>
+    @if($progressKepala?->catatan)
+        <p style="font-size:13px;color:var(--gray-500);line-height:1.6;margin-top:12px">{{ $progressKepala->catatan }}</p>
+    @endif
+</div>
+
 <div class="card" style="margin-bottom:20px">
     <div class="card-header"><h3><i class="fas fa-quran" style="color:var(--blue)"></i> Progress Tahfidz {{ $kelas?->nama_kelas }}</h3></div>
     <div class="tahfidz-stats" style="margin-bottom: 20px;">
@@ -113,6 +140,7 @@
         <div class="tahfidz-stat"><span class="tahfidz-stat-number orange">{{ number_format($avgNilai ?? 0, 0) }}</span><span class="tahfidz-stat-label">Rata-rata Nilai</span></div>
         <div class="tahfidz-stat"><span class="tahfidz-stat-number orange">{{ $surahBaru }}</span><span class="tahfidz-stat-label">Surah Baru</span></div>
     </div>
+
     <div style="margin: 20px 0 15px 0; padding-top: 15px; border-top: 1px solid var(--border-light)">
         <div style="display:flex; justify-content:space-between; margin-bottom: 8px; font-size: 13px; font-weight: 600; color: var(--gray-500)">
             <span>Progress Hafalan Al-Qur'an: <strong>{{ $percentHafalan }}%</strong>
@@ -126,6 +154,7 @@
             <div style="width: {{ $percentHafalan }}%; background: linear-gradient(90deg, #20c997, #0ca678); border-radius: 6px; transition: width 0.8s ease-in-out"></div>
         </div>
     </div>
+
     <div style="margin-top: 20px;">
         <h4 style="font-size:13px; color:var(--gray-500); margin-bottom:12px; font-weight:600"><i class="fas fa-th" style="margin-right:6px"></i> Peta Hafalan 30 Juz</h4>
         <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(36px, 1fr)); gap: 8px;">
@@ -145,6 +174,7 @@
         </div>
     </div>
 </div>
+
 <div class="card" style="margin-bottom:20px">
     <div class="card-header"><h3><i class="fas fa-list" style="color:var(--red)"></i> Riwayat Setoran Ayat</h3></div>
     <div class="table-wrap">
@@ -168,6 +198,7 @@
         </table>
     </div>
 </div>
+
 <div class="card">
     <div class="card-header"><h3><i class="fas fa-chart-bar" style="color:var(--orange)"></i> Grafik Perkembangan Tahfidz (4 Minggu Terakhir)</h3></div>
     <div class="h-bar-group">

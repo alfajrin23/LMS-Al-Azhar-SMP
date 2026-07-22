@@ -53,7 +53,7 @@
     }
 </style>
 <div class="sd-content sd-content-nilai" x-data="{ showBandingModal: false, activeNilaiId: null, alasan: '' }">
-  <div class="content-header"><h1>Nilai <span>SDIT {{ setting('school_name') }}</span></h1><div class="header-right"><div class="avatar red">{{ strtoupper(substr($siswa->nama, 0, 1)) }}</div></div></div>
+  <div class="content-header"><h1>Nilai <span>SMPIT {{ setting('school_name') }}</span></h1><div class="header-right"><div class="avatar red">{{ strtoupper(substr($siswa->nama, 0, 1)) }}</div></div></div>
   <div class="grid-2">
     <div class="card"><div class="card-header"><h3><i class="fas fa-file-invoice" style="color:var(--orange)"></i> Rapor Semester Genap</h3><label @click="tab='rapor'" style="font-size:12px;color:var(--orange);font-weight:600;cursor:pointer;text-decoration:none">Cetak</label></div>
       @foreach($nilai as $n)

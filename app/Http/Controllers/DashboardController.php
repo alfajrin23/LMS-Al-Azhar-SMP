@@ -1,5 +1,7 @@
 <?php
+
 namespace App\Http\Controllers;
+
 use App\Http\Controllers\Controller;
 use App\Models\Badge;
 use App\Models\CatatanWali;
@@ -15,13 +17,16 @@ use App\Models\Pesan;
 use App\Models\Siswa;
 use App\Models\TahfidzProgress;
 use App\Models\TahfidzSetoran;
+use App\Models\TahsinSetoran;
 use App\Models\Tugas;
 use Illuminate\Http\Request;
+
 class DashboardController extends Controller
 {
     public function index(Request $request)
     {
         $role = $request->user()->role;
+
         $views = [
             'siswa_sd' => 'dashboard.siswa-sd',
             'siswa_smp' => 'dashboard.siswa-smp',
@@ -30,28 +35,41 @@ class DashboardController extends Controller
             'admin' => 'dashboard.admin',
             'kepala_sekolah' => 'dashboard.kepala-sekolah',
         ];
+
         $view = $views[$role] ?? 'dashboard';
         $data = [];
+
         if ($role === 'siswa_sd' || $role === 'siswa_smp') {
             $user = $request->user();
             $siswa = $user->siswa;
             $kelas = $siswa->kelas;
+
             $sudahIsiKondisi = \App\Models\KondisiKelas::query()->where('siswa_id', $siswa->id)
                 ->where('tanggal', now()->format('Y-m-d'))
                 ->exists();
+
             $remedialActive = \App\Models\Remedial::query()->where('siswa_id', $siswa->id)
                 ->where('status', 'pending')
                 ->with('mapel', 'nilai')
                 ->get();
-            $isKelas9 = str_starts_with($kelas->kode_kelas ?? '', '9');
+                
+            $isKelas9 = $this->isKelas9($kelas);
             $nilaiKti = $isKelas9 ? \App\Models\NilaiKti::query()->where('siswa_id', $siswa->id)->first() : null;
             $ktiBimbingans = $isKelas9 ? \App\Models\KtiBimbingan::query()->where('siswa_id', $siswa->id)->orderBy('created_at', 'desc')->get() : collect();
+
             $data = [
                 'user' => $user,
                 'siswa' => $siswa,
                 'kelas' => $kelas,
+                'rapors' => \App\Models\Rapor::query()
+                    ->where('siswa_id', $siswa->id)
+                    ->with(['items.mapel'])
+                    ->orderByDesc('tahun_ajaran')
+                    ->orderByDesc('semester')
+                    ->get()
+                    ->keyBy('jenis_rapor'),
                 'mapels' => Mapel::query()
-                    ->whereNotIn('nama_mapel', ['Istirahat', 'Dzuhur Time', 'Ashar Time', 'Upacara / Flash', 'Upacara / PAS Mantap', 'Dhuha Time', 'Apel, Dhuha & Muroja\'ah', 'Upacara / Pentas Seni', 'Qailullah', 'Sholat dan Makan', 'Pulang / Penjemputan Orang Tua', 'Snack Time', 'Transisi / Pindah ke Kelas', 'Shalat Ashar', 'Shalat Ashar dan Dzikir', 'Kegiatan Pramuka', 'Ekskul'])
+                    ->whereNotIn('nama_mapel', ['Istirahat', 'Dzuhur Time', 'Ashar Time', 'Upacara / Flash', 'Dhuha Time', 'Upacara / Pentas Seni', 'Qailullah', 'Sholat dan Makan', 'Pulang / Penjemputan Orang Tua', 'Snack Time', 'Transisi / Pindah ke Kelas', 'Shalat Ashar', 'Kegiatan Pramuka'])
                     ->where(function($q) use ($kelas, $siswa) {
                         $jadwalMapels = Jadwal::query()->where('kelas_id', $kelas?->id)->pluck('mapel_id');
                         if ($jadwalMapels->isNotEmpty()) {
@@ -102,6 +120,10 @@ class DashboardController extends Controller
                     ->orderBy('tanggal', 'desc')
                     ->get(),
                 'tahfidzProgress' => TahfidzProgress::query()->where('siswa_id', $siswa->id)->first(),
+                'tahsinSetoran' => TahsinSetoran::query()->where('siswa_id', $siswa->id)
+                    ->with(['guru', 'kelas'])
+                    ->orderBy('tanggal', 'desc')
+                    ->get(),
                 'pengumuman' => Pengumuman::where(function ($q) use ($role) {
                         $q->whereNull('target_role')
                             ->orWhere('target_role', $role)
@@ -110,13 +132,16 @@ class DashboardController extends Controller
                     ->orderBy('created_at', 'desc')
                     ->get(),
                 'pesan' => Pesan::query()->where('penerima_id', $user->id)
-                    ->with('pengirim')
+                    ->with(['pengirim', 'siswa'])
                     ->orderBy('created_at', 'desc')
                     ->get(),
                 'guruKelas' => $kelas?->load('siswa'),
                 'kehadiran' => Kehadiran::query()->where('siswa_id', $siswa->id)
                     ->orderBy('tanggal', 'desc')
                     ->get(),
+                'kehadiranSummary' => $this->attendanceSummary(
+                    Kehadiran::query()->where('siswa_id', $siswa->id)->get()
+                ),
                 'catatanWali' => CatatanWali::query()->where('siswa_id', $siswa->id)
                     ->with('guru')
                     ->latest()
@@ -136,6 +161,7 @@ class DashboardController extends Controller
                 'nilaiKti' => $nilaiKti,
                 'ktiBimbingans' => $ktiBimbingans,
             ];
+
             $siswaKelas = $kelas
                 ? \App\Models\Siswa::query()->where('kelas_id', $kelas->id)->get()
                 : collect();
@@ -152,9 +178,11 @@ class DashboardController extends Controller
             }
             $data['peringkat'] = ['rank' => $rank, 'total' => $total];
         }
+
         if ($role === 'guru') {
             $user = $request->user();
             $guru = $user->guru;
+
             $kelasIds = Jadwal::where('guru_id', $guru->id)->pluck('kelas_id')->unique();
             $kelasYangDiajar = Kelas::whereIn('id', $kelasIds)
                 ->withCount('siswa')
@@ -167,34 +195,46 @@ class DashboardController extends Controller
                         ->avg('nilai') ?? 0;
                     return $k;
                 });
+
             $tugas = Tugas::where('guru_id', $guru->id)
                 ->with(['mapel', 'kelas'])
                 ->orderBy('tanggal_deadline')
                 ->get();
+
             $pesan = Pesan::where('penerima_id', $user->id)
-                ->with('pengirim')
+                ->with(['pengirim', 'siswa'])
                 ->orderBy('created_at', 'desc')
                 ->get();
+
             $pengumuman = Pengumuman::orderBy('created_at', 'desc')->get();
+
             $siswaIdsAll = \App\Models\Siswa::whereIn('kelas_id', $kelasIds)->pluck('id');
             $remedialActive = \App\Models\Remedial::whereIn('siswa_id', $siswaIdsAll)
                 ->where('status', 'pending')
                 ->with(['siswa.kelas', 'mapel', 'nilai'])
                 ->get();
+
             $kondisiKelasHistory = \App\Models\KondisiKelas::whereIn('kelas_id', $kelasIds)
                 ->selectRaw('tanggal, kelas_id, AVG(hubungan_guru_siswa) as avg_hubungan, AVG(siswa_nyaman) as avg_nyaman, AVG(siswa_minta_bantuan) as avg_bantuan')
                 ->groupBy('tanggal', 'kelas_id')
                 ->orderBy('tanggal', 'desc')
                 ->with('kelas')
                 ->get();
+
             $ktiBimbinganReviews = \App\Models\KtiBimbingan::where('status', 'pending')
                 ->with(['siswa.kelas'])
                 ->orderBy('created_at', 'desc')
                 ->get();
-            $siswaKelas9 = \App\Models\Siswa::whereHas('kelas', fn($q) => $q->where('kode_kelas', 'like', '9%'))
+
+            $siswaKelas9 = \App\Models\Siswa::whereHas('kelas', fn ($q) => $this->whereKelas9($q))
                 ->with('kelas')
                 ->get();
+
             $nilaiKtiRekap = \App\Models\NilaiKti::whereIn('siswa_id', $siswaKelas9->pluck('id'))->get();
+            $materiJadwal = Jadwal::where('guru_id', $guru->id)->get();
+            $materiMapelIds = $materiJadwal->pluck('mapel_id')->merge($guru->mapels->pluck('id'))->filter()->unique();
+            $materiKelasIds = $materiJadwal->pluck('kelas_id')->filter()->unique();
+
             $data = [
                 'user'                 => $user,
                 'guru'                 => $guru,
@@ -207,29 +247,84 @@ class DashboardController extends Controller
                 'ktiBimbinganReviews'  => $ktiBimbinganReviews,
                 'siswaKelas9'          => $siswaKelas9,
                 'nilaiKtiRekap'        => $nilaiKtiRekap,
+                'materiList'           => \App\Models\Materi::where('guru_id', $guru->id)
+                    ->with(['mapel', 'kelas', 'approvalHistories.actor'])
+                    ->latest()
+                    ->get(),
+                'materiMapelList'      => Mapel::akademik()->whereIn('id', $materiMapelIds)->get(),
+                'materiKelasList'      => Kelas::whereIn('id', $materiKelasIds)->get(),
+                'absensiKelasList'     => Kelas::whereIn('id', $kelasIds)->with('siswa')->get(),
+                'absensiMapelList'     => Mapel::akademik()->whereIn('id', $materiMapelIds)->get(),
+                'riwayatAbsensi'       => Kehadiran::whereIn('kelas_id', $kelasIds)
+                    ->orWhereHas('siswa', fn ($q) => $q->whereIn('kelas_id', $kelasIds))
+                    ->with(['siswa.kelas', 'mapel'])
+                    ->orderByDesc('tanggal')
+                    ->take(50)
+                    ->get(),
+                'absensiHariIni'       => Kehadiran::whereIn('kelas_id', $kelasIds)
+                    ->whereDate('tanggal', now()->format('Y-m-d'))
+                    ->get(),
+                'jurnalHarianList'     => LaporanMengajar::where('guru_id', $guru->id)
+                    ->where('tipe', 'jurnal_harian')
+                    ->with(['mapel', 'kelas'])
+                    ->latest('tanggal')
+                    ->take(30)
+                    ->get(),
+                'jurnalSikapList'      => \App\Models\JurnalSikap::where('guru_id', $guru->id)
+                    ->with(['siswa.kelas'])
+                    ->latest('tanggal')
+                    ->take(30)
+                    ->get(),
+                'programPengayaanList' => \App\Models\ProgramPengayaan::where('guru_id', $guru->id)
+                    ->with(['mapel', 'kelas'])
+                    ->latest()
+                    ->take(30)
+                    ->get(),
+                'programRemedialList'  => \App\Models\ProgramRemedial::where('guru_id', $guru->id)
+                    ->with(['siswa.kelas', 'mapel'])
+                    ->latest()
+                    ->take(30)
+                    ->get(),
+                'adminChecklistList'   => \App\Models\AdministrasiGuruChecklist::where('guru_id', $guru->id)
+                    ->latest()
+                    ->get(),
+                'siswaDiajar'          => Siswa::whereIn('kelas_id', $kelasIds)
+                    ->with('kelas')
+                    ->orderBy('nama')
+                    ->get(),
+                'orangTuaDiajar'       => \App\Models\OrangTua::whereHas('siswa', fn ($q) => $q->whereIn('kelas_id', $kelasIds))
+                    ->with(['user', 'siswa.kelas'])
+                    ->orderBy('nama')
+                    ->get(),
             ];
         }
+
         if ($role === 'admin') {
             $teachersList = Guru::with('mapels')->get();
             $guruReportsData = [];
+
             foreach ($teachersList as $g) {
                 $today = now()->format('Y-m-d');
                 $startOfWeek = now()->startOfWeek()->format('Y-m-d');
                 $endOfWeek = now()->endOfWeek()->format('Y-m-d');
                 $startOfMonth = now()->startOfMonth()->format('Y-m-d');
                 $endOfMonth = now()->endOfMonth()->format('Y-m-d');
+
                 $hasHarian = LaporanMengajar::query()->where('guru_id', $g->id)
                     ->where('tipe', 'harian')
                     ->where('tanggal', $today)
                     ->exists();
+
                 $hasMingguan = LaporanMengajar::query()->where('guru_id', $g->id)
                     ->where('tipe', 'mingguan')
                     ->whereBetween('tanggal', [$startOfWeek, $endOfWeek])
                     ->exists();
+
                 $hasBulanan = LaporanMengajar::query()->where('guru_id', $g->id)
                     ->where('tipe', 'bulanan')
                     ->whereBetween('tanggal', [$startOfMonth, $endOfMonth])
                     ->exists();
+
                 $allReports = LaporanMengajar::query()->where('guru_id', $g->id)
                     ->orderBy('tanggal', 'desc')
                     ->get()
@@ -262,9 +357,11 @@ class DashboardController extends Controller
                                 if (!empty($l->isi['refleksi']['kendala_terbesar'])) {
                                     $kList[] = "• [Refleksi] Kendala: {$l->isi['refleksi']['kendala_terbesar']}";
                                 }
+
                                 if (empty($kList)) {
                                     $kList[] = "KBM Terlaksana Baik (Tidak ada kendala)";
                                 }
+
                                 if (!empty($l->isi['catatan_umum'])) {
                                     $kList[] = "Catatan: " . $l->isi['catatan_umum'];
                                 }
@@ -304,6 +401,7 @@ class DashboardController extends Controller
                         } else {
                             $isiTeks = $l->isi;
                         }
+
                         return [
                             'id' => $l->id,
                             'tipe' => ucfirst($l->tipe),
@@ -311,12 +409,14 @@ class DashboardController extends Controller
                             'isi' => $isiTeks,
                         ];
                     });
+
                 $classNames = Jadwal::query()->where('guru_id', $g->id)
                     ->with('kelas')
                     ->get()
                     ->pluck('kelas.nama_kelas')
                     ->unique()
                     ->implode(', ') ?: '—';
+
                 $guruReportsData[] = [
                     'id' => $g->id,
                     'nama' => $g->nama,
@@ -328,6 +428,7 @@ class DashboardController extends Controller
                     'reports' => $allReports,
                 ];
             }
+
             $data = [
                 'guruReportsData' => $guruReportsData
             ];
@@ -337,15 +438,23 @@ class DashboardController extends Controller
             $totalGuru = \App\Models\Guru::count();
             $totalOrtu = \App\Models\User::query()->where('role', 'orang_tua')->count();
             $totalKelas = \App\Models\Kelas::count();
+
             $siswaBaru = \App\Models\Siswa::whereMonth('created_at', now()->month)
                 ->whereYear('created_at', now()->year)->count();
+
             $guruBaru = \App\Models\Guru::whereYear('created_at', now()->year)->count();
+
             $ortuBaru = \App\Models\User::where('role', 'orang_tua')
                 ->whereMonth('created_at', now()->month)
                 ->whereYear('created_at', now()->year)->count();
+
             $kelasBaru = \App\Models\Kelas::whereYear('created_at', now()->year)->count();
+
+
+
             $akademikNasional = round(\App\Models\Nilai::query()->where('jenis_nilai', 'biasa')->avg('nilai') ?? 0, 1);
             $internasional = round(\App\Models\Nilai::query()->where('jenis_nilai', 'unggulan')->avg('nilai') ?? 0, 1);
+
             $avgMakhroj = \App\Models\TahfidzAyatNilai::avg('makhroj') ?? 0;
             $avgTajwid = \App\Models\TahfidzAyatNilai::avg('tajwid') ?? 0;
             $avgKelancaran = \App\Models\TahfidzAyatNilai::avg('kelancaran') ?? 0;
@@ -355,33 +464,45 @@ class DashboardController extends Controller
             if ($progressTahfidzKepala !== null) {
                 $tahfidz = round($progressTahfidzKepala, 1);
             }
+
             $targetAkademik = 80;
             $targetInternasional = 75;
             $targetTahfidz = 85;
+
             $stsAkademik = $akademikNasional >= $targetAkademik ? 'Sangat Baik' : 'Perlu Peningkatan';
             $clrAkademik = $akademikNasional >= $targetAkademik ? 'var(--teal)' : 'var(--orange)';
             $typAkademik = $akademikNasional >= $targetAkademik ? 'up' : 'down';
+
             $stsInternasional = $internasional >= $targetInternasional ? 'Sangat Baik' : 'Perlu Peningkatan';
             $clrInternasional = $internasional >= $targetInternasional ? 'var(--teal)' : 'var(--orange)';
             $typInternasional = $internasional >= $targetInternasional ? 'up' : 'down';
+
             $stsTahfidz = $tahfidz >= $targetTahfidz ? 'Sangat Baik' : 'Perlu Peningkatan';
             $clrTahfidz = $tahfidz >= $targetTahfidz ? 'var(--teal)' : 'var(--orange)';
             $typTahfidz = $tahfidz >= $targetTahfidz ? 'up' : 'down';
+
             $bulan = now()->month;
             $semester = ($bulan >= 7 && $bulan <= 12) ? 'Semester Ganjil' : 'Semester Genap';
+
+
             $tigaHariLalu = now()->subDays(3)->format('Y-m-d');
             $kelasGakSehat = [];
+
             $kondisiKelasRecs = \App\Models\KondisiKelas::where('tanggal', '>=', $tigaHariLalu)
                 ->with(['kelas.waliKelas'])
                 ->get();
+
             $kelasGroup = $kondisiKelasRecs->groupBy('kelas_id');
             $todayStr = now()->format('Y-m-d');
+
             foreach ($kelasGroup as $kelasId => $records) {
                 $recordsByDate = $records->groupBy(function ($item) {
                     return \Carbon\Carbon::parse($item->tanggal)->format('Y-m-d');
                 });
+
                 $sumDailyAvgs = 0;
                 $countDays = 0;
+
                 foreach ($recordsByDate as $date => $dailyRecords) {
                     $dailySum = 0;
                     foreach ($dailyRecords as $rec) {
@@ -390,9 +511,12 @@ class DashboardController extends Controller
                     $sumDailyAvgs += ($dailySum / $dailyRecords->count());
                     $countDays++;
                 }
+
                 $avgKelas = $countDays > 0 ? $sumDailyAvgs / $countDays : 0;
+
                 $avgToday = 0;
                 $hasTodayData = $recordsByDate->has($todayStr);
+
                 if ($hasTodayData) {
                     $dailyRecords = $recordsByDate->get($todayStr);
                     $dailySum = 0;
@@ -401,14 +525,16 @@ class DashboardController extends Controller
                     }
                     $avgToday = $dailySum / $dailyRecords->count();
                 }
+
                 $isWarning = false;
                 if ($countDays > 0 && $avgKelas <= 3.5) {
                     if ($hasTodayData && $avgToday > 3.5) {
-                        $isWarning = false;
+                        $isWarning = false; // Trend sudah membaik hari ini
                     } else {
                         $isWarning = true;
                     }
                 }
+
                 if ($isWarning) {
                     $kls = $records->first()->kelas;
                     $kelasGakSehat[] = [
@@ -425,6 +551,7 @@ class DashboardController extends Controller
                     ];
                 }
             }
+
             $guruKinerja = [];
             $allGuru = \App\Models\Guru::with('mapels')->get();
             foreach ($allGuru as $g) {
@@ -432,20 +559,24 @@ class DashboardController extends Controller
                 $startOfWeek = now()->startOfWeek()->format('Y-m-d');
                 $endOfWeek = now()->endOfWeek()->format('Y-m-d');
                 $startOfMonth = now()->startOfMonth()->format('Y-m-d');
+
                 $yesterday = now()->subDay()->format('Y-m-d');
                 $lastWeekStart = now()->subWeek()->startOfWeek()->format('Y-m-d');
                 $lastWeekEnd = now()->subWeek()->endOfWeek()->format('Y-m-d');
                 $lastMonthStart = now()->subMonth()->startOfMonth()->format('Y-m-d');
                 $lastMonthEnd = now()->subMonth()->endOfMonth()->format('Y-m-d');
+
                 $checkHarian = $g->created_at->format('Y-m-d') <= $yesterday;
                 $checkMingguan = $g->created_at->format('Y-m-d') <= $lastWeekEnd;
                 $checkBulanan = $g->created_at->format('Y-m-d') <= $lastMonthEnd;
+
                 $hasHarian = !$checkHarian || \App\Models\LaporanMengajar::where('guru_id', $g->id)
                     ->where('tipe', 'harian')->where('tanggal', $yesterday)->exists();
                 $hasMingguan = !$checkMingguan || \App\Models\LaporanMengajar::where('guru_id', $g->id)
                     ->where('tipe', 'mingguan')->whereBetween('tanggal', [$lastWeekStart, $lastWeekEnd])->exists();
                 $hasBulanan = !$checkBulanan || \App\Models\LaporanMengajar::where('guru_id', $g->id)
                     ->where('tipe', 'bulanan')->whereBetween('tanggal', [$lastMonthStart, $lastMonthEnd])->exists();
+
                 $skor = 100;
                 $details = [];
                 if (!$hasHarian) {
@@ -460,7 +591,9 @@ class DashboardController extends Controller
                     $skor -= 10;
                     $details[] = 'Bulanan (Lalu) blm diisi';
                 }
+
                 $detailStr = empty($details) ? 'Disiplin mengisi administrasi Monev secara lengkap (Sesuai SOP).' : 'Tunggakan: ' . implode(', ', $details) . '.';
+
                 if ($skor >= 90) {
                     $status = 'Sangat Baik (Safe Zone)';
                     $color = 'var(--teal)';
@@ -474,6 +607,7 @@ class DashboardController extends Controller
                     $status = 'Sangat Kritis (Terminal Zone - Rekomendasi PHK)';
                     $color = '#000000';
                 }
+
                 $guruKinerja[] = [
                     'user_id' => $g->user_id,
                     'nama' => $g->nama,
@@ -487,6 +621,7 @@ class DashboardController extends Controller
             usort($guruKinerja, function ($a, $b) {
                 return $a['skor'] <=> $b['skor'];
             });
+
             $semuaKelas = \App\Models\Kelas::with('waliKelas')->withCount('siswa')->get();
             $tahfidzSiswaOptions = \App\Models\Siswa::with(['kelas', 'kelasQuran'])
                 ->whereHas('user', fn ($q) => $q->whereIn('role', ['siswa_sd', 'siswa_smp']))
@@ -496,6 +631,7 @@ class DashboardController extends Controller
                 ->whereHas('user', fn ($q) => $q->whereIn('role', ['siswa_sd', 'siswa_smp']))
                 ->orderBy('nama')
                 ->get();
+
             $data = [
                 'statSiswa' => $totalSiswa,
                 'statGuru' => $totalGuru,
@@ -534,22 +670,32 @@ class DashboardController extends Controller
                 'tahfidzKelasOptions' => \App\Models\Kelas::withCount('siswa')->orderBy('id')->get(),
                 'tahfidzKelasQuranOptions' => \App\Models\KelasQuran::orderBy('jenjang')->orderBy('tingkat')->orderBy('nama_kelas')->get(),
                 'tahfidzProgressRows' => $tahfidzProgressRows,
+                'materiApprovalList' => \App\Models\Materi::with(['guru.user', 'mapel', 'kelas', 'reviewer', 'approvalHistories.actor'])
+                    ->whereIn('status', ['pending', 'approved', 'rejected', 'revision_requested'])
+                    ->latest()
+                    ->get(),
+                'materiApprovalGurus' => \App\Models\Guru::orderBy('nama')->get(),
+                'materiApprovalMapels' => \App\Models\Mapel::akademik()->orderBy('nama_mapel')->get(),
+                'materiApprovalKelas' => \App\Models\Kelas::orderBy('jenjang')->orderBy('kode_kelas')->get(),
             ];
         } elseif ($role === 'admin') {
             $totalSiswa = \App\Models\Siswa::count();
             $totalGuru = \App\Models\Guru::count();
             $totalOrtu = \App\Models\User::where('role', 'orang_tua')->count();
             $totalKelas = \App\Models\Kelas::count() + \App\Models\KelasQuran::count();
+            
             $logAktivitas = \App\Models\LogAktivitas::latest()->take(6)->get();
+
             $siswaSD13 = \App\Models\Siswa::whereHas('kelas', function($q) {
-                $q->whereIn('kode_kelas', ['1', '2', '3']);
+                $q->where('nama_kelas', 'like', '1%')->orWhere('nama_kelas', 'like', '2%')->orWhere('nama_kelas', 'like', '3%');
             })->count();
             $siswaSD46 = \App\Models\Siswa::whereHas('kelas', function($q) {
-                $q->whereIn('kode_kelas', ['4', '5A', '5B', '6A', '6B']);
+                $q->where('nama_kelas', 'like', '4%')->orWhere('nama_kelas', 'like', '5%')->orWhere('nama_kelas', 'like', '6%');
             })->count();
-            $siswa7 = \App\Models\Siswa::whereHas('kelas', function($q) { $q->where('kode_kelas', '7'); })->count();
-            $siswa8 = \App\Models\Siswa::whereHas('kelas', function($q) { $q->where('kode_kelas', 'like', '8%'); })->count();
-            $siswa9 = \App\Models\Siswa::whereHas('kelas', function($q) { $q->where('kode_kelas', 'like', '9%'); })->count();
+            $siswa7 = \App\Models\Siswa::whereHas('kelas', function($q) { $q->where('nama_kelas', 'like', '7%'); })->count();
+            $siswa8 = \App\Models\Siswa::whereHas('kelas', function($q) { $q->where('nama_kelas', 'like', '8%'); })->count();
+            $siswa9 = \App\Models\Siswa::whereHas('kelas', fn ($q) => $this->whereKelas9($q))->count();
+
             $dist = [
                 'sd13' => ['count' => $siswaSD13, 'pct' => $totalSiswa > 0 ? round(($siswaSD13/$totalSiswa)*100) : 0],
                 'sd46' => ['count' => $siswaSD46, 'pct' => $totalSiswa > 0 ? round(($siswaSD46/$totalSiswa)*100) : 0],
@@ -557,13 +703,15 @@ class DashboardController extends Controller
                 'smp8' => ['count' => $siswa8, 'pct' => $totalSiswa > 0 ? round(($siswa8/$totalSiswa)*100) : 0],
                 'smp9' => ['count' => $siswa9, 'pct' => $totalSiswa > 0 ? round(($siswa9/$totalSiswa)*100) : 0],
             ];
+
             $kkmList = \App\Models\Mapel::all()->map(function ($m) {
                 return [
                     'mapel' => $m->nama_mapel,
-                    'biasa' => 75,
+                    'biasa' => 75, 
                     'unggulan' => 80
                 ];
             });
+
             $anomalies = \App\Models\Nilai::with(['siswa.kelas', 'mapel', 'tugas.guru'])
                 ->whereRaw('ABS(nilai - COALESCE(nilai_bahasa, nilai)) > 15')
                 ->take(10)->get()
@@ -578,6 +726,7 @@ class DashboardController extends Controller
                         'guru' => $n->tugas->guru->nama ?? '-'
                     ];
                 });
+            
             $soalList = \App\Models\CbtSoal::inRandomOrder()->take(5)->get()->map(function ($s, $i) {
                 return [
                     'no' => $i + 1,
@@ -585,10 +734,12 @@ class DashboardController extends Controller
                     'tipe' => 'Otomatis'
                 ];
             });
+
             $guruReportsData = \App\Models\Guru::with(['laporanMengajar', 'mapels'])->get()->map(function ($g) {
                 $harian = $g->laporanMengajar->where('tipe', 'harian')->count();
                 $mingguan = $g->laporanMengajar->where('tipe', 'mingguan')->count();
                 $bulanan = $g->laporanMengajar->where('tipe', 'bulanan')->count();
+                
                 return [
                     'nama' => $g->nama,
                     'mapel' => $g->mapels->first()->nama_mapel ?? 'Umum',
@@ -598,6 +749,7 @@ class DashboardController extends Controller
                     'bulanan' => $bulanan > 0 ? 'Lengkap' : 'Belum Isi'
                 ];
             });
+
             $materiAjarData = \App\Models\Materi::with('guru')->latest()->take(10)->get()->map(function ($m) {
                 return [
                     'id' => $m->id,
@@ -606,13 +758,16 @@ class DashboardController extends Controller
                     'status' => ucfirst($m->status)
                 ];
             });
-            $siswaKelas9 = \App\Models\Siswa::whereHas('kelas', function($q) {
-                $q->whereIn('kode_kelas', ['9A', '9B']);
-            })->with(['kelas'])->get();
+
+            $siswaKelas9 = \App\Models\Siswa::whereHas('kelas', fn ($q) => $this->whereKelas9($q))
+                ->with(['kelas'])
+                ->get();
+
             $ktiData = \App\Models\NilaiKti::whereIn('siswa_id', $siswaKelas9->pluck('id'))->get()->keyBy('siswa_id');
             $tahfidzData = \App\Models\TahfidzSetoran::whereIn('siswa_id', $siswaKelas9->pluck('id'))
                 ->selectRaw('siswa_id, COUNT(*) as jumlah_surat, MAX(tanggal) as last_setor')
                 ->groupBy('siswa_id')->get()->keyBy('siswa_id');
+
             $karyaTahfidzList = $siswaKelas9->map(function ($s) use ($ktiData, $tahfidzData) {
                 $kti = $ktiData->get($s->id);
                 $t = $tahfidzData->get($s->id);
@@ -625,6 +780,7 @@ class DashboardController extends Controller
                     'last_setor' => $t ? \Carbon\Carbon::parse($t->last_setor)->diffForHumans() : '-'
                 ];
             });
+
             $data = [
                 'totalSiswa' => $totalSiswa,
                 'totalGuru' => $totalGuru,
@@ -646,6 +802,7 @@ class DashboardController extends Controller
                 'karyaTahfidzList' => $karyaTahfidzList
             ];
         }
+
         if ($role === 'orang_tua') {
             $user = $request->user();
             $ortu = $user->orangTua;
@@ -654,16 +811,29 @@ class DashboardController extends Controller
                 : collect();
             $kelasIds = $anak->pluck('kelas_id')->filter()->unique();
             $guruIds = Jadwal::whereIn('kelas_id', $kelasIds)->pluck('guru_id')->unique();
+            $anakTahfidzData = $anak->mapWithKeys(function ($child) {
+                return [
+                    $child->id => [
+                        'setoran' => TahfidzSetoran::where('siswa_id', $child->id)
+                            ->with('guru')
+                            ->orderByDesc('tanggal')
+                            ->get(),
+                        'progress' => TahfidzProgress::where('siswa_id', $child->id)->first(),
+                    ],
+                ];
+            });
+
             $data = [
                 'user' => $user,
                 'ortu' => $ortu,
                 'anak' => $anak,
+                'anakTahfidzData' => $anakTahfidzData,
                 'daftarGuru' => Guru::with(['user', 'mapel', 'mapels'])
                     ->whereIn('id', $guruIds)
                     ->orderBy('nama')
                     ->get(),
                 'pesanGuru' => Pesan::where('penerima_id', $user->id)
-                    ->with('pengirim')
+                    ->with(['pengirim', 'siswa'])
                     ->orderBy('created_at', 'desc')
                     ->get(),
                 'pengumuman' => Pengumuman::where(function ($q) {
@@ -675,9 +845,48 @@ class DashboardController extends Controller
                     ->get(),
             ];
         }
+
         $view = $views[$role] ?? 'dashboard';
         return view($view, $data);
     }
+
+    private function attendanceSummary($records): array
+    {
+        $total = $records->count();
+        $hadir = $records->where('status', 'hadir')->count();
+        $sakit = $records->where('status', 'sakit')->count();
+        $izin = $records->where('status', 'izin')->count();
+        $alpha = $records->where('status', 'alpha')->count();
+
+        return [
+            'total_hari_efektif' => $total,
+            'hadir' => $hadir,
+            'sakit' => $sakit,
+            'izin' => $izin,
+            'alpha' => $alpha,
+            'total_tidak_hadir' => $sakit + $izin + $alpha,
+            'persentase_hadir' => $total > 0 ? round(($hadir / $total) * 100, 2) : 0,
+            'tidak_hadir_records' => $records->whereIn('status', ['sakit', 'izin', 'alpha'])->values(),
+        ];
+    }
+
+    private function isKelas9(?Kelas $kelas): bool
+    {
+        if (!$kelas) {
+            return false;
+        }
+
+        return str_starts_with((string) $kelas->kode_kelas, '9')
+            || str_starts_with((string) $kelas->nama_kelas, '9');
+    }
+
+    private function whereKelas9($query)
+    {
+        return $query->where('kode_kelas', 'like', '9%')
+            ->orWhere('nama_kelas', 'like', '9%');
+    }
+
+
     public function storeSiswa(\Illuminate\Http\Request $request)
     {
         $request->validate([
@@ -687,12 +896,14 @@ class DashboardController extends Controller
             'jenis_kelamin' => 'required|in:L,P',
             'email'         => 'required|email|unique:users,email',
         ]);
+
         $user = \App\Models\User::create([
             'name'     => $request->nama,
             'email'    => $request->email,
             'password' => bcrypt('password123'),
             'role'     => 'siswa_smp',
         ]);
+
         \App\Models\Siswa::create([
             'user_id'       => $user->id,
             'nis'           => $request->nis,
@@ -700,9 +911,11 @@ class DashboardController extends Controller
             'kelas_id'      => $request->kelas_id,
             'jenis_kelamin' => $request->jenis_kelamin,
         ]);
+
         return redirect()->route('dashboard', ['tab' => 'siswa'])
             ->with('success', 'Siswa berhasil ditambahkan. Password default: password123');
     }
+
     public function storeGuru(\Illuminate\Http\Request $request)
     {
         $request->validate([
@@ -711,21 +924,25 @@ class DashboardController extends Controller
             'no_telp' => 'nullable|string|max:20',
             'email'   => 'required|email|unique:users,email',
         ]);
+
         $user = \App\Models\User::create([
             'name'     => $request->nama,
             'email'    => $request->email,
             'password' => bcrypt('password123'),
             'role'     => 'guru',
         ]);
+
         \App\Models\Guru::create([
             'user_id' => $user->id,
             'nip'     => $request->nip,
             'nama'    => $request->nama,
             'no_telp' => $request->no_telp,
         ]);
+
         return redirect()->route('dashboard', ['tab' => 'guru'])
             ->with('success', 'Guru berhasil ditambahkan. Password default: password123');
     }
+
     public function storeOrtu(\Illuminate\Http\Request $request)
     {
         $request->validate([
@@ -734,37 +951,45 @@ class DashboardController extends Controller
             'no_telp' => 'nullable|string|max:20',
             'alamat' => 'nullable|string|max:500',
         ]);
+
         $user = \App\Models\User::create([
             'name'     => $request->name,
             'email'    => $request->email,
             'password' => bcrypt('password123'),
             'role'     => 'orang_tua',
         ]);
+
         \App\Models\OrangTua::create([
             'user_id' => $user->id,
             'nama'    => $request->name,
             'no_telp' => $request->no_telp,
             'alamat'  => $request->alamat,
         ]);
+
         return redirect()->route('dashboard', ['tab' => 'ortu'])
             ->with('success', 'Orang tua berhasil ditambahkan. Password default: password123');
     }
+
     public function storeKelas(\Illuminate\Http\Request $request)
     {
         $request->validate([
             'nama_kelas' => 'required|string|max:255|unique:kelas,nama_kelas',
             'guru_id'    => 'nullable|exists:guru,id',
         ]);
+
         $namaParts  = explode(' ', trim($request->nama_kelas));
-        $kodeKelas  = end($namaParts);
+        $kodeKelas  = end($namaParts); // ambil kata terakhir sebagai kode
+
         \App\Models\Kelas::create([
             'nama_kelas'  => $request->nama_kelas,
             'kode_kelas'  => $kodeKelas,
             'guru_id'     => $request->guru_id ?: null,
         ]);
+
         return redirect()->route('dashboard', ['tab' => 'kelas'])
             ->with('success', 'Kelas berhasil ditambahkan.');
     }
+
     public function updateSiswa(\Illuminate\Http\Request $request, \App\Models\Siswa $siswa)
     {
         $request->validate([
@@ -773,16 +998,20 @@ class DashboardController extends Controller
             'jenis_kelamin' => 'required|string|in:L,P',
             'email' => 'required|email|max:255',
         ]);
+
         $siswa->update([
             'nis' => $request->nis,
             'nama' => $request->nama,
             'jenis_kelamin' => $request->jenis_kelamin,
         ]);
+        
         $siswa->user()->update([
             'email' => $request->email,
         ]);
+
         return redirect()->route('dashboard', ['tab' => 'siswa'])->with('success', 'Data siswa berhasil diperbarui.');
     }
+
     public function updateGuru(\Illuminate\Http\Request $request, \App\Models\Guru $guru)
     {
         $request->validate([
@@ -791,16 +1020,20 @@ class DashboardController extends Controller
             'no_telp' => 'nullable|string|max:20',
             'email' => 'required|email|max:255',
         ]);
+
         $guru->update([
             'nip' => $request->nip,
             'nama' => $request->nama,
             'no_telp' => $request->no_telp,
         ]);
+
         $guru->user()->update([
             'email' => $request->email,
         ]);
+
         return redirect()->route('dashboard', ['tab' => 'guru'])->with('success', 'Data guru berhasil diperbarui.');
     }
+
     public function updateOrtu(\Illuminate\Http\Request $request, \App\Models\User $user)
     {
         $request->validate([
@@ -809,42 +1042,52 @@ class DashboardController extends Controller
             'no_telp' => 'nullable|string|max:20',
             'alamat' => 'nullable|string|max:500',
         ]);
+
         $user->update([
             'name' => $request->name,
             'email' => $request->email,
         ]);
+
         if ($user->orangTua) {
             $user->orangTua->update([
                 'no_telp' => $request->no_telp,
                 'alamat' => $request->alamat,
             ]);
         }
+
         return redirect()->route('dashboard', ['tab' => 'ortu'])->with('success', 'Data orang tua berhasil diperbarui.');
     }
+
     public function updateKelas(\Illuminate\Http\Request $request, \App\Models\Kelas $kelas)
     {
         $request->validate([
             'nama_kelas' => 'required|string|max:255',
             'guru_id'    => 'nullable|exists:guru,id',
         ]);
+
         $kelas->update([
             'nama_kelas' => $request->nama_kelas,
             'guru_id'    => $request->guru_id,
         ]);
+
         return redirect()->route('dashboard', ['tab' => 'kelas'])->with('success', 'Data kelas berhasil diperbarui.');
     }
+
     public function kirimPesanKinerja(Request $request)
     {
         $request->validate([
             'penerima_id' => 'required|exists:users,id',
             'tipe' => 'required|in:selamat,bimbingan'
         ]);
+
         $subjek = $request->tipe === 'selamat'
             ? 'Apresiasi Kinerja Mengajar'
             : 'Panggilan Program Bimbingan (Coaching)';
+
         $isi = $request->tipe === 'selamat'
             ? 'Selamat! Berdasarkan evaluasi sistem, Indikator Kinerja Anda (Accountability Score) sangat baik. Terima kasih atas kedisiplinan Anda dalam mengisi laporan. Pertahankan!'
-            : 'Berdasarkan evaluasi sistem SAKT (Sistem Audit Kompetensi Terukur), Anda memiliki beberapa tunggakan pelaporan administratif (Jurnal Laporan Mengajar). Mohon segera melengkapi dan temui Tim Penjamin Mutu untuk pendampingan.';
+            : 'Berdasarkan evaluasi sistem SAKT (Sistem Audit Kompetensi Terukur), Anda memiliki beberapa tunggakan pelaporan administratif (Jurnal Mengajar). Mohon segera melengkapi dan temui Tim Penjamin Mutu untuk pendampingan.';
+
         \App\Models\Pesan::create([
             'pengirim_id' => auth()->id(),
             'penerima_id' => $request->penerima_id,
@@ -852,14 +1095,17 @@ class DashboardController extends Controller
             'isi' => $isi,
             'dibaca' => false
         ]);
+
         return response()->json(['success' => true]);
     }
+
     public function kirimPesanWali(Request $request)
     {
         $request->validate([
             'wali_user_id' => 'required|exists:users,id',
             'kelas' => 'required|string',
         ]);
+
         \App\Models\Pesan::create([
             'pengirim_id' => $request->user()->id,
             'penerima_id' => $request->wali_user_id,
@@ -867,6 +1113,7 @@ class DashboardController extends Controller
             'isi' => 'Rekomendasi penyesuaian jadwal tugas dan pendekatan khusus telah dikirimkan untuk kelas ' . $request->kelas . ' karena terdeteksi penurunan skor kenyamanan dan dukungan siswa (Vulnerability Index). Mohon segera ditindaklanjuti.',
             'dibaca' => false,
         ]);
+
         return response()->json(['success' => true]);
     }
 }

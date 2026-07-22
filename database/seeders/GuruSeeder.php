@@ -5,10 +5,13 @@ use App\Models\Guru;
 use App\Models\User;
 use App\Models\Mapel;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 class GuruSeeder extends Seeder
 {
     public function run(): void
     {
+        $this->correctKhoirunnisa();
+
         $gurus = [
             'Sahrial Pulungan, M.Pd' => ['Karya Tulis Ilmiah', 'Karya Tulis'],
             'Riva Riana, S.Pd' => ['Teknologi Digital', 'Ilmu Pengetahuan Alam', 'PJOK'],
@@ -19,7 +22,7 @@ class GuruSeeder extends Seeder
             'Ajeng Putyri Aryantika, S.Pd' => ['Matematika'],
             'Nurhayati, S.Ag' => ['Aqidah', 'Pendidikan Agama Islam', 'Fiqh'],
             'Sri Wanti Maulani, S.Pd' => [],
-            'Khairunisa' => [],
+            'Khoirunnisa, S.Ag' => [],
             'Ai Sunariah, S.Pd' => [],
         ];
         $sdGuru = Guru::query()->where('nama', 'Guru Pendamping SD')->first();
@@ -50,15 +53,23 @@ class GuruSeeder extends Seeder
         }
         $nipCounter = 1001;
         foreach ($gurus as $namaGuru => $mapels) {
-            $email = strtolower(str_replace([' ', ',', '.'], ['', '', ''], $namaGuru)) . '@alazharjayaindonesia.sch.id';
-            $user = User::updateOrCreate(
-                ['email' => $email],
-                [
+            $email = $this->emailFor($namaGuru);
+            $user = User::where('email', $email)->first();
+
+            if (!$user) {
+                $user = User::create([
                     'name' => $namaGuru,
+                    'email' => $email,
                     'password' => Hash::make('password123'),
-                    'role' => 'guru'
-                ]
-            );
+                    'role' => 'guru',
+                ]);
+            } else {
+                $user->update([
+                    'name' => $namaGuru,
+                    'role' => 'guru',
+                ]);
+            }
+
             $guru = Guru::updateOrCreate(
                 ['user_id' => $user->id],
                 [
@@ -71,11 +82,52 @@ class GuruSeeder extends Seeder
             $mapelIds = [];
             foreach ($mapels as $namaMapel) {
                 $mapel = Mapel::query()->where('nama_mapel', $namaMapel)->first();
-                if ($mapel) {
+            if ($mapel) {
                     $mapelIds[] = $mapel->id;
                 }
             }
             $guru->mapels()->sync($mapelIds);
+            if (!$guru->mapel_id && !empty($mapelIds)) {
+                $guru->update(['mapel_id' => $mapelIds[0]]);
+            }
         }
+    }
+
+    private function correctKhoirunnisa(): void
+    {
+        $user = User::where('email', 'khairunisa@alazharjayaindonesia.sch.id')
+            ->orWhere('email', 'khoirunnisa@alazharjayaindonesia.sch.id')
+            ->orWhere('email', 'khoirunnisa.sag@alazharjayaindonesia.sch.id')
+            ->orWhere('name', 'Khairunisa')
+            ->first();
+
+        if (!$user) {
+            return;
+        }
+
+        $user->update([
+            'name' => 'Khoirunnisa, S.Ag',
+            'email' => 'khoirunnisa@alazharjayaindonesia.sch.id',
+            'role' => 'guru',
+        ]);
+
+        Guru::where('user_id', $user->id)
+            ->orWhere('nama', 'Khairunisa')
+            ->update(['nama' => 'Khoirunnisa, S.Ag']);
+    }
+
+    private function emailFor(string $name): string
+    {
+        if ($name === 'Khoirunnisa, S.Ag') {
+            return 'khoirunnisa@alazharjayaindonesia.sch.id';
+        }
+
+        return Str::of($name)
+            ->lower()
+            ->replaceMatches('/[^a-z0-9\s]/', '')
+            ->squish()
+            ->replace(' ', '.')
+            ->append('@alazharjayaindonesia.sch.id')
+            ->toString();
     }
 }

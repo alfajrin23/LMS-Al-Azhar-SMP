@@ -13,7 +13,7 @@
     };
 @endphp
 <div class="sd-content sd-content-ulangan">
-  <div class="content-header"><h1>Ulangan <span>SDIT {{ setting('school_name') }}</span></h1><div class="header-right"><div class="avatar red">{{ strtoupper(substr($siswa->nama, 0, 1)) }}</div></div></div>
+  <div class="content-header"><h1>Ulangan <span>SMPIT {{ setting('school_name') }}</span></h1><div class="header-right"><div class="avatar red">{{ strtoupper(substr($siswa->nama, 0, 1)) }}</div></div></div>
   <div class="card"><div class="card-header"><h3><i class="fas fa-pencil-alt" style="color:var(--orange)"></i> Jadwal Ulangan</h3></div>
     <div class="table-wrap"><table><thead><tr><th>Nama Ulangan</th><th>Mapel</th><th>Tanggal</th><th>Status</th></tr></thead>
     <tbody>

@@ -7,11 +7,13 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+        
         :root {
             --font: 'Outfit', sans-serif;
             --text-color: #1e293b;
             --border-color: #cbd5e1;
         }
+
         body {
             font-family: var(--font);
             color: var(--text-color);
@@ -20,6 +22,7 @@
             margin: 0;
             padding: 40px;
         }
+
         .no-print-bar {
             background: #ffffff;
             padding: 16px 24px;
@@ -33,6 +36,7 @@
             margin-left: auto;
             margin-right: auto;
         }
+
         .btn-print {
             background: #0d9488;
             color: #ffffff;
@@ -47,9 +51,11 @@
             font-size: 14px;
             transition: background 0.2s;
         }
+
         .btn-print:hover {
             background: #0f766e;
         }
+
         .exam-paper {
             background: #ffffff;
             padding: 50px;
@@ -59,6 +65,7 @@
             margin-left: auto;
             margin-right: auto;
         }
+
         .kop-surat {
             display: flex;
             align-items: center;
@@ -66,14 +73,17 @@
             padding-bottom: 15px;
             margin-bottom: 25px;
         }
+
         .kop-logo {
             font-size: 40px;
             color: #0d9488;
             margin-right: 20px;
         }
+
         .kop-text {
             flex: 1;
         }
+
         .kop-text h2 {
             margin: 0;
             font-size: 20px;
@@ -81,11 +91,13 @@
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
+
         .kop-text p {
             margin: 4px 0 0 0;
             font-size: 12px;
             color: #64748b;
         }
+
         .exam-info {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -97,23 +109,29 @@
             margin-bottom: 30px;
             border: 1px solid var(--border-color);
         }
+
         .info-item {
             display: flex;
         }
+
         .info-label {
             font-weight: 600;
             width: 140px;
         }
+
         .info-value {
             flex: 1;
         }
+
         .question-list {
             margin-top: 20px;
         }
+
         .question-item {
             margin-bottom: 24px;
             page-break-inside: avoid;
         }
+
         .question-text {
             font-size: 14px;
             font-weight: 500;
@@ -121,21 +139,25 @@
             display: flex;
             gap: 8px;
         }
+
         .options-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 8px 20px;
             margin-left: 24px;
         }
+
         .option-item {
             font-size: 13px;
         }
+
         .essay-space {
             border-bottom: 1px dashed #cbd5e1;
             height: 80px;
             margin-left: 24px;
             margin-top: 10px;
         }
+
         .key-paper {
             page-break-before: always;
             background: #ffffff;
@@ -147,21 +169,25 @@
             margin-right: auto;
             margin-top: 40px;
         }
+
         @media print {
             body {
                 background: #ffffff;
                 padding: 0;
                 color: #000000;
             }
+
             .no-print-bar {
                 display: none;
             }
+
             .exam-paper, .key-paper {
                 box-shadow: none;
                 padding: 0;
                 margin: 0;
                 max-width: 100%;
             }
+
             .exam-info {
                 background: none;
                 border: 1px solid #000000;
@@ -170,6 +196,7 @@
     </style>
 </head>
 <body>
+
     <div class="no-print-bar">
         <div>
             <h4 style="margin:0; font-size:16px;">Pratinjau Cetak Ujian</h4>
@@ -179,6 +206,7 @@
             <i class="fas fa-print"></i> Cetak Soal Ujian
         </button>
     </div>
+
     <div class="exam-paper">
         <div class="kop-surat">
             <div class="kop-logo">
@@ -186,12 +214,14 @@
             </div>
             <div class="kop-text">
                 <h2>Lembaga Pendidikan Al Azhar Jaya Indonesia</h2>
-                <p>SDIT &amp; SMPIT Al Azhar Jaya Indonesia &bull; Akreditasi A &bull; Sistem Informasi Akademik</p>
+                <p>SMPIT Al Azhar Jaya Indonesia &bull; Akreditasi A &bull; Sistem Informasi Akademik</p>
             </div>
         </div>
+
         <h3 style="text-align:center; text-transform:uppercase; margin-bottom:20px; font-size:16px; font-weight:700;">
             Lembar Soal {{ $cbtExam->tipe === 'uts' ? 'Ujian Tengah Semester' : ($cbtExam->tipe === 'uas' ? 'Ujian Akhir Semester' : 'Ulangan Harian') }}
         </h3>
+
         <div class="exam-info">
             <div class="info-item">
                 <div class="info-label">Mata Pelajaran</div>
@@ -214,12 +244,14 @@
                 <div class="info-value">: ________________________________________</div>
             </div>
         </div>
+
         @if($cbtExam->deskripsi)
         <div style="font-size:13px; font-style:italic; border-left:3px solid #0d9488; padding-left:10px; margin-bottom:25px; color:#475569;">
             <strong>Petunjuk Mengerjakan:</strong><br>
             {{ $cbtExam->deskripsi }}
         </div>
         @endif
+
         <div class="question-list">
             @foreach($soals as $s)
             <div class="question-item">
@@ -227,6 +259,7 @@
                     <span style="font-weight:700;">{{ $s->nomor }}.</span>
                     <span style="flex:1;">{!! nl2br(e($s->soal)) !!}</span>
                 </div>
+                
                 @if($s->tipe === 'pg')
                 <div class="options-grid">
                     <div class="option-item">A. {{ $s->pilihan_a }}</div>
@@ -241,14 +274,17 @@
             @endforeach
         </div>
     </div>
+
     <div class="key-paper">
         <h3 style="text-align:center; text-transform:uppercase; margin-bottom:25px; font-size:15px; font-weight:700; border-bottom:2px solid #000; padding-bottom:10px;">
             Lembar Kunci Jawaban &bull; Khusus Guru
         </h3>
+        
         <div style="margin-bottom:20px; font-size:13px;">
             <strong>Nama Ujian:</strong> {{ $cbtExam->judul }}<br>
             <strong>Mata Pelajaran:</strong> {{ $cbtExam->mapel->nama_mapel ?? '—' }}
         </div>
+
         <table style="width:100%; border-collapse:collapse; font-size:13px; margin-top:20px;">
             <thead>
                 <tr style="background:#f1f5f9;">
@@ -274,5 +310,6 @@
             </tbody>
         </table>
     </div>
+
 </body>
 </html>

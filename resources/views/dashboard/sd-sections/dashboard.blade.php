@@ -274,7 +274,7 @@
                 style="position:absolute; top:12px; right:12px; background:none; border:none; font-size:20px; color:var(--gray-400); cursor:pointer;"><i
                     class="fas fa-times"></i></button>
             <h3 style="font-size:18px; font-weight:700; color:var(--text); margin-bottom:4px;">Infaq & Shodaqoh</h3>
-            <p style="font-size:13px; color:var(--gray-500); margin-bottom:20px;">SDIT Al Azhar Jaya Indonesia</p>
+            <p style="font-size:13px; color:var(--gray-500); margin-bottom:20px;">SMPIT Al Azhar Jaya Indonesia</p>
             <div
                 style="background:var(--white); padding:20px; border-radius:var(--radius-sm); border:2px dashed var(--border); margin:0 auto 20px; display:inline-block;">
                 <i class="fas fa-qrcode" style="font-size:180px; color:var(--gray-800);"></i>

@@ -14,7 +14,7 @@
     $pengumpulanSaya = \App\Models\PengumpulanTugas::where('siswa_id', $siswa->id)->get()->keyBy('tugas_id');
 @endphp
 <div class="sd-content sd-content-tugas" x-data="{ showKumpul: false, kumpulTugasId: null, filterMapel: 'semua' }">
-  <div class="content-header"><h1>Tugas <span>SDIT {{ setting('school_name') }}</span></h1><div class="header-right"><div class="avatar blue">{{ strtoupper(substr($siswa->nama, 0, 1)) }}</div></div></div>
+  <div class="content-header"><h1>Tugas <span>SMPIT {{ setting('school_name') }}</span></h1><div class="header-right"><div class="avatar blue">{{ strtoupper(substr($siswa->nama, 0, 1)) }}</div></div></div>
   <div class="card">
     <div class="card-header" style="display:flex; justify-content:space-between; align-items:center;">
         <h3><i class="fas fa-tasks" style="color:var(--blue)"></i> Semua Tugas</h3>

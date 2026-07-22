@@ -1,5 +1,5 @@
 <div class="sd-content sd-content-mapel">
-  <div class="content-header"><h1>Mata Pelajaran <span>SDIT {{ setting('school_name') }}</span></h1><div class="header-right"><div class="avatar red">{{ strtoupper(substr($siswa->nama, 0, 1)) }}</div></div></div>
+  <div class="content-header"><h1>Mata Pelajaran <span>SMPIT {{ setting('school_name') }}</span></h1><div class="header-right"><div class="avatar red">{{ strtoupper(substr($siswa->nama, 0, 1)) }}</div></div></div>
   <div class="grid-2">
     @foreach($mapels as $m)
     @php

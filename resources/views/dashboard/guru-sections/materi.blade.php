@@ -1,300 +1,267 @@
 @php
-    $materiList = \App\Models\Materi::where('guru_id', $guru->id)
-        ->with('mapel', 'kelas')
-        ->orderBy('created_at', 'desc')
-        ->get();
-    $jadwalGuru = \App\Models\Jadwal::where('guru_id', $guru->id)->get();
-    $mapelList = \App\Models\Mapel::akademik()
-        ->whereIn('id', $jadwalGuru->pluck('mapel_id')->merge($guru->mapels->pluck('id'))->unique())
-        ->get();
-    $kelasList = \App\Models\Kelas::whereIn('id', $jadwalGuru->pluck('kelas_id')->unique())->get();
+    $materiList = $materiList ?? collect();
+    $mapelList = $materiMapelList ?? collect();
+    $kelasList = $materiKelasList ?? collect();
+    $categories = [
+        'kompetensi_inti' => 'Kompetensi Inti',
+        'kompetensi_dasar' => 'Kompetensi Dasar',
+        'alur_tahapan_pembelajaran' => 'Alur Tahapan Pembelajaran',
+    ];
+    $statusMeta = [
+        'draft' => ['label' => 'Draft', 'class' => 'gray'],
+        'pending' => ['label' => 'Menunggu Approval', 'class' => 'orange'],
+        'approved' => ['label' => 'Disetujui', 'class' => 'green'],
+        'rejected' => ['label' => 'Ditolak', 'class' => 'red'],
+        'revision_requested' => ['label' => 'Perlu Revisi', 'class' => 'orange'],
+    ];
     $fileIcon = fn($path) => match (true) {
-        str_ends_with($path, '.pdf') => 'fa-file-pdf',
-        str_ends_with($path, '.doc') || str_ends_with($path, '.docx') => 'fa-file-word',
-        str_ends_with($path, '.xls') || str_ends_with($path, '.xlsx') => 'fa-file-excel',
-        str_ends_with($path, '.ppt') || str_ends_with($path, '.pptx') => 'fa-file-powerpoint',
-        str_ends_with($path, '.zip') || str_ends_with($path, '.rar') => 'fa-file-archive',
-        str_ends_with($path, '.jpg') || str_ends_with($path, '.jpeg') || str_ends_with($path, '.png')
-            => 'fa-file-image',
-        str_ends_with($path, '.mp4') => 'fa-file-video',
-        str_ends_with($path, '.mp3') => 'fa-file-audio',
+        str_ends_with(strtolower($path ?? ''), '.pdf') => 'fa-file-pdf',
+        str_ends_with(strtolower($path ?? ''), '.doc') || str_ends_with(strtolower($path ?? ''), '.docx') => 'fa-file-word',
+        str_ends_with(strtolower($path ?? ''), '.xls') || str_ends_with(strtolower($path ?? ''), '.xlsx') => 'fa-file-excel',
+        str_ends_with(strtolower($path ?? ''), '.ppt') || str_ends_with(strtolower($path ?? ''), '.pptx') => 'fa-file-powerpoint',
+        str_ends_with(strtolower($path ?? ''), '.zip') || str_ends_with(strtolower($path ?? ''), '.rar') => 'fa-file-archive',
         default => 'fa-file',
     };
 @endphp
+
 <div x-data="{
+    activeCategory: 'kompetensi_inti',
+    historyId: null,
     isEdit: false,
     actionUrl: '{{ route('guru.materi.store') }}',
-    judul: '',
-    mapelId: '{{ $guru->mapels->first()?->id }}',
-    kelasId: '',
-    tipe: 'materi',
-    deskripsi: '',
-    setEdit(materi) {
+    form: {
+        judul: '',
+        kategori: 'kompetensi_inti',
+        kode: '',
+        mapel_id: '{{ $mapelList->first()?->id }}',
+        kelas_id: '{{ $kelasList->first()?->id }}',
+        tahun_ajaran: '2026/2027',
+        semester: 'Ganjil',
+        deskripsi: '',
+        isi: ''
+    },
+    edit(item) {
         this.isEdit = true;
-        this.actionUrl = '/guru/materi/' + materi.id + '/update';
-        this.judul = materi.judul;
-        this.mapelId = materi.mapel_id;
-        this.kelasId = materi.kelas_id || '';
-        this.tipe = materi.tipe;
-        this.deskripsi = materi.deskripsi || '';
+        this.actionUrl = '/guru/materi/' + item.id + '/update';
+        this.form = {
+            judul: item.judul || '',
+            kategori: item.kategori || 'kompetensi_inti',
+            kode: item.kode || '',
+            mapel_id: item.mapel_id || '',
+            kelas_id: item.kelas_id || '',
+            tahun_ajaran: item.tahun_ajaran || '2026/2027',
+            semester: item.semester || 'Ganjil',
+            deskripsi: item.deskripsi || '',
+            isi: item.isi || ''
+        };
+        this.activeCategory = this.form.kategori;
         window.scrollTo({ top: 0, behavior: 'smooth' });
     },
-    setCreate() {
+    reset() {
         this.isEdit = false;
         this.actionUrl = '{{ route('guru.materi.store') }}';
-        this.judul = '';
-        this.mapelId = '{{ $guru->mapels->first()?->id }}';
-        this.kelasId = '';
-        this.tipe = 'materi';
-        this.deskripsi = '';
+        this.form = {
+            judul: '',
+            kategori: this.activeCategory,
+            kode: '',
+            mapel_id: '{{ $mapelList->first()?->id }}',
+            kelas_id: '{{ $kelasList->first()?->id }}',
+            tahun_ajaran: '2026/2027',
+            semester: 'Ganjil',
+            deskripsi: '',
+            isi: ''
+        };
     }
 }">
     <div class="content-header">
-        <h1>Kelola &amp; Upload Materi</h1>
+        <div>
+            <h1>Bahan Ajar</h1>
+            <p style="font-size:14px;color:var(--gray-400);margin-top:2px">Kompetensi Inti, Kompetensi Dasar, dan Alur Tahapan Pembelajaran</p>
+        </div>
         <div class="header-right">
             <div class="avatar blue">{{ strtoupper(substr($guru->nama, 0, 1)) }}</div>
         </div>
     </div>
+
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px">
+        @foreach($categories as $key => $label)
+            <button type="button" @click="activeCategory='{{ $key }}'; form.kategori='{{ $key }}'"
+                :class="activeCategory === '{{ $key }}' ? 'btn-tab-active' : 'btn-tab-inactive'"
+                style="padding:8px 12px;border:none;border-radius:6px;font-weight:700;cursor:pointer">
+                {{ $label }}
+            </button>
+        @endforeach
+    </div>
+
+    <style>
+        .btn-tab-active { background: var(--blue); color: #fff; }
+        .btn-tab-inactive { background: var(--gray-100); color: var(--gray-500); }
+        .bahan-actions { display:flex; gap:5px; flex-wrap:wrap; }
+        .bahan-actions form { display:inline; }
+    </style>
+
     <div class="grid-2" style="margin-bottom:20px">
         <div class="card">
             <div class="card-header">
-                <h3>
-                    <i class="fas" :class="isEdit ? 'fa-edit' : 'fa-upload'" style="color:var(--teal)"></i>
-                    <span x-text="isEdit ? 'Edit Materi Ajar' : 'Upload Materi Baru'"></span>
-                </h3>
+                <h3><i class="fas" :class="isEdit ? 'fa-edit' : 'fa-plus-circle'" style="color:var(--teal)"></i> <span x-text="isEdit ? 'Edit Bahan Ajar' : 'Tambah Bahan Ajar'"></span></h3>
             </div>
             <form method="POST" :action="actionUrl" enctype="multipart/form-data" style="padding:4px 0">
                 @csrf
-                <div class="form-group" style="margin-bottom:14px">
-                    <label
-                        style="display:block;font-size:13px;font-weight:600;color:var(--gray-500);margin-bottom:4px">Judul</label>
-                    <input type="text" name="judul" required placeholder="Contoh: Bab 3 Aljabar Linear"
-                        x-model="judul"
-                        style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:14px;font-family:var(--font)">
+                <input type="hidden" name="kategori" x-model="form.kategori">
+                <div class="grid-2" style="gap:10px;margin-bottom:12px">
+                    <div>
+                        <label style="display:block;font-size:12px;font-weight:700;color:var(--gray-500);margin-bottom:4px">Judul</label>
+                        <input type="text" name="judul" x-model="form.judul" required style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:var(--radius-sm)">
+                    </div>
+                    <div>
+                        <label style="display:block;font-size:12px;font-weight:700;color:var(--gray-500);margin-bottom:4px">Kode / Nomor</label>
+                        <input type="text" name="kode" x-model="form.kode" placeholder="Contoh: KI-01" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:var(--radius-sm)">
+                    </div>
                 </div>
-                <div style="display:flex;gap:10px;margin-bottom:14px">
-                    <div class="form-group" style="flex:1">
-                        <label
-                            style="display:block;font-size:13px;font-weight:600;color:var(--gray-500);margin-bottom:4px">Mata
-                            Pelajaran</label>
-                        <select name="mapel_id" required class="form-select" x-model="mapelId"
-                            style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:14px;font-family:var(--font);background:var(--white)">
+                <div class="grid-2" style="gap:10px;margin-bottom:12px">
+                    <div>
+                        <label style="display:block;font-size:12px;font-weight:700;color:var(--gray-500);margin-bottom:4px">Mata Pelajaran</label>
+                        <select name="mapel_id" x-model="form.mapel_id" required class="form-select" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);background:white">
                             <option value="">Pilih Mapel</option>
-                            @foreach ($mapelList as $m)
+                            @foreach($mapelList as $m)
                                 <option value="{{ $m->id }}">{{ $m->nama_mapel }}</option>
                             @endforeach
                         </select>
                     </div>
-                    <div class="form-group" style="flex:1">
-                        <label
-                            style="display:block;font-size:13px;font-weight:600;color:var(--gray-500);margin-bottom:4px">Kelas
-                            (Wajib untuk kelengkapan)</label>
-                        <select name="kelas_id" class="form-select" x-model="kelasId"
-                            style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:14px;font-family:var(--font);background:var(--white)">
+                    <div>
+                        <label style="display:block;font-size:12px;font-weight:700;color:var(--gray-500);margin-bottom:4px">Kelas</label>
+                        <select name="kelas_id" x-model="form.kelas_id" required class="form-select" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);background:white">
                             <option value="">Pilih Kelas</option>
-                            @foreach ($kelasList as $k)
+                            @foreach($kelasList as $k)
                                 <option value="{{ $k->id }}">{{ $k->nama_kelas }}</option>
                             @endforeach
                         </select>
                     </div>
                 </div>
-                <div style="display:flex;gap:10px;margin-bottom:14px">
-                    <div class="form-group" style="flex:1">
-                        <label
-                            style="display:block;font-size:13px;font-weight:600;color:var(--gray-500);margin-bottom:4px">Tipe
-                            Berkas</label>
-                        <select name="tipe" class="form-select" x-model="tipe"
-                            style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:14px;font-family:var(--font);background:var(--white)">
-                            <option value="materi">Materi Ajar</option>
-                            <option value="referensi">Referensi</option>
-                            <option value="tugas">Tugas</option>
+                <div class="grid-2" style="gap:10px;margin-bottom:12px">
+                    <div>
+                        <label style="display:block;font-size:12px;font-weight:700;color:var(--gray-500);margin-bottom:4px">Tahun Ajaran</label>
+                        <input type="text" name="tahun_ajaran" x-model="form.tahun_ajaran" required style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:var(--radius-sm)">
+                    </div>
+                    <div>
+                        <label style="display:block;font-size:12px;font-weight:700;color:var(--gray-500);margin-bottom:4px">Semester</label>
+                        <select name="semester" x-model="form.semester" required class="form-select" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);background:white">
+                            <option value="Ganjil">Ganjil</option>
+                            <option value="Genap">Genap</option>
                         </select>
                     </div>
-                    <div class="form-group" style="flex:1">
-                        <label
-                            style="display:block;font-size:13px;font-weight:600;color:var(--gray-500);margin-bottom:4px">Berkas
-                            File</label>
-                        <input type="file" name="file" :required="!isEdit"
-                            style="width:100%;padding:7px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:14px;font-family:var(--font);background:var(--white)">
-                        <small x-show="isEdit"
-                            style="color:var(--gray-400);font-size:11px;display:block;margin-top:2px">Biarkan kosong
-                            jika tidak ingin mengganti berkas file.</small>
-                    </div>
                 </div>
-                <div class="form-group" style="margin-bottom:16px">
-                    <label
-                        style="display:block;font-size:13px;font-weight:600;color:var(--gray-500);margin-bottom:4px">Deskripsi
-                        (Wajib min. 20 karakter untuk kelengkapan)</label>
-                    <textarea name="deskripsi" rows="3" placeholder="Tuliskan ringkasan materi atau petunjuk belajar siswa di sini..."
-                        x-model="deskripsi"
-                        style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:14px;font-family:var(--font);resize:vertical"></textarea>
-                    <small style="color:var(--gray-400);font-size:11px;display:block;margin-top:2px"
-                        :style="deskripsi.length >= 20 ? 'color:var(--green)' : 'color:var(--red)'">
-                        Panjang karakter: <span x-text="deskripsi.length"></span> / 20 minimum.
-                    </small>
+                <div style="margin-bottom:12px">
+                    <label style="display:block;font-size:12px;font-weight:700;color:var(--gray-500);margin-bottom:4px">Deskripsi</label>
+                    <textarea name="deskripsi" rows="3" x-model="form.deskripsi" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);resize:vertical"></textarea>
                 </div>
-                <button type="submit" class="btn-login" style="cursor:pointer;border:none">
-                    <i class="fas" :class="isEdit ? 'fa-save' : 'fa-upload'"></i>
-                    <span x-text="isEdit ? 'Simpan Perubahan' : 'Upload & Ajukan'"></span>
-                </button>
-                <button type="button" x-show="isEdit" @click="setCreate" class="btn-login"
-                    style="background:var(--gray-300); color:var(--text); border:none; cursor:pointer; margin-left:8px">Batal</button>
+                <div style="margin-bottom:12px">
+                    <label style="display:block;font-size:12px;font-weight:700;color:var(--gray-500);margin-bottom:4px">Isi / Ringkasan Kompetensi</label>
+                    <textarea name="isi" rows="4" x-model="form.isi" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);resize:vertical"></textarea>
+                </div>
+                <div style="margin-bottom:16px">
+                    <label style="display:block;font-size:12px;font-weight:700;color:var(--gray-500);margin-bottom:4px">File</label>
+                    <input type="file" name="file" style="width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);background:white">
+                    <small x-show="isEdit" style="display:block;margin-top:4px;color:var(--gray-400)">Biarkan kosong jika file tidak diganti.</small>
+                </div>
+                <div style="display:flex;gap:8px;flex-wrap:wrap">
+                    <button type="submit" name="submit_action" value="draft" class="btn-small outline" style="cursor:pointer"><i class="fas fa-save"></i> Simpan Draft</button>
+                    <button type="submit" name="submit_action" value="request_approval" class="btn-small teal" style="border:none;cursor:pointer"><i class="fas fa-paper-plane"></i> Request Approval</button>
+                    <button type="button" x-show="isEdit" @click="reset" class="btn-small outline" style="cursor:pointer"><i class="fas fa-times"></i> Batal</button>
+                </div>
             </form>
         </div>
+
         <div class="card">
-            <div class="card-header">
-                <h3><i class="fas fa-clipboard-check" style="color:var(--teal)"></i> Syarat Kelengkapan Materi</h3>
-            </div>
-            <div style="padding:10px 0">
-                <p style="font-size:13px;line-height:1.6;color:var(--gray-600);margin-bottom:16px">
-                    Agar materi ajar dapat diterbitkan dan diunduh oleh siswa, pastikan semua kolom berikut lengkap
-                    untuk memicu pengajuan persetujuan ke Admin:
-                </p>
-                <div style="display:flex;flex-direction:column;gap:12px">
-                    <div
-                        style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:var(--gray-100);border-radius:var(--radius-sm)">
-                        <span style="font-size:13px;font-weight:600"><i class="fas fa-heading"
-                                style="color:var(--blue);margin-right:6px"></i> Judul Terisi</span>
-                        <i class="fas fa-check-circle" style="color:var(--green)"></i>
-                    </div>
-                    <div
-                        style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:var(--gray-100);border-radius:var(--radius-sm)">
-                        <span style="font-size:13px;font-weight:600"><i class="fas fa-file-upload"
-                                style="color:var(--teal);margin-right:6px"></i> Berkas File Terlampir</span>
-                        <i class="fas fa-check-circle" style="color:var(--green)"></i>
-                    </div>
-                    <div
-                        style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:var(--gray-100);border-radius:var(--radius-sm)">
-                        <span style="font-size:13px;font-weight:600"><i class="fas fa-book"
-                                style="color:var(--purple);margin-right:6px"></i> Mata Pelajaran Terpilih</span>
-                        <i class="fas fa-check-circle" style="color:var(--green)"></i>
-                    </div>
-                    <div
-                        style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:var(--gray-100);border-radius:var(--radius-sm)">
-                        <span style="font-size:13px;font-weight:600"><i class="fas fa-users"
-                                style="color:var(--orange);margin-right:6px"></i> Kelas Target Ditentukan</span>
-                        <span class="badge orange light" style="font-size:10px;font-weight:700">Wajib</span>
-                    </div>
-                    <div
-                        style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:var(--gray-100);border-radius:var(--radius-sm)">
-                        <span style="font-size:13px;font-weight:600"><i class="fas fa-align-left"
-                                style="color:var(--indigo);margin-right:6px"></i> Deskripsi Minimal 20 Karakter</span>
-                        <span class="badge orange light" style="font-size:10px;font-weight:700">Wajib</span>
-                    </div>
-                </div>
+            <div class="card-header"><h3><i class="fas fa-route" style="color:var(--purple)"></i> Alur Approval</h3></div>
+            <div style="display:flex;flex-direction:column;gap:10px;font-size:13px;color:var(--gray-600)">
+                <div><strong>1. Draft</strong><br><span>Guru dapat menyimpan, mengedit, atau menghapus.</span></div>
+                <div><strong>2. Request Approval</strong><br><span>Aksi eksplisit mengubah status menjadi pending untuk Kepala Sekolah.</span></div>
+                <div><strong>3. Review</strong><br><span>Kepala Sekolah menyetujui, menolak, atau meminta revisi dengan catatan.</span></div>
+                <div><strong>4. Published</strong><br><span>Siswa dan orang tua hanya dapat mengunduh file berstatus approved sesuai kelas.</span></div>
             </div>
         </div>
     </div>
+
     <div class="card">
         <div class="card-header">
-            <h3><i class="fas fa-folder-open" style="color:var(--teal)"></i> Daftar Materi &amp; Kelengkapan Syarat
-            </h3>
-            <select x-model="filterTipeVal" class="form-select"
-                style="padding:5px 10px;font-size:12px;border:1px solid var(--border);border-radius:var(--radius-sm)">
-                <option value="">Semua Tipe</option>
-                <option value="materi">Materi Ajar</option>
-                <option value="referensi">Referensi</option>
-                <option value="tugas">Tugas</option>
-            </select>
+            <h3><i class="fas fa-folder-open" style="color:var(--teal)"></i> Daftar Bahan Ajar</h3>
+            <span class="badge light blue">{{ $materiList->count() }} dokumen</span>
         </div>
         <div class="table-wrap">
             <table>
                 <thead>
                     <tr>
-                        <th style="width:50px">Format</th>
-                        <th>Judul &amp; Deskripsi</th>
+                        <th>File</th>
+                        <th>Judul</th>
+                        <th>Kategori</th>
                         <th>Mapel / Kelas</th>
-                        <th>Syarat Kelengkapan</th>
+                        <th>Periode</th>
                         <th>Status</th>
-                        <th style="width:140px">Aksi</th>
+                        <th>Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
                     @forelse($materiList as $m)
-                        @php $chk = $m->checklist(); @endphp
-                        <tr x-show="!filterTipeVal || '{{ $m->tipe }}' === filterTipeVal">
-                            <td style="text-align:center;font-size:22px;color:var(--teal)"><i
-                                    class="fas {{ $fileIcon($m->file_path) }}"></i></td>
+                        @php $meta = $statusMeta[$m->status] ?? ['label' => ucfirst($m->status), 'class' => 'gray']; @endphp
+                        <tr x-show="activeCategory === '{{ $m->kategori }}'">
+                            <td style="text-align:center;font-size:20px;color:var(--teal)"><i class="fas {{ $fileIcon($m->file_path) }}"></i></td>
                             <td>
-                                <strong style="font-size:14px;color:var(--gray-800)">{{ $m->judul }}</strong>
-                                <p
-                                    style="font-size:12px;color:var(--gray-500);margin-top:4px;max-width:350px;line-height:1.4">
-                                    {{ $m->deskripsi ?? '— Tidak ada deskripsi —' }}</p>
+                                <strong>{{ $m->kode ? $m->kode.' - ' : '' }}{{ $m->judul }}</strong>
+                                <div style="font-size:12px;color:var(--gray-400);margin-top:4px">{{ \Illuminate\Support\Str::limit($m->deskripsi, 90) }}</div>
+                            </td>
+                            <td>{{ $categories[$m->kategori] ?? $m->kategori }}</td>
+                            <td>
+                                <div>{{ $m->mapel->nama_mapel ?? '-' }}</div>
+                                <small style="color:var(--gray-400)">{{ $m->kelas->nama_kelas ?? '-' }}</small>
+                            </td>
+                            <td>{{ $m->tahun_ajaran }}<br><small style="color:var(--gray-400)">{{ $m->semester }}</small></td>
+                            <td>
+                                <span class="badge light {{ $meta['class'] }}">{{ $meta['label'] }}</span>
+                                @if($m->catatan_reviewer)
+                                    <div style="font-size:11px;color:var(--gray-500);margin-top:4px">{{ \Illuminate\Support\Str::limit($m->catatan_reviewer, 70) }}</div>
+                                @endif
                             </td>
                             <td>
-                                <div><strong>{{ $m->mapel->kode ?? '-' }}</strong></div>
-                                <div style="font-size:11px;color:var(--gray-400);margin-top:2px">
-                                    {{ $m->kelas->nama_kelas ?? 'Semua Kelas' }}</div>
-                            </td>
-                            <td>
-                                <div
-                                    style="display:flex;flex-direction:column;gap:4px;font-size:11px;color:var(--gray-600)">
-                                    <span style="color:{{ $chk['judul'] ? 'var(--green)' : 'var(--red)' }}">
-                                        <i
-                                            class="fas {{ $chk['judul'] ? 'fa-check-circle' : 'fa-times-circle' }}"></i>
-                                        Judul
-                                    </span>
-                                    <span style="color:{{ $chk['file'] ? 'var(--green)' : 'var(--red)' }}">
-                                        <i class="fas {{ $chk['file'] ? 'fa-check-circle' : 'fa-times-circle' }}"></i>
-                                        File
-                                    </span>
-                                    <span style="color:{{ $chk['kelas'] ? 'var(--green)' : 'var(--red)' }}">
-                                        <i
-                                            class="fas {{ $chk['kelas'] ? 'fa-check-circle' : 'fa-times-circle' }}"></i>
-                                        Kelas
-                                    </span>
-                                    <span style="color:{{ $chk['deskripsi'] ? 'var(--green)' : 'var(--red)' }}">
-                                        <i
-                                            class="fas {{ $chk['deskripsi'] ? 'fa-check-circle' : 'fa-times-circle' }}"></i>
-                                        Deskripsi
-                                    </span>
+                                <div class="bahan-actions">
+                                    @if($m->file_path)
+                                        <a href="{{ route('materi.download', $m) }}" class="btn-small outline" title="Download" style="text-decoration:none"><i class="fas fa-download"></i></a>
+                                    @endif
+                                    @if(in_array($m->status, ['draft', 'rejected', 'revision_requested'], true))
+                                        <button type="button" @click="edit(@js($m->only(['id','judul','kategori','kode','mapel_id','kelas_id','tahun_ajaran','semester','deskripsi','isi'])))" class="btn-small outline" style="cursor:pointer"><i class="fas fa-edit"></i></button>
+                                        <form method="POST" action="{{ route('guru.materi.request-approval', $m) }}">
+                                            @csrf
+                                            <button type="submit" class="btn-small teal" style="border:none;cursor:pointer"><i class="fas fa-paper-plane"></i></button>
+                                        </form>
+                                    @endif
+                                    @if($m->status === 'pending')
+                                        <form method="POST" action="{{ route('guru.materi.cancel-approval', $m) }}">
+                                            @csrf
+                                            <button type="submit" class="btn-small outline" style="cursor:pointer"><i class="fas fa-ban"></i></button>
+                                        </form>
+                                    @endif
+                                    @if($m->status === 'draft')
+                                        <form method="POST" action="{{ route('guru.materi.delete', $m) }}" onsubmit="return confirm('Hapus draft Bahan Ajar ini?')">
+                                            @csrf
+                                            <button type="submit" class="btn-small outline" style="border-color:var(--red);color:var(--red);cursor:pointer"><i class="fas fa-trash"></i></button>
+                                        </form>
+                                    @endif
+                                    <button type="button" @click="historyId = historyId === {{ $m->id }} ? null : {{ $m->id }}" class="btn-small outline" style="cursor:pointer"><i class="fas fa-history"></i></button>
                                 </div>
-                            </td>
-                            <td>
-                                <span
-                                    class="badge light {{ $m->status === 'approved' ? 'green' : ($m->status === 'pending' ? 'orange' : ($m->status === 'rejected' ? 'red' : 'gray')) }}">
-                                    {{ $m->status === 'approved' ? 'Disetujui' : ($m->status === 'pending' ? 'Menunggu Review' : ($m->status === 'rejected' ? 'Ditolak' : 'Draft (Belum Lengkap)')) }}
-                                </span>
-                            </td>
-                            <td>
-                                <div style="display:flex;gap:4px;align-items:center">
-                                    <a href="{{ route('materi.download', $m->id) }}" target="_blank"
-                                        class="btn-small outline" style="text-decoration:none;padding:5px 8px"><i
-                                            class="fas fa-download"></i></a>
-                                    <button type="button" @click="setEdit({{ json_encode($m) }})"
-                                        class="btn-small outline" style="padding:5px 8px;cursor:pointer"><i
-                                            class="fas fa-edit"></i></button>
-                                    <form method="POST" action="{{ route('guru.materi.delete', $m->id) }}"
-                                        style="display:inline"
-                                        onsubmit="return confirm('Apakah Anda yakin ingin menghapus materi ini?')">
-                                        @csrf
-                                        <button type="submit" class="btn-small outline"
-                                            style="border-color:var(--red);color:var(--red);padding:5px 8px;cursor:pointer"><i
-                                                class="fas fa-trash"></i></button>
-                                    </form>
+                                <div x-show="historyId === {{ $m->id }}" x-cloak style="margin-top:8px;font-size:11px;color:var(--gray-500);line-height:1.5">
+                                    @forelse($m->approvalHistories as $history)
+                                        <div>{{ $history->created_at->format('d M Y H:i') }} - {{ $history->actor->name ?? 'Sistem' }}: {{ $history->action }} ({{ $history->status_to }})</div>
+                                    @empty
+                                        <div>Belum ada riwayat approval.</div>
+                                    @endforelse
                                 </div>
                             </td>
                         </tr>
                     @empty
-                        <tr>
-                            <td colspan="6" style="text-align:center;color:var(--gray-400);padding:20px">Belum ada
-                                materi</td>
-                        </tr>
+                        <tr><td colspan="7" style="text-align:center;color:var(--gray-400);padding:20px">Belum ada Bahan Ajar.</td></tr>
                     @endforelse
                 </tbody>
             </table>
         </div>
     </div>
 </div>
-@if (session('success'))
-    <div
-        style="position:fixed;bottom:20px;right:20px;background:var(--green);color:#fff;padding:14px 20px;border-radius:var(--radius-sm);font-weight:600;box-shadow:0 4px 12px rgba(0,0,0,0.15);z-index:999">
-        <i class="fas fa-check-circle"></i> {{ session('success') }}
-    </div>
-@endif
-@if (session('error'))
-    <div
-        style="position:fixed;bottom:20px;right:20px;background:var(--red);color:#fff;padding:14px 20px;border-radius:var(--radius-sm);font-weight:600;box-shadow:0 4px 12px rgba(0,0,0,0.15);z-index:999">
-        <i class="fas fa-exclamation-circle"></i> {{ session('error') }}
-    </div>
-@endif

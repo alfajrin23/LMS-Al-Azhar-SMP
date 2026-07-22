@@ -30,12 +30,13 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call([
+            MapelSeeder::class,
             GuruSeeder::class,
             KelasSeeder::class,
             KelasQuranSeeder::class,
             SiswaSeeder::class,
-            MapelSeeder::class,
             JadwalSeeder::class,
+            Revisi1Seeder::class,
         ]);
         $user = User::firstOrCreate(
             ['email' => 'sari.rohmah@email.com'],
@@ -232,7 +233,7 @@ class DatabaseSeeder extends Seeder
             ['key' => 'kkm_default', 'value' => '70'],
         ];
         foreach ($pengaturanData as $pd) {
-            Pengaturan::firstOrCreate(['key' => $pd['key']], ['value' => $pd['value']]);
+            Pengaturan::updateOrCreate(['key' => $pd['key']], ['value' => $pd['value']]);
         }
         $this->command->info('Database seeded successfully!');
     }

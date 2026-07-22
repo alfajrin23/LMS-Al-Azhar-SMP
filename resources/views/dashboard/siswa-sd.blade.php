@@ -79,7 +79,7 @@
         @include('dashboard.sd-sections.rapor')
     </div>
     <div x-show="tab === 'prestasi'">
-        <div class="content-header"><h1>Prestasi Siswa <span>SDIT {{ setting('school_name') }}</span></h1></div>
+        <div class="content-header"><h1>Prestasi Siswa <span>SMPIT {{ setting('school_name') }}</span></h1></div>
         <div class="card"><div style="padding:40px;text-align:center;color:var(--gray-400)"><i class="fas fa-medal" style="font-size:48px;margin-bottom:16px;opacity:0.3"></i><p>Belum ada rekapan prestasi saat ini</p></div></div>
     </div>
 @endsection

@@ -1,1374 +1,2515 @@
-PRAGMA foreign_keys=OFF;
-BEGIN TRANSACTION;
-
-DROP TABLE IF EXISTS "badges";
-CREATE TABLE "badges" ("id" integer primary key autoincrement not null, "nama" varchar not null, "deskripsi" varchar not null, "icon" varchar not null default '⭐', "created_at" datetime, "updated_at" datetime);
-INSERT INTO "badges" ("id", "nama", "deskripsi", "icon", "created_at", "updated_at") VALUES (1, 'Rajin Belajar', 'Aktif 30 hari berturut-turut', '⭐', '2026-07-21 10:44:15', '2026-07-21 10:44:15');
-INSERT INTO "badges" ("id", "nama", "deskripsi", "icon", "created_at", "updated_at") VALUES (2, 'Juara Quiz', 'Nilai quiz di atas 90', '🎯', '2026-07-21 10:44:15', '2026-07-21 10:44:15');
-INSERT INTO "badges" ("id", "nama", "deskripsi", "icon", "created_at", "updated_at") VALUES (3, 'Pembaca Aktif', 'Baca 20 materi', '📖', '2026-07-21 10:44:15', '2026-07-21 10:44:15');
-INSERT INTO "badges" ("id", "nama", "deskripsi", "icon", "created_at", "updated_at") VALUES (4, 'Hafidz Cilik', 'Hafal 1 juz Al-Qur''an', '📿', '2026-07-21 10:44:15', '2026-07-21 10:44:15');
-
-DROP TABLE IF EXISTS "banding_nilai";
-CREATE TABLE "banding_nilai" ("id" integer primary key autoincrement not null, "nilai_id" integer not null, "siswa_id" integer not null, "alasan_siswa" text not null, "status" varchar check ("status" in ('pending', 'disetujui', 'ditolak')) not null default 'pending', "catatan_guru" text, "created_at" datetime, "updated_at" datetime, foreign key("nilai_id") references "nilai"("id") on delete cascade, foreign key("siswa_id") references "siswa"("id") on delete cascade);
-
-DROP TABLE IF EXISTS "cache";
-CREATE TABLE "cache" ("key" varchar not null, "value" text not null, "expiration" integer not null, primary key ("key"));
-
-DROP TABLE IF EXISTS "cache_locks";
-CREATE TABLE "cache_locks" ("key" varchar not null, "owner" varchar not null, "expiration" integer not null, primary key ("key"));
-
-DROP TABLE IF EXISTS "catatan_wali";
-CREATE TABLE "catatan_wali" ("id" integer primary key autoincrement not null, "siswa_id" integer not null, "semester" varchar not null default 'Genap 2025/2026', "catatan" text not null, "created_by" integer not null, "created_at" datetime, "updated_at" datetime, foreign key("siswa_id") references "siswa"("id") on delete cascade, foreign key("created_by") references "guru"("id"));
-INSERT INTO "catatan_wali" ("id", "siswa_id", "semester", "catatan", "created_by", "created_at", "updated_at") VALUES (1, 1, 'Genap 2025/2026', 'Ananda aktif dalam kegiatan kelas, namun perlu lebih teliti.', 11, '2026-07-21 10:44:15', '2026-07-21 10:44:15');
-INSERT INTO "catatan_wali" ("id", "siswa_id", "semester", "catatan", "created_by", "created_at", "updated_at") VALUES (2, 2, 'Genap 2025/2026', 'Ananda aktif dalam kegiatan kelas, namun perlu lebih teliti.', 8, '2026-07-21 10:44:15', '2026-07-21 10:44:15');
-INSERT INTO "catatan_wali" ("id", "siswa_id", "semester", "catatan", "created_by", "created_at", "updated_at") VALUES (3, 3, 'Genap 2025/2026', 'Ananda aktif dalam kegiatan kelas, namun perlu lebih teliti.', 11, '2026-07-21 10:44:15', '2026-07-21 10:44:15');
-INSERT INTO "catatan_wali" ("id", "siswa_id", "semester", "catatan", "created_by", "created_at", "updated_at") VALUES (4, 4, 'Genap 2025/2026', 'Ananda aktif dalam kegiatan kelas, namun perlu lebih teliti.', 8, '2026-07-21 10:44:15', '2026-07-21 10:44:15');
-INSERT INTO "catatan_wali" ("id", "siswa_id", "semester", "catatan", "created_by", "created_at", "updated_at") VALUES (5, 5, 'Genap 2025/2026', 'Ananda siswi yang kreatif dan disiplin. Terus kembangkan bakat.', 11, '2026-07-21 10:44:15', '2026-07-21 10:44:15');
-INSERT INTO "catatan_wali" ("id", "siswa_id", "semester", "catatan", "created_by", "created_at", "updated_at") VALUES (6, 6, 'Genap 2025/2026', 'Ananda aktif dalam kegiatan kelas, namun perlu lebih teliti.', 1, '2026-07-21 10:44:15', '2026-07-21 10:44:15');
-INSERT INTO "catatan_wali" ("id", "siswa_id", "semester", "catatan", "created_by", "created_at", "updated_at") VALUES (7, 7, 'Genap 2025/2026', 'Ananda memiliki potensi besar di bidang agama. Pertahankan!', 10, '2026-07-21 10:44:15', '2026-07-21 10:44:15');
-INSERT INTO "catatan_wali" ("id", "siswa_id", "semester", "catatan", "created_by", "created_at", "updated_at") VALUES (8, 8, 'Genap 2025/2026', 'Ananda adalah siswa yang rajin dan memiliki semangat belajar tinggi.', 11, '2026-07-21 10:44:15', '2026-07-21 10:44:15');
-INSERT INTO "catatan_wali" ("id", "siswa_id", "semester", "catatan", "created_by", "created_at", "updated_at") VALUES (9, 9, 'Genap 2025/2026', 'Ananda memiliki potensi besar di bidang agama. Pertahankan!', 1, '2026-07-21 10:44:15', '2026-07-21 10:44:15');
-INSERT INTO "catatan_wali" ("id", "siswa_id", "semester", "catatan", "created_by", "created_at", "updated_at") VALUES (10, 10, 'Genap 2025/2026', 'Ananda siswi yang kreatif dan disiplin. Terus kembangkan bakat.', 7, '2026-07-21 10:44:15', '2026-07-21 10:44:15');
-
-DROP TABLE IF EXISTS "cbt_exams";
-CREATE TABLE "cbt_exams" ("id" integer primary key autoincrement not null, "judul" varchar not null, "deskripsi" text, "mapel_id" integer not null, "kelas_id" integer, "guru_id" integer not null, "durasi" integer not null, "jumlah_soal" integer not null default '0', "status" varchar check ("status" in ('draft', 'pending', 'approved', 'rejected')) not null default 'draft', "approved_by" integer, "approved_at" datetime, "catatan_reject" text, "created_at" datetime, "updated_at" datetime, "tipe" varchar check ("tipe" in ('ulangan', 'uts', 'uas')) not null default 'ulangan', "metode" varchar not null default 'online', foreign key("mapel_id") references "mapel"("id"), foreign key("kelas_id") references "kelas"("id"), foreign key("guru_id") references "guru"("id"), foreign key("approved_by") references "users"("id"));
-
-DROP TABLE IF EXISTS "cbt_jawabans";
-CREATE TABLE "cbt_jawabans" ("id" integer primary key autoincrement not null, "cbt_exam_id" integer not null, "cbt_soal_id" integer not null, "siswa_id" integer not null, "jawaban" text, "nilai" numeric, "dinilai" tinyint(1) not null default '0', "created_at" datetime, "updated_at" datetime, foreign key("cbt_exam_id") references "cbt_exams"("id") on delete cascade, foreign key("cbt_soal_id") references "cbt_soals"("id") on delete cascade, foreign key("siswa_id") references "siswa"("id"));
-
-DROP TABLE IF EXISTS "cbt_soals";
-CREATE TABLE "cbt_soals" ("id" integer primary key autoincrement not null, "cbt_exam_id" integer not null, "nomor" integer not null, "soal" text not null, "tipe" varchar check ("tipe" in ('pg', 'essay')) not null default 'pg', "pilihan_a" text, "pilihan_b" text, "pilihan_c" text, "pilihan_d" text, "jawaban_benar" varchar, "bobot" integer not null default '1', "created_at" datetime, "updated_at" datetime, "kesulitan" varchar not null default 'sedang', foreign key("cbt_exam_id") references "cbt_exams"("id") on delete cascade);
-
-DROP TABLE IF EXISTS "failed_jobs";
-CREATE TABLE "failed_jobs" ("id" integer primary key autoincrement not null, "uuid" varchar not null, "connection" varchar not null, "queue" varchar not null, "payload" text not null, "exception" text not null, "failed_at" datetime not null default CURRENT_TIMESTAMP);
-
-DROP TABLE IF EXISTS "guru";
-CREATE TABLE "guru" ("id" integer primary key autoincrement not null, "user_id" integer not null, "nip" varchar not null, "nama" varchar not null, "alamat" text, "no_telp" varchar, "status" varchar check ("status" in ('aktif', 'nonaktif')) not null default 'aktif', "created_at" datetime, "updated_at" datetime, foreign key("user_id") references "users"("id") on delete cascade);
-INSERT INTO "guru" ("id", "user_id", "nip", "nama", "alamat", "no_telp", "status", "created_at", "updated_at") VALUES (1, 1, '1001', 'Sahrial Pulungan, M.Pd', NULL, NULL, 'aktif', '2026-07-21 10:43:53', '2026-07-21 10:43:53');
-INSERT INTO "guru" ("id", "user_id", "nip", "nama", "alamat", "no_telp", "status", "created_at", "updated_at") VALUES (2, 2, '1002', 'Riva Riana, S.Pd', NULL, NULL, 'aktif', '2026-07-21 10:43:53', '2026-07-21 10:43:53');
-INSERT INTO "guru" ("id", "user_id", "nip", "nama", "alamat", "no_telp", "status", "created_at", "updated_at") VALUES (3, 3, '1003', 'Adinda Oktavhiani S.Pd', NULL, NULL, 'aktif', '2026-07-21 10:43:53', '2026-07-21 10:43:53');
-INSERT INTO "guru" ("id", "user_id", "nip", "nama", "alamat", "no_telp", "status", "created_at", "updated_at") VALUES (4, 4, '1004', 'Intan Kusuma Dera, S.Ag', NULL, NULL, 'aktif', '2026-07-21 10:43:53', '2026-07-21 10:43:53');
-INSERT INTO "guru" ("id", "user_id", "nip", "nama", "alamat", "no_telp", "status", "created_at", "updated_at") VALUES (5, 5, '1005', 'Vika Wati Dzulciha, S.Ag', NULL, NULL, 'aktif', '2026-07-21 10:43:54', '2026-07-21 10:43:54');
-INSERT INTO "guru" ("id", "user_id", "nip", "nama", "alamat", "no_telp", "status", "created_at", "updated_at") VALUES (6, 6, '1006', 'Irnika Widiyan Dini, S.Li', NULL, NULL, 'aktif', '2026-07-21 10:43:54', '2026-07-21 10:43:54');
-INSERT INTO "guru" ("id", "user_id", "nip", "nama", "alamat", "no_telp", "status", "created_at", "updated_at") VALUES (7, 7, '1007', 'Ajeng Putyri Aryantika, S.Pd', NULL, NULL, 'aktif', '2026-07-21 10:43:54', '2026-07-21 10:43:54');
-INSERT INTO "guru" ("id", "user_id", "nip", "nama", "alamat", "no_telp", "status", "created_at", "updated_at") VALUES (8, 8, '1008', 'Nurhayati, S.Ag', NULL, NULL, 'aktif', '2026-07-21 10:43:54', '2026-07-21 10:43:54');
-INSERT INTO "guru" ("id", "user_id", "nip", "nama", "alamat", "no_telp", "status", "created_at", "updated_at") VALUES (9, 9, '1009', 'Sri Wanti Maulani, S.Pd', NULL, NULL, 'aktif', '2026-07-21 10:43:55', '2026-07-21 10:43:55');
-INSERT INTO "guru" ("id", "user_id", "nip", "nama", "alamat", "no_telp", "status", "created_at", "updated_at") VALUES (10, 10, '1010', 'Khairunisa', NULL, NULL, 'aktif', '2026-07-21 10:43:55', '2026-07-21 10:43:55');
-INSERT INTO "guru" ("id", "user_id", "nip", "nama", "alamat", "no_telp", "status", "created_at", "updated_at") VALUES (11, 11, '1011', 'Ai Sunariah, S.Pd', NULL, NULL, 'aktif', '2026-07-21 10:43:55', '2026-07-21 10:43:55');
-
-DROP TABLE IF EXISTS "guru_mapel";
-CREATE TABLE "guru_mapel" ("id" integer primary key autoincrement not null, "guru_id" integer not null, "mapel_id" integer not null, "created_at" datetime, "updated_at" datetime, foreign key("guru_id") references "guru"("id") on delete cascade, foreign key("mapel_id") references "mapel"("id") on delete cascade);
-
-DROP TABLE IF EXISTS "jadwal";
-CREATE TABLE "jadwal" ("id" integer primary key autoincrement not null, "kelas_id" integer not null, "mapel_id" integer not null, "guru_id" integer not null, "hari" varchar not null, "jam_mulai" time not null, "jam_selesai" time, "created_at" datetime, "updated_at" datetime, foreign key("kelas_id") references "kelas"("id") on delete cascade, foreign key("mapel_id") references "mapel"("id") on delete cascade, foreign key("guru_id") references "guru"("id") on delete cascade);
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (1, 1, 27, 9, 'Senin', '07:00', '07:30', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (2, 1, 22, 9, 'Senin', '07:30', '08:15', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (3, 1, 11, 2, 'Senin', '08:15', '08:55', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (4, 1, 11, 2, 'Senin', '08:55', '09:35', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (5, 1, 19, 9, 'Senin', '09:35', '09:50', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (6, 1, 8, 4, 'Senin', '09:50', '10:30', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (7, 1, 8, 4, 'Senin', '10:30', '11:10', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (8, 1, 3, 6, 'Senin', '11:10', '11:50', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (9, 1, 20, 9, 'Senin', '11:50', '12:30', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (10, 1, 19, 9, 'Senin', '12:30', '13:00', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (11, 1, 3, 6, 'Senin', '13:00', '13:40', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (12, 1, 6, 9, 'Senin', '13:40', '14:20', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (13, 1, 6, 9, 'Senin', '14:20', '15:00', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (14, 1, 17, 3, 'Senin', '15:00', '15:20', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (15, 1, 21, 9, 'Senin', '15:20', '15:30', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (16, 1, 27, 9, 'Selasa', '07:00', '07:30', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (17, 1, 8, 4, 'Selasa', '07:30', '08:10', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (18, 1, 8, 4, 'Selasa', '08:10', '08:50', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (19, 1, 19, 9, 'Selasa', '08:50', '09:05', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (20, 1, 9, 8, 'Selasa', '09:05', '09:45', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (21, 1, 9, 8, 'Selasa', '09:45', '10:25', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (22, 1, 1, 7, 'Selasa', '10:25', '11:05', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (23, 1, 1, 7, 'Selasa', '11:05', '11:45', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (24, 1, 20, 9, 'Selasa', '11:45', '12:30', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (25, 1, 19, 9, 'Selasa', '12:30', '13:00', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (26, 1, 3, 6, 'Selasa', '13:00', '13:40', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (27, 1, 2, 3, 'Selasa', '13:40', '14:20', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (28, 1, 2, 3, 'Selasa', '14:20', '15:00', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (29, 1, 17, 3, 'Selasa', '15:00', '15:20', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (30, 1, 21, 9, 'Selasa', '15:20', '15:30', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (31, 1, 27, 9, 'Rabu', '07:00', '07:30', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (32, 1, 18, 9, 'Rabu', '07:30', '09:00', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (33, 1, 19, 9, 'Rabu', '09:00', '09:15', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (34, 1, 8, 4, 'Rabu', '09:15', '09:55', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (35, 1, 8, 4, 'Rabu', '09:55', '10:35', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (36, 1, 4, 3, 'Rabu', '10:35', '11:15', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (37, 1, 4, 3, 'Rabu', '11:15', '11:55', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (38, 1, 20, 9, 'Rabu', '11:55', '12:30', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (39, 1, 19, 9, 'Rabu', '12:30', '13:00', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (40, 1, 5, 2, 'Rabu', '13:00', '13:40', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (41, 1, 13, 5, 'Rabu', '13:40', '14:20', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (42, 1, 13, 5, 'Rabu', '14:20', '15:00', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (43, 1, 17, 3, 'Rabu', '15:00', '15:20', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (44, 1, 21, 9, 'Rabu', '15:20', '15:30', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (45, 1, 27, 9, 'Kamis', '07:00', '07:30', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (46, 1, 5, 2, 'Kamis', '07:30', '08:10', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (47, 1, 5, 2, 'Kamis', '08:10', '08:50', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (48, 1, 19, 9, 'Kamis', '08:50', '09:05', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (49, 1, 8, 4, 'Kamis', '09:05', '09:45', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (50, 1, 8, 4, 'Kamis', '09:45', '10:25', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (51, 1, 10, 8, 'Kamis', '10:25', '11:05', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (52, 1, 10, 8, 'Kamis', '11:05', '11:45', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (53, 1, 20, 9, 'Kamis', '11:45', '12:30', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (54, 1, 19, 9, 'Kamis', '12:30', '13:00', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (55, 1, 3, 6, 'Kamis', '13:00', '13:40', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (56, 1, 2, 3, 'Kamis', '13:40', '14:20', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (57, 1, 2, 3, 'Kamis', '14:20', '15:00', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (58, 1, 17, 3, 'Kamis', '15:00', '15:20', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (59, 1, 21, 9, 'Kamis', '15:20', '15:30', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (60, 1, 27, 9, 'Jumat', '07:00', '07:30', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (61, 1, 16, 9, 'Jumat', '07:30', '08:30', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (62, 1, 1, 7, 'Jumat', '08:30', '09:10', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (63, 1, 1, 7, 'Jumat', '09:10', '09:50', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (64, 1, 19, 9, 'Jumat', '09:50', '10:05', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (65, 1, 8, 4, 'Jumat', '10:05', '10:45', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (66, 1, 8, 4, 'Jumat', '10:45', '11:15', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (67, 1, 20, 9, 'Jumat', '11:15', '11:30', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (68, 1, 19, 9, 'Jumat', '11:30', '13:00', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (69, 1, 12, 2, 'Jumat', '13:00', '13:40', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (70, 1, 12, 2, 'Jumat', '13:40', '14:20', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (71, 2, 27, 9, 'Senin', '07:00', '07:30', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (72, 2, 22, 9, 'Senin', '07:30', '08:15', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (73, 2, 1, 7, 'Senin', '08:15', '08:55', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (74, 2, 1, 7, 'Senin', '08:55', '09:35', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (75, 2, 19, 9, 'Senin', '09:35', '09:50', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (76, 2, 11, 2, 'Senin', '09:50', '10:30', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (77, 2, 11, 2, 'Senin', '10:30', '11:10', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (78, 2, 8, 4, 'Senin', '11:10', '11:50', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (79, 2, 20, 9, 'Senin', '11:50', '12:30', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (80, 2, 19, 9, 'Senin', '12:30', '13:00', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (81, 2, 8, 4, 'Senin', '13:00', '13:40', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (82, 2, 12, 2, 'Senin', '13:40', '14:20', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (83, 2, 12, 2, 'Senin', '14:20', '15:00', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (84, 2, 17, 3, 'Senin', '15:00', '15:20', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (85, 2, 21, 9, 'Senin', '15:20', '15:30', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (86, 2, 27, 9, 'Selasa', '07:00', '07:30', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (87, 2, 5, 2, 'Selasa', '07:30', '08:10', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (88, 2, 5, 2, 'Selasa', '08:10', '08:50', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (89, 2, 19, 9, 'Selasa', '08:50', '09:05', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (90, 2, 13, 5, 'Selasa', '09:05', '09:45', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (91, 2, 13, 5, 'Selasa', '09:45', '10:25', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (92, 2, 8, 4, 'Selasa', '10:25', '11:05', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (93, 2, 8, 4, 'Selasa', '11:05', '11:45', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (94, 2, 20, 9, 'Selasa', '11:45', '12:30', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (95, 2, 19, 9, 'Selasa', '12:30', '13:00', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (96, 2, 2, 3, 'Selasa', '13:00', '13:40', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (97, 2, 6, 9, 'Selasa', '13:40', '14:20', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (98, 2, 6, 9, 'Selasa', '14:20', '15:00', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (99, 2, 17, 3, 'Selasa', '15:00', '15:20', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (100, 2, 21, 9, 'Selasa', '15:20', '15:30', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (101, 2, 27, 9, 'Rabu', '07:00', '07:30', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (102, 2, 18, 9, 'Rabu', '07:30', '09:00', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (103, 2, 19, 9, 'Rabu', '09:00', '09:15', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (104, 2, 2, 3, 'Rabu', '09:15', '09:55', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (105, 2, 2, 3, 'Rabu', '09:55', '10:35', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (106, 2, 3, 6, 'Rabu', '10:35', '11:15', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (107, 2, 3, 6, 'Rabu', '11:15', '11:55', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (108, 2, 20, 9, 'Rabu', '11:55', '12:30', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (109, 2, 19, 9, 'Rabu', '12:30', '13:00', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (110, 2, 2, 3, 'Rabu', '13:00', '13:40', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (111, 2, 8, 4, 'Rabu', '13:40', '14:20', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (112, 2, 8, 4, 'Rabu', '14:20', '15:00', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (113, 2, 17, 3, 'Rabu', '15:00', '15:20', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (114, 2, 21, 9, 'Rabu', '15:20', '15:30', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (115, 2, 27, 9, 'Kamis', '07:00', '07:30', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (116, 2, 8, 4, 'Kamis', '07:30', '08:10', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (117, 2, 8, 4, 'Kamis', '08:10', '08:50', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (118, 2, 19, 9, 'Kamis', '08:50', '09:05', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (119, 2, 1, 7, 'Kamis', '09:05', '09:45', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (120, 2, 1, 7, 'Kamis', '09:45', '10:25', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (121, 2, 4, 3, 'Kamis', '10:25', '11:05', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (122, 2, 4, 3, 'Kamis', '11:05', '11:45', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (123, 2, 20, 9, 'Kamis', '11:45', '12:30', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (124, 2, 19, 9, 'Kamis', '12:30', '13:00', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (125, 2, 5, 2, 'Kamis', '13:00', '13:40', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (126, 2, 9, 8, 'Kamis', '13:40', '14:20', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (127, 2, 9, 8, 'Kamis', '14:20', '15:00', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (128, 2, 17, 3, 'Kamis', '15:00', '15:20', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (129, 2, 21, 9, 'Kamis', '15:20', '15:30', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (130, 2, 27, 9, 'Jumat', '07:00', '07:30', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (131, 2, 16, 9, 'Jumat', '07:30', '08:30', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (132, 2, 8, 4, 'Jumat', '08:30', '09:10', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (133, 2, 8, 4, 'Jumat', '09:10', '09:50', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (134, 2, 19, 9, 'Jumat', '09:50', '10:05', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (135, 2, 10, 8, 'Jumat', '10:05', '10:45', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (136, 2, 10, 8, 'Jumat', '10:45', '11:15', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (137, 2, 20, 9, 'Jumat', '11:15', '11:30', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (138, 2, 19, 9, 'Jumat', '11:30', '13:00', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (139, 2, 3, 6, 'Jumat', '13:00', '13:40', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (140, 2, 3, 6, 'Jumat', '13:40', '14:20', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (141, 3, 27, 9, 'Senin', '07:00', '07:30', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (142, 3, 22, 9, 'Senin', '07:30', '08:15', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (143, 3, 8, 4, 'Senin', '08:15', '08:55', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (144, 3, 8, 4, 'Senin', '08:55', '09:35', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (145, 3, 19, 9, 'Senin', '09:35', '09:50', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (146, 3, 3, 6, 'Senin', '09:50', '10:30', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (147, 3, 3, 6, 'Senin', '10:30', '11:10', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (148, 3, 10, 8, 'Senin', '11:10', '11:50', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (149, 3, 20, 9, 'Senin', '11:50', '12:30', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (150, 3, 19, 9, 'Senin', '12:30', '13:00', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (151, 3, 10, 8, 'Senin', '13:00', '13:40', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (152, 3, 11, 2, 'Senin', '13:40', '14:20', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (153, 3, 11, 2, 'Senin', '14:20', '15:00', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (154, 3, 17, 3, 'Senin', '15:00', '15:20', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (155, 3, 21, 9, 'Senin', '15:20', '15:30', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (156, 3, 27, 9, 'Selasa', '07:00', '07:30', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (157, 3, 13, 5, 'Selasa', '07:30', '08:10', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (158, 3, 13, 5, 'Selasa', '08:10', '08:50', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (159, 3, 19, 9, 'Selasa', '08:50', '09:05', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (160, 3, 6, 9, 'Selasa', '09:05', '09:45', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (161, 3, 6, 9, 'Selasa', '09:45', '10:25', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (162, 3, 2, 3, 'Selasa', '10:25', '11:05', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (163, 3, 2, 3, 'Selasa', '11:05', '11:45', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (164, 3, 20, 9, 'Selasa', '11:45', '12:30', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (165, 3, 19, 9, 'Selasa', '12:30', '13:00', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (166, 3, 9, 8, 'Selasa', '13:00', '13:40', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (167, 3, 8, 4, 'Selasa', '13:40', '14:20', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (168, 3, 8, 4, 'Selasa', '14:20', '15:00', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (169, 3, 17, 3, 'Selasa', '15:00', '15:20', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (170, 3, 21, 9, 'Selasa', '15:20', '15:30', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (171, 3, 27, 9, 'Rabu', '07:00', '07:30', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (172, 3, 18, 9, 'Rabu', '07:30', '09:00', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (173, 3, 19, 9, 'Rabu', '09:00', '09:15', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (174, 3, 5, 2, 'Rabu', '09:15', '09:55', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (175, 3, 5, 2, 'Rabu', '09:55', '10:35', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (176, 3, 8, 4, 'Rabu', '10:35', '11:15', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (177, 3, 8, 4, 'Rabu', '11:15', '11:55', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (178, 3, 20, 9, 'Rabu', '11:55', '12:30', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (179, 3, 19, 9, 'Rabu', '12:30', '13:00', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (180, 3, 1, 7, 'Rabu', '13:00', '13:40', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (181, 3, 1, 7, 'Rabu', '13:40', '14:20', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (182, 3, 9, 8, 'Rabu', '14:20', '15:00', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (183, 3, 17, 3, 'Rabu', '15:00', '15:20', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (184, 3, 21, 9, 'Rabu', '15:20', '15:30', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (185, 3, 27, 9, 'Kamis', '07:00', '07:30', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (186, 3, 2, 3, 'Kamis', '07:30', '08:10', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (187, 3, 2, 3, 'Kamis', '08:10', '08:50', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (188, 3, 19, 9, 'Kamis', '08:50', '09:05', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (189, 3, 3, 6, 'Kamis', '09:05', '09:45', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (190, 3, 3, 6, 'Kamis', '09:45', '10:25', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (191, 3, 5, 2, 'Kamis', '10:25', '11:05', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (192, 3, 8, 4, 'Kamis', '11:05', '11:45', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (193, 3, 20, 9, 'Kamis', '11:45', '12:30', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (194, 3, 19, 9, 'Kamis', '12:30', '13:00', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (195, 3, 8, 4, 'Kamis', '13:00', '13:40', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (196, 3, 12, 2, 'Kamis', '13:40', '14:20', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (197, 3, 12, 2, 'Kamis', '14:20', '15:00', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (198, 3, 17, 3, 'Kamis', '15:00', '15:20', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (199, 3, 21, 9, 'Kamis', '15:20', '15:30', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (200, 3, 27, 9, 'Jumat', '07:00', '07:30', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (201, 3, 16, 9, 'Jumat', '07:30', '08:30', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (202, 3, 4, 3, 'Jumat', '08:30', '09:10', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (203, 3, 4, 3, 'Jumat', '09:10', '09:50', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (204, 3, 19, 9, 'Jumat', '09:50', '10:05', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (205, 3, 1, 7, 'Jumat', '10:05', '10:45', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (206, 3, 1, 7, 'Jumat', '10:45', '11:15', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (207, 3, 20, 9, 'Jumat', '11:15', '11:30', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (208, 3, 19, 9, 'Jumat', '11:30', '13:00', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (209, 3, 8, 4, 'Jumat', '13:00', '13:40', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (210, 3, 8, 4, 'Jumat', '13:40', '14:20', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (211, 4, 27, 9, 'Senin', '07:00', '07:30', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (212, 4, 22, 9, 'Senin', '07:30', '08:15', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (213, 4, 5, 2, 'Senin', '08:15', '08:55', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (214, 4, 5, 2, 'Senin', '08:55', '09:35', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (215, 4, 19, 9, 'Senin', '09:35', '09:50', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (216, 4, 6, 9, 'Senin', '09:50', '10:30', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (217, 4, 6, 9, 'Senin', '10:30', '11:10', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (218, 4, 8, 4, 'Senin', '11:10', '11:50', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (219, 4, 20, 9, 'Senin', '11:50', '12:30', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (220, 4, 19, 9, 'Senin', '12:30', '13:00', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (221, 4, 8, 4, 'Senin', '13:00', '13:40', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (222, 4, 2, 3, 'Senin', '13:40', '14:20', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (223, 4, 2, 3, 'Senin', '14:20', '15:00', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (224, 4, 17, 3, 'Senin', '15:00', '15:20', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (225, 4, 21, 9, 'Senin', '15:20', '15:30', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (226, 4, 27, 9, 'Selasa', '07:00', '07:30', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (227, 4, 1, 7, 'Selasa', '07:30', '08:10', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (228, 4, 1, 7, 'Selasa', '08:10', '08:50', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (229, 4, 19, 9, 'Selasa', '08:50', '09:05', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (230, 4, 2, 3, 'Selasa', '09:05', '09:45', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (231, 4, 2, 3, 'Selasa', '09:45', '10:25', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (232, 4, 8, 4, 'Selasa', '10:25', '11:05', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (233, 4, 8, 4, 'Selasa', '11:05', '11:45', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (234, 4, 20, 9, 'Selasa', '11:45', '12:30', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (235, 4, 19, 9, 'Selasa', '12:30', '13:00', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (236, 4, 15, 1, 'Selasa', '13:00', '13:40', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (237, 4, 15, 1, 'Selasa', '13:40', '14:20', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (238, 4, 3, 6, 'Selasa', '14:20', '15:00', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (239, 4, 17, 3, 'Selasa', '15:00', '15:20', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (240, 4, 21, 9, 'Selasa', '15:20', '15:30', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (241, 4, 27, 9, 'Rabu', '07:00', '07:30', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (242, 4, 18, 9, 'Rabu', '07:30', '09:00', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (243, 4, 19, 9, 'Rabu', '09:00', '09:15', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (244, 4, 11, 2, 'Rabu', '09:15', '09:55', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (245, 4, 11, 2, 'Rabu', '09:55', '10:35', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (246, 4, 12, 2, 'Rabu', '10:35', '11:15', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (247, 4, 12, 2, 'Rabu', '11:15', '11:55', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (248, 4, 20, 9, 'Rabu', '11:55', '12:30', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (249, 4, 19, 9, 'Rabu', '12:30', '13:00', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (250, 4, 3, 6, 'Rabu', '13:00', '13:40', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (251, 4, 8, 4, 'Rabu', '13:40', '14:20', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (252, 4, 8, 4, 'Rabu', '14:20', '15:00', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (253, 4, 17, 3, 'Rabu', '15:00', '15:20', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (254, 4, 21, 9, 'Rabu', '15:20', '15:30', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (255, 4, 27, 9, 'Kamis', '07:00', '07:30', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (256, 4, 8, 4, 'Kamis', '07:30', '08:10', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (257, 4, 8, 4, 'Kamis', '08:10', '08:50', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (258, 4, 19, 9, 'Kamis', '08:50', '09:05', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (259, 4, 7, 8, 'Kamis', '09:05', '09:45', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (260, 4, 7, 8, 'Kamis', '09:45', '10:25', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (261, 4, 1, 7, 'Kamis', '10:25', '11:05', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (262, 4, 1, 7, 'Kamis', '11:05', '11:45', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (263, 4, 20, 9, 'Kamis', '11:45', '12:30', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (264, 4, 19, 9, 'Kamis', '12:30', '13:00', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (265, 4, 14, 1, 'Kamis', '13:00', '13:40', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (266, 4, 3, 6, 'Kamis', '13:40', '14:20', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (267, 4, 3, 6, 'Kamis', '14:20', '15:00', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (268, 4, 17, 3, 'Kamis', '15:00', '15:20', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (269, 4, 21, 9, 'Kamis', '15:20', '15:30', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (270, 4, 27, 9, 'Jumat', '07:00', '07:30', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (271, 4, 16, 9, 'Jumat', '07:30', '08:30', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (272, 4, 8, 4, 'Jumat', '08:30', '09:10', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (273, 4, 8, 4, 'Jumat', '09:10', '09:50', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (274, 4, 19, 9, 'Jumat', '09:50', '10:05', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (275, 4, 3, 6, 'Jumat', '10:05', '10:45', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (276, 4, 3, 6, 'Jumat', '10:45', '11:15', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (277, 4, 20, 9, 'Jumat', '11:15', '11:30', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (278, 4, 19, 9, 'Jumat', '11:30', '13:00', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (279, 4, 4, 3, 'Jumat', '13:00', '13:40', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (280, 4, 4, 3, 'Jumat', '13:40', '14:20', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (281, 5, 27, 9, 'Senin', '07:00', '07:30', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (282, 5, 22, 9, 'Senin', '07:30', '08:15', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (283, 5, 8, 4, 'Senin', '08:15', '08:55', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (284, 5, 8, 4, 'Senin', '08:55', '09:35', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (285, 5, 19, 9, 'Senin', '09:35', '09:50', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (286, 5, 5, 2, 'Senin', '09:50', '10:30', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (287, 5, 5, 2, 'Senin', '10:30', '11:10', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (288, 5, 2, 3, 'Senin', '11:10', '11:50', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (289, 5, 20, 9, 'Senin', '11:50', '12:30', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (290, 5, 19, 9, 'Senin', '12:30', '13:00', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (291, 5, 2, 3, 'Senin', '13:00', '13:40', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (292, 5, 7, 8, 'Senin', '13:40', '14:20', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (293, 5, 7, 8, 'Senin', '14:20', '15:00', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (294, 5, 17, 3, 'Senin', '15:00', '15:20', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (295, 5, 21, 9, 'Senin', '15:20', '15:30', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (296, 5, 27, 9, 'Selasa', '07:00', '07:30', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (297, 5, 4, 3, 'Selasa', '07:30', '08:10', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (298, 5, 4, 3, 'Selasa', '08:10', '08:50', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (299, 5, 19, 9, 'Selasa', '08:50', '09:05', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (300, 5, 1, 7, 'Selasa', '09:05', '09:45', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (301, 5, 1, 7, 'Selasa', '09:45', '10:25', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (302, 5, 3, 6, 'Selasa', '10:25', '11:05', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (303, 5, 6, 9, 'Selasa', '11:05', '11:45', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (304, 5, 20, 9, 'Selasa', '11:45', '12:30', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (305, 5, 19, 9, 'Selasa', '12:30', '13:00', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (306, 5, 6, 9, 'Selasa', '13:00', '13:40', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (307, 5, 8, 4, 'Selasa', '13:40', '14:20', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (308, 5, 8, 4, 'Selasa', '14:20', '15:00', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (309, 5, 17, 3, 'Selasa', '15:00', '15:20', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (310, 5, 21, 9, 'Selasa', '15:20', '15:30', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (311, 5, 27, 9, 'Rabu', '07:00', '07:30', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (312, 5, 18, 9, 'Rabu', '07:30', '09:00', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (313, 5, 19, 9, 'Rabu', '09:00', '09:15', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (314, 5, 3, 6, 'Rabu', '09:15', '09:55', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (315, 5, 3, 6, 'Rabu', '09:55', '10:35', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (316, 5, 8, 4, 'Rabu', '10:35', '11:15', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (317, 5, 8, 4, 'Rabu', '11:15', '11:55', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (318, 5, 20, 9, 'Rabu', '11:55', '12:30', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (319, 5, 19, 9, 'Rabu', '12:30', '13:00', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (320, 5, 14, 1, 'Rabu', '13:00', '13:40', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (321, 5, 11, 2, 'Rabu', '13:40', '14:20', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (322, 5, 11, 2, 'Rabu', '14:20', '15:00', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (323, 5, 17, 3, 'Rabu', '15:00', '15:20', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (324, 5, 21, 9, 'Rabu', '15:20', '15:30', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (325, 5, 27, 9, 'Kamis', '07:00', '07:30', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (326, 5, 1, 7, 'Kamis', '07:30', '08:10', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (327, 5, 1, 7, 'Kamis', '08:10', '08:50', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (328, 5, 19, 9, 'Kamis', '08:50', '09:05', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (329, 5, 2, 3, 'Kamis', '09:05', '09:45', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (330, 5, 2, 3, 'Kamis', '09:45', '10:25', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (331, 5, 3, 6, 'Kamis', '10:25', '11:05', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (332, 5, 8, 4, 'Kamis', '11:05', '11:45', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (333, 5, 20, 9, 'Kamis', '11:45', '12:30', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (334, 5, 19, 9, 'Kamis', '12:30', '13:00', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (335, 5, 8, 4, 'Kamis', '13:00', '13:40', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (336, 5, 15, 1, 'Kamis', '13:40', '14:20', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (337, 5, 15, 1, 'Kamis', '14:20', '15:00', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (338, 5, 17, 3, 'Kamis', '15:00', '15:20', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (339, 5, 21, 9, 'Kamis', '15:20', '15:30', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (340, 5, 27, 9, 'Jumat', '07:00', '07:30', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (341, 5, 16, 9, 'Jumat', '07:30', '08:30', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (342, 5, 3, 6, 'Jumat', '08:30', '09:10', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (343, 5, 3, 6, 'Jumat', '09:10', '09:50', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (344, 5, 19, 9, 'Jumat', '09:50', '10:05', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (345, 5, 12, 2, 'Jumat', '10:05', '10:45', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (346, 5, 12, 2, 'Jumat', '10:45', '11:15', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (347, 5, 20, 9, 'Jumat', '11:15', '11:30', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (348, 5, 19, 9, 'Jumat', '11:30', '13:00', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (349, 5, 8, 4, 'Jumat', '13:00', '13:40', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-INSERT INTO "jadwal" ("id", "kelas_id", "mapel_id", "guru_id", "hari", "jam_mulai", "jam_selesai", "created_at", "updated_at") VALUES (350, 5, 8, 4, 'Jumat', '13:40', '14:20', '2026-07-21 10:44:12', '2026-07-21 10:44:12');
-
-DROP TABLE IF EXISTS "job_batches";
-CREATE TABLE "job_batches" ("id" varchar not null, "name" varchar not null, "total_jobs" integer not null, "pending_jobs" integer not null, "failed_jobs" integer not null, "failed_job_ids" text not null, "options" text, "cancelled_at" integer, "created_at" integer not null, "finished_at" integer, primary key ("id"));
-
-DROP TABLE IF EXISTS "jobs";
-CREATE TABLE "jobs" ("id" integer primary key autoincrement not null, "queue" varchar not null, "payload" text not null, "attempts" integer not null, "reserved_at" integer, "available_at" integer not null, "created_at" integer not null);
-
-DROP TABLE IF EXISTS "kehadiran";
-CREATE TABLE "kehadiran" ("id" integer primary key autoincrement not null, "siswa_id" integer not null, "tanggal" date not null, "status" varchar check ("status" in ('hadir', 'sakit', 'izin', 'alpha')) not null, "keterangan" text, "created_at" datetime, "updated_at" datetime, foreign key("siswa_id") references "siswa"("id") on delete cascade);
-INSERT INTO "kehadiran" ("id", "siswa_id", "tanggal", "status", "keterangan", "created_at", "updated_at") VALUES (1, 1, '2026-03-02', 'hadir', NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14');
-INSERT INTO "kehadiran" ("id", "siswa_id", "tanggal", "status", "keterangan", "created_at", "updated_at") VALUES (2, 2, '2026-03-02', 'hadir', NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14');
-INSERT INTO "kehadiran" ("id", "siswa_id", "tanggal", "status", "keterangan", "created_at", "updated_at") VALUES (3, 3, '2026-03-02', 'hadir', NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14');
-INSERT INTO "kehadiran" ("id", "siswa_id", "tanggal", "status", "keterangan", "created_at", "updated_at") VALUES (4, 4, '2026-03-02', 'alpha', NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14');
-INSERT INTO "kehadiran" ("id", "siswa_id", "tanggal", "status", "keterangan", "created_at", "updated_at") VALUES (5, 5, '2026-03-02', 'hadir', NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14');
-INSERT INTO "kehadiran" ("id", "siswa_id", "tanggal", "status", "keterangan", "created_at", "updated_at") VALUES (6, 6, '2026-03-02', 'hadir', NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14');
-INSERT INTO "kehadiran" ("id", "siswa_id", "tanggal", "status", "keterangan", "created_at", "updated_at") VALUES (7, 7, '2026-03-02', 'izin', NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14');
-INSERT INTO "kehadiran" ("id", "siswa_id", "tanggal", "status", "keterangan", "created_at", "updated_at") VALUES (8, 8, '2026-03-02', 'hadir', NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14');
-INSERT INTO "kehadiran" ("id", "siswa_id", "tanggal", "status", "keterangan", "created_at", "updated_at") VALUES (9, 9, '2026-03-02', 'hadir', NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14');
-INSERT INTO "kehadiran" ("id", "siswa_id", "tanggal", "status", "keterangan", "created_at", "updated_at") VALUES (10, 10, '2026-03-02', 'hadir', NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14');
-INSERT INTO "kehadiran" ("id", "siswa_id", "tanggal", "status", "keterangan", "created_at", "updated_at") VALUES (11, 1, '2026-03-03', 'alpha', NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14');
-INSERT INTO "kehadiran" ("id", "siswa_id", "tanggal", "status", "keterangan", "created_at", "updated_at") VALUES (12, 2, '2026-03-03', 'hadir', NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14');
-INSERT INTO "kehadiran" ("id", "siswa_id", "tanggal", "status", "keterangan", "created_at", "updated_at") VALUES (13, 3, '2026-03-03', 'hadir', NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14');
-INSERT INTO "kehadiran" ("id", "siswa_id", "tanggal", "status", "keterangan", "created_at", "updated_at") VALUES (14, 4, '2026-03-03', 'hadir', NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14');
-INSERT INTO "kehadiran" ("id", "siswa_id", "tanggal", "status", "keterangan", "created_at", "updated_at") VALUES (15, 5, '2026-03-03', 'hadir', NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14');
-INSERT INTO "kehadiran" ("id", "siswa_id", "tanggal", "status", "keterangan", "created_at", "updated_at") VALUES (16, 6, '2026-03-03', 'hadir', NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14');
-INSERT INTO "kehadiran" ("id", "siswa_id", "tanggal", "status", "keterangan", "created_at", "updated_at") VALUES (17, 7, '2026-03-03', 'hadir', NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14');
-INSERT INTO "kehadiran" ("id", "siswa_id", "tanggal", "status", "keterangan", "created_at", "updated_at") VALUES (18, 8, '2026-03-03', 'hadir', NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14');
-INSERT INTO "kehadiran" ("id", "siswa_id", "tanggal", "status", "keterangan", "created_at", "updated_at") VALUES (19, 9, '2026-03-03', 'hadir', NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14');
-INSERT INTO "kehadiran" ("id", "siswa_id", "tanggal", "status", "keterangan", "created_at", "updated_at") VALUES (20, 10, '2026-03-03', 'hadir', NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14');
-INSERT INTO "kehadiran" ("id", "siswa_id", "tanggal", "status", "keterangan", "created_at", "updated_at") VALUES (21, 1, '2026-03-04', 'hadir', NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14');
-INSERT INTO "kehadiran" ("id", "siswa_id", "tanggal", "status", "keterangan", "created_at", "updated_at") VALUES (22, 2, '2026-03-04', 'hadir', NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14');
-INSERT INTO "kehadiran" ("id", "siswa_id", "tanggal", "status", "keterangan", "created_at", "updated_at") VALUES (23, 3, '2026-03-04', 'hadir', NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14');
-INSERT INTO "kehadiran" ("id", "siswa_id", "tanggal", "status", "keterangan", "created_at", "updated_at") VALUES (24, 4, '2026-03-04', 'hadir', NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14');
-INSERT INTO "kehadiran" ("id", "siswa_id", "tanggal", "status", "keterangan", "created_at", "updated_at") VALUES (25, 5, '2026-03-04', 'hadir', NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14');
-INSERT INTO "kehadiran" ("id", "siswa_id", "tanggal", "status", "keterangan", "created_at", "updated_at") VALUES (26, 6, '2026-03-04', 'hadir', NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14');
-INSERT INTO "kehadiran" ("id", "siswa_id", "tanggal", "status", "keterangan", "created_at", "updated_at") VALUES (27, 7, '2026-03-04', 'hadir', NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14');
-INSERT INTO "kehadiran" ("id", "siswa_id", "tanggal", "status", "keterangan", "created_at", "updated_at") VALUES (28, 8, '2026-03-04', 'hadir', NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14');
-INSERT INTO "kehadiran" ("id", "siswa_id", "tanggal", "status", "keterangan", "created_at", "updated_at") VALUES (29, 9, '2026-03-04', 'hadir', NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14');
-INSERT INTO "kehadiran" ("id", "siswa_id", "tanggal", "status", "keterangan", "created_at", "updated_at") VALUES (30, 10, '2026-03-04', 'hadir', NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14');
-INSERT INTO "kehadiran" ("id", "siswa_id", "tanggal", "status", "keterangan", "created_at", "updated_at") VALUES (31, 1, '2026-03-05', 'alpha', NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14');
-INSERT INTO "kehadiran" ("id", "siswa_id", "tanggal", "status", "keterangan", "created_at", "updated_at") VALUES (32, 2, '2026-03-05', 'hadir', NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14');
-INSERT INTO "kehadiran" ("id", "siswa_id", "tanggal", "status", "keterangan", "created_at", "updated_at") VALUES (33, 3, '2026-03-05', 'hadir', NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14');
-INSERT INTO "kehadiran" ("id", "siswa_id", "tanggal", "status", "keterangan", "created_at", "updated_at") VALUES (34, 4, '2026-03-05', 'hadir', NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14');
-INSERT INTO "kehadiran" ("id", "siswa_id", "tanggal", "status", "keterangan", "created_at", "updated_at") VALUES (35, 5, '2026-03-05', 'hadir', NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14');
-INSERT INTO "kehadiran" ("id", "siswa_id", "tanggal", "status", "keterangan", "created_at", "updated_at") VALUES (36, 6, '2026-03-05', 'hadir', NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14');
-INSERT INTO "kehadiran" ("id", "siswa_id", "tanggal", "status", "keterangan", "created_at", "updated_at") VALUES (37, 7, '2026-03-05', 'alpha', NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14');
-INSERT INTO "kehadiran" ("id", "siswa_id", "tanggal", "status", "keterangan", "created_at", "updated_at") VALUES (38, 8, '2026-03-05', 'hadir', NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14');
-INSERT INTO "kehadiran" ("id", "siswa_id", "tanggal", "status", "keterangan", "created_at", "updated_at") VALUES (39, 9, '2026-03-05', 'hadir', NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14');
-INSERT INTO "kehadiran" ("id", "siswa_id", "tanggal", "status", "keterangan", "created_at", "updated_at") VALUES (40, 10, '2026-03-05', 'hadir', NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14');
-INSERT INTO "kehadiran" ("id", "siswa_id", "tanggal", "status", "keterangan", "created_at", "updated_at") VALUES (41, 1, '2026-03-06', 'hadir', NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14');
-INSERT INTO "kehadiran" ("id", "siswa_id", "tanggal", "status", "keterangan", "created_at", "updated_at") VALUES (42, 2, '2026-03-06', 'hadir', NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14');
-INSERT INTO "kehadiran" ("id", "siswa_id", "tanggal", "status", "keterangan", "created_at", "updated_at") VALUES (43, 3, '2026-03-06', 'sakit', NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14');
-INSERT INTO "kehadiran" ("id", "siswa_id", "tanggal", "status", "keterangan", "created_at", "updated_at") VALUES (44, 4, '2026-03-06', 'hadir', NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14');
-INSERT INTO "kehadiran" ("id", "siswa_id", "tanggal", "status", "keterangan", "created_at", "updated_at") VALUES (45, 5, '2026-03-06', 'hadir', NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14');
-INSERT INTO "kehadiran" ("id", "siswa_id", "tanggal", "status", "keterangan", "created_at", "updated_at") VALUES (46, 6, '2026-03-06', 'hadir', NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14');
-INSERT INTO "kehadiran" ("id", "siswa_id", "tanggal", "status", "keterangan", "created_at", "updated_at") VALUES (47, 7, '2026-03-06', 'hadir', NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14');
-INSERT INTO "kehadiran" ("id", "siswa_id", "tanggal", "status", "keterangan", "created_at", "updated_at") VALUES (48, 8, '2026-03-06', 'alpha', NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14');
-INSERT INTO "kehadiran" ("id", "siswa_id", "tanggal", "status", "keterangan", "created_at", "updated_at") VALUES (49, 9, '2026-03-06', 'hadir', NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14');
-INSERT INTO "kehadiran" ("id", "siswa_id", "tanggal", "status", "keterangan", "created_at", "updated_at") VALUES (50, 10, '2026-03-06', 'hadir', NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14');
-INSERT INTO "kehadiran" ("id", "siswa_id", "tanggal", "status", "keterangan", "created_at", "updated_at") VALUES (51, 1, '2026-03-09', 'hadir', NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14');
-INSERT INTO "kehadiran" ("id", "siswa_id", "tanggal", "status", "keterangan", "created_at", "updated_at") VALUES (52, 2, '2026-03-09', 'izin', NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14');
-INSERT INTO "kehadiran" ("id", "siswa_id", "tanggal", "status", "keterangan", "created_at", "updated_at") VALUES (53, 3, '2026-03-09', 'hadir', NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14');
-INSERT INTO "kehadiran" ("id", "siswa_id", "tanggal", "status", "keterangan", "created_at", "updated_at") VALUES (54, 4, '2026-03-09', 'hadir', NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14');
-INSERT INTO "kehadiran" ("id", "siswa_id", "tanggal", "status", "keterangan", "created_at", "updated_at") VALUES (55, 5, '2026-03-09', 'hadir', NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14');
-INSERT INTO "kehadiran" ("id", "siswa_id", "tanggal", "status", "keterangan", "created_at", "updated_at") VALUES (56, 6, '2026-03-09', 'hadir', NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14');
-INSERT INTO "kehadiran" ("id", "siswa_id", "tanggal", "status", "keterangan", "created_at", "updated_at") VALUES (57, 7, '2026-03-09', 'hadir', NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14');
-INSERT INTO "kehadiran" ("id", "siswa_id", "tanggal", "status", "keterangan", "created_at", "updated_at") VALUES (58, 8, '2026-03-09', 'hadir', NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14');
-INSERT INTO "kehadiran" ("id", "siswa_id", "tanggal", "status", "keterangan", "created_at", "updated_at") VALUES (59, 9, '2026-03-09', 'hadir', NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14');
-INSERT INTO "kehadiran" ("id", "siswa_id", "tanggal", "status", "keterangan", "created_at", "updated_at") VALUES (60, 10, '2026-03-09', 'hadir', NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14');
-INSERT INTO "kehadiran" ("id", "siswa_id", "tanggal", "status", "keterangan", "created_at", "updated_at") VALUES (61, 1, '2026-03-10', 'hadir', NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14');
-INSERT INTO "kehadiran" ("id", "siswa_id", "tanggal", "status", "keterangan", "created_at", "updated_at") VALUES (62, 2, '2026-03-10', 'hadir', NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14');
-INSERT INTO "kehadiran" ("id", "siswa_id", "tanggal", "status", "keterangan", "created_at", "updated_at") VALUES (63, 3, '2026-03-10', 'hadir', NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14');
-INSERT INTO "kehadiran" ("id", "siswa_id", "tanggal", "status", "keterangan", "created_at", "updated_at") VALUES (64, 4, '2026-03-10', 'hadir', NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14');
-INSERT INTO "kehadiran" ("id", "siswa_id", "tanggal", "status", "keterangan", "created_at", "updated_at") VALUES (65, 5, '2026-03-10', 'hadir', NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14');
-INSERT INTO "kehadiran" ("id", "siswa_id", "tanggal", "status", "keterangan", "created_at", "updated_at") VALUES (66, 6, '2026-03-10', 'hadir', NULL, '2026-07-21 10:44:15', '2026-07-21 10:44:15');
-INSERT INTO "kehadiran" ("id", "siswa_id", "tanggal", "status", "keterangan", "created_at", "updated_at") VALUES (67, 7, '2026-03-10', 'hadir', NULL, '2026-07-21 10:44:15', '2026-07-21 10:44:15');
-INSERT INTO "kehadiran" ("id", "siswa_id", "tanggal", "status", "keterangan", "created_at", "updated_at") VALUES (68, 8, '2026-03-10', 'hadir', NULL, '2026-07-21 10:44:15', '2026-07-21 10:44:15');
-INSERT INTO "kehadiran" ("id", "siswa_id", "tanggal", "status", "keterangan", "created_at", "updated_at") VALUES (69, 9, '2026-03-10', 'hadir', NULL, '2026-07-21 10:44:15', '2026-07-21 10:44:15');
-INSERT INTO "kehadiran" ("id", "siswa_id", "tanggal", "status", "keterangan", "created_at", "updated_at") VALUES (70, 10, '2026-03-10', 'hadir', NULL, '2026-07-21 10:44:15', '2026-07-21 10:44:15');
-
-DROP TABLE IF EXISTS "kehadiran_gurus";
-CREATE TABLE "kehadiran_gurus" ("id" integer primary key autoincrement not null, "guru_id" integer not null, "tanggal" date not null, "waktu_masuk" time, "waktu_pulang" time, "status" varchar check ("status" in ('hadir', 'sakit', 'izin', 'alpha', 'belum_absen')) not null default 'belum_absen', "keterangan" text, "created_at" datetime, "updated_at" datetime, foreign key("guru_id") references "guru"("id") on delete cascade);
-
-DROP TABLE IF EXISTS "kelas";
-CREATE TABLE "kelas" ("id" integer primary key autoincrement not null, "kode_kelas" varchar not null, "nama_kelas" varchar not null, "jenjang" varchar not null, "created_at" datetime, "updated_at" datetime, "guru_id" integer, foreign key("guru_id") references "guru"("id") on delete set null);
-INSERT INTO "kelas" ("id", "kode_kelas", "nama_kelas", "jenjang", "created_at", "updated_at", "guru_id") VALUES (1, '7', 'Abu Bakar Ar Razi', 'SMP', '2026-07-21 10:43:55', '2026-07-21 10:43:55', 5);
-INSERT INTO "kelas" ("id", "kode_kelas", "nama_kelas", "jenjang", "created_at", "updated_at", "guru_id") VALUES (2, '8A', 'Ibnu Al Haytam', 'SMP', '2026-07-21 10:43:55', '2026-07-21 10:43:55', NULL);
-INSERT INTO "kelas" ("id", "kode_kelas", "nama_kelas", "jenjang", "created_at", "updated_at", "guru_id") VALUES (3, '8B', 'Maryam Al Ijliyah', 'SMP', '2026-07-21 10:43:55', '2026-07-21 10:43:55', NULL);
-INSERT INTO "kelas" ("id", "kode_kelas", "nama_kelas", "jenjang", "created_at", "updated_at", "guru_id") VALUES (4, '9A', 'Al Khawarizmi', 'SMP', '2026-07-21 10:43:55', '2026-07-21 10:43:55', NULL);
-INSERT INTO "kelas" ("id", "kode_kelas", "nama_kelas", "jenjang", "created_at", "updated_at", "guru_id") VALUES (5, '9B', 'Fatimah Al Fihri', 'SMP', '2026-07-21 10:43:55', '2026-07-21 10:43:55', NULL);
-
-DROP TABLE IF EXISTS "kelas_quran";
-CREATE TABLE "kelas_quran" ("id" integer primary key autoincrement not null, "nama_kelas" varchar not null, "jenjang" varchar check ("jenjang" in ('SD', 'SMP')) not null, "kategori" varchar check ("kategori" in ('Ikhwan', 'Akhwat')) not null, "tingkat" varchar not null, "created_at" datetime, "updated_at" datetime);
-INSERT INTO "kelas_quran" ("id", "nama_kelas", "jenjang", "kategori", "tingkat", "created_at", "updated_at") VALUES (1, 'Imam Nafi’ bin Abdurrahman', 'SMP', 'Ikhwan', 'Kelas 8-9', '2026-07-21 10:43:55', '2026-07-21 10:43:55');
-INSERT INTO "kelas_quran" ("id", "nama_kelas", "jenjang", "kategori", "tingkat", "created_at", "updated_at") VALUES (2, 'Imam Abdullah bin Katsir', 'SMP', 'Ikhwan', 'Kelas 8-9', '2026-07-21 10:43:55', '2026-07-21 10:43:55');
-INSERT INTO "kelas_quran" ("id", "nama_kelas", "jenjang", "kategori", "tingkat", "created_at", "updated_at") VALUES (3, 'Imam Ashim bin Abi Al-Najud', 'SMP', 'Ikhwan', 'Kelas 7', '2026-07-21 10:43:55', '2026-07-21 10:43:55');
-INSERT INTO "kelas_quran" ("id", "nama_kelas", "jenjang", "kategori", "tingkat", "created_at", "updated_at") VALUES (4, 'Sutayta Al Mahamali', 'SMP', 'Akhwat', 'Kelas 8-9', '2026-07-21 10:43:55', '2026-07-21 10:43:55');
-INSERT INTO "kelas_quran" ("id", "nama_kelas", "jenjang", "kategori", "tingkat", "created_at", "updated_at") VALUES (5, 'Zainab binti Ahmad', 'SMP', 'Akhwat', 'Kelas 8-9', '2026-07-21 10:43:55', '2026-07-21 10:43:55');
-INSERT INTO "kelas_quran" ("id", "nama_kelas", "jenjang", "kategori", "tingkat", "created_at", "updated_at") VALUES (6, 'Bina Shaheen Siddiqui', 'SMP', 'Akhwat', 'Kelas 7', '2026-07-21 10:43:55', '2026-07-21 10:43:55');
-
-DROP TABLE IF EXISTS "kondisi_kelas";
-CREATE TABLE "kondisi_kelas" ("id" integer primary key autoincrement not null, "siswa_id" integer not null, "kelas_id" integer not null, "hubungan_guru_siswa" integer not null, "siswa_nyaman" integer not null, "siswa_minta_bantuan" integer not null, "tanggal" date not null, "created_at" datetime, "updated_at" datetime, foreign key("siswa_id") references "siswa"("id") on delete cascade, foreign key("kelas_id") references "kelas"("id") on delete cascade);
-
-DROP TABLE IF EXISTS "kti_bimbingans";
-CREATE TABLE "kti_bimbingans" ("id" integer primary key autoincrement not null, "siswa_id" integer not null, "bab" varchar check ("bab" in ('Bab 1', 'Bab 2', 'Bab 3', 'Bab 4', 'Bab 5', 'Draft Akhir')) not null, "file_draft" varchar not null, "catatan_siswa" text, "status" varchar check ("status" in ('pending', 'disetujui', 'revisi')) not null default 'pending', "catatan_guru" text, "created_at" datetime, "updated_at" datetime, foreign key("siswa_id") references "siswa"("id") on delete cascade);
-
-DROP TABLE IF EXISTS "laporan_mengajars";
-CREATE TABLE "laporan_mengajars" ("id" integer primary key autoincrement not null, "guru_id" integer not null, "tipe" varchar not null, "tanggal" date not null, "isi" text not null, "created_at" datetime, "updated_at" datetime, foreign key("guru_id") references guru("id") on delete cascade on update no action);
-
-DROP TABLE IF EXISTS "log_aktivitas";
-CREATE TABLE "log_aktivitas" ("id" integer primary key autoincrement not null, "user_id" integer, "tipe" varchar not null, "deskripsi" text not null, "status" varchar, "created_at" datetime, "updated_at" datetime, foreign key("user_id") references "users"("id"));
-INSERT INTO "log_aktivitas" ("id", "user_id", "tipe", "deskripsi", "status", "created_at", "updated_at") VALUES (1, 79, 'User', 'Login admin dashboard', NULL, '2026-07-21 10:44:15', '2026-07-21 10:44:15');
-
-DROP TABLE IF EXISTS "mapel";
-CREATE TABLE "mapel" ("id" integer primary key autoincrement not null, "nama_mapel" varchar not null, "kode" varchar, "created_at" datetime, "updated_at" datetime);
-INSERT INTO "mapel" ("id", "nama_mapel", "kode", "created_at", "updated_at") VALUES (1, 'Matematika', 'MTK', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "mapel" ("id", "nama_mapel", "kode", "created_at", "updated_at") VALUES (2, 'Bahasa Indonesia', 'B.IND', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "mapel" ("id", "nama_mapel", "kode", "created_at", "updated_at") VALUES (3, 'Bahasa Inggris', 'ING', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "mapel" ("id", "nama_mapel", "kode", "created_at", "updated_at") VALUES (4, 'Bahasa Arab', 'ARB', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "mapel" ("id", "nama_mapel", "kode", "created_at", "updated_at") VALUES (5, 'Ilmu Pengetahuan Alam', 'IPA', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "mapel" ("id", "nama_mapel", "kode", "created_at", "updated_at") VALUES (6, 'Ilmu Pengetahuan Sosial', 'IPS', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "mapel" ("id", "nama_mapel", "kode", "created_at", "updated_at") VALUES (7, 'Pendidikan Agama Islam', 'PAI', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "mapel" ("id", "nama_mapel", "kode", "created_at", "updated_at") VALUES (8, 'Tahfidzul Qur''an', 'TAH', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "mapel" ("id", "nama_mapel", "kode", "created_at", "updated_at") VALUES (9, 'Aqidah', 'AQD', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "mapel" ("id", "nama_mapel", "kode", "created_at", "updated_at") VALUES (10, 'Fiqh', 'FQH', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "mapel" ("id", "nama_mapel", "kode", "created_at", "updated_at") VALUES (11, 'PJOK', 'PJOK', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "mapel" ("id", "nama_mapel", "kode", "created_at", "updated_at") VALUES (12, 'Teknologi Digital', 'TKD', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "mapel" ("id", "nama_mapel", "kode", "created_at", "updated_at") VALUES (13, 'Project Based Learning', 'PBL', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "mapel" ("id", "nama_mapel", "kode", "created_at", "updated_at") VALUES (14, 'Karya Tulis', 'KT', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "mapel" ("id", "nama_mapel", "kode", "created_at", "updated_at") VALUES (15, 'Karya Tulis Ilmiah', 'KTI', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "mapel" ("id", "nama_mapel", "kode", "created_at", "updated_at") VALUES (16, 'BPI', 'BPI', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "mapel" ("id", "nama_mapel", "kode", "created_at", "updated_at") VALUES (17, 'Baca Tulis Quran', 'BTQ', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "mapel" ("id", "nama_mapel", "kode", "created_at", "updated_at") VALUES (18, 'Pramuka', 'PRM', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "mapel" ("id", "nama_mapel", "kode", "created_at", "updated_at") VALUES (19, 'Istirahat', 'IST', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "mapel" ("id", "nama_mapel", "kode", "created_at", "updated_at") VALUES (20, 'Dzuhur Time', 'DZH', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "mapel" ("id", "nama_mapel", "kode", "created_at", "updated_at") VALUES (21, 'Ashar Time', 'ASHR_SMP', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "mapel" ("id", "nama_mapel", "kode", "created_at", "updated_at") VALUES (22, 'Upacara / Flash', 'UPCR_SMP', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "mapel" ("id", "nama_mapel", "kode", "created_at", "updated_at") VALUES (23, 'Upacara / PAS Mantap', 'UPCR_PAS', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "mapel" ("id", "nama_mapel", "kode", "created_at", "updated_at") VALUES (24, 'Apel, Dhuha & Muroja''ah', 'ADM', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "mapel" ("id", "nama_mapel", "kode", "created_at", "updated_at") VALUES (25, 'Shalat Ashar dan Dzikir', 'ASHR_DZK', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "mapel" ("id", "nama_mapel", "kode", "created_at", "updated_at") VALUES (26, 'Ekskul', 'EKS', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "mapel" ("id", "nama_mapel", "kode", "created_at", "updated_at") VALUES (27, 'Dhuha Time', 'DHUHA', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "mapel" ("id", "nama_mapel", "kode", "created_at", "updated_at") VALUES (28, 'Upacara / Pentas Seni', 'UPCR', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "mapel" ("id", "nama_mapel", "kode", "created_at", "updated_at") VALUES (29, 'Qailullah', 'QAIL', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "mapel" ("id", "nama_mapel", "kode", "created_at", "updated_at") VALUES (30, 'Sholat dan Makan', 'ISHOMA', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "mapel" ("id", "nama_mapel", "kode", "created_at", "updated_at") VALUES (31, 'Pulang / Penjemputan Orang Tua', 'PLG', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "mapel" ("id", "nama_mapel", "kode", "created_at", "updated_at") VALUES (32, 'Snack Time', 'SNCK', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "mapel" ("id", "nama_mapel", "kode", "created_at", "updated_at") VALUES (33, 'IPAS', 'IPAS', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "mapel" ("id", "nama_mapel", "kode", "created_at", "updated_at") VALUES (34, 'Qadhaya Rawa''i', 'QRW', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "mapel" ("id", "nama_mapel", "kode", "created_at", "updated_at") VALUES (35, 'Transisi / Pindah ke Kelas', 'TRNS', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "mapel" ("id", "nama_mapel", "kode", "created_at", "updated_at") VALUES (36, 'Aqidah/Akhlak', 'AKHLAK', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "mapel" ("id", "nama_mapel", "kode", "created_at", "updated_at") VALUES (37, 'Kegiatan Pramuka', 'KPRM', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "mapel" ("id", "nama_mapel", "kode", "created_at", "updated_at") VALUES (38, 'Bina Pribadi Islam', 'BPI', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "mapel" ("id", "nama_mapel", "kode", "created_at", "updated_at") VALUES (39, 'TIK', 'TIK', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "mapel" ("id", "nama_mapel", "kode", "created_at", "updated_at") VALUES (40, 'Pendidikan Kewarganegaraan', 'PKN', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "mapel" ("id", "nama_mapel", "kode", "created_at", "updated_at") VALUES (41, 'Shalat Ashar', 'ASHR', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-
-DROP TABLE IF EXISTS "materi";
-CREATE TABLE "materi" ("id" integer primary key autoincrement not null, "judul" varchar not null, "deskripsi" text, "file_path" varchar not null, "tipe" varchar not null default 'materi', "mapel_id" integer not null, "kelas_id" integer, "guru_id" integer not null, "created_at" datetime, "updated_at" datetime, "status" varchar not null default 'draft', "skor_kauniyah" integer, "skor_bilingual" integer, "skor_ai" integer, foreign key("mapel_id") references "mapel"("id"), foreign key("kelas_id") references "kelas"("id"), foreign key("guru_id") references "guru"("id"));
-
-DROP TABLE IF EXISTS "migrations";
-CREATE TABLE "migrations" ("id" integer primary key autoincrement not null, "migration" varchar not null, "batch" integer not null);
-INSERT INTO "migrations" ("id", "migration", "batch") VALUES (1, '0001_01_01_000000_create_users_table', 1);
-INSERT INTO "migrations" ("id", "migration", "batch") VALUES (2, '0001_01_01_000001_create_cache_table', 1);
-INSERT INTO "migrations" ("id", "migration", "batch") VALUES (3, '0001_01_01_000002_create_jobs_table', 1);
-INSERT INTO "migrations" ("id", "migration", "batch") VALUES (4, '2026_05_29_081457_add_role_to_users_table', 1);
-INSERT INTO "migrations" ("id", "migration", "batch") VALUES (5, '2026_05_29_083954_create_kelas_table', 1);
-INSERT INTO "migrations" ("id", "migration", "batch") VALUES (6, '2026_05_29_084058_create_mapel_table', 1);
-INSERT INTO "migrations" ("id", "migration", "batch") VALUES (7, '2026_05_29_084110_create_kelas_quran_table', 1);
-INSERT INTO "migrations" ("id", "migration", "batch") VALUES (8, '2026_05_29_084114_create_siswa_table', 1);
-INSERT INTO "migrations" ("id", "migration", "batch") VALUES (9, '2026_05_29_084129_create_guru_table', 1);
-INSERT INTO "migrations" ("id", "migration", "batch") VALUES (10, '2026_05_29_084158_create_orang_tua_table', 1);
-INSERT INTO "migrations" ("id", "migration", "batch") VALUES (11, '2026_05_29_084209_create_jadwal_table', 1);
-INSERT INTO "migrations" ("id", "migration", "batch") VALUES (12, '2026_05_29_084209_create_orang_tua_siswa_table', 1);
-INSERT INTO "migrations" ("id", "migration", "batch") VALUES (13, '2026_05_29_084210_create_tahfidz_setoran_table', 1);
-INSERT INTO "migrations" ("id", "migration", "batch") VALUES (14, '2026_05_29_084210_create_tugas_table', 1);
-INSERT INTO "migrations" ("id", "migration", "batch") VALUES (15, '2026_05_29_084231_create_nilai_table', 1);
-INSERT INTO "migrations" ("id", "migration", "batch") VALUES (16, '2026_05_29_084231_create_pengumuman_table', 1);
-INSERT INTO "migrations" ("id", "migration", "batch") VALUES (17, '2026_05_29_084231_create_pesan_table', 1);
-INSERT INTO "migrations" ("id", "migration", "batch") VALUES (18, '2026_05_29_085947_create_catatan_wali_table', 1);
-INSERT INTO "migrations" ("id", "migration", "batch") VALUES (19, '2026_05_29_085947_create_kehadiran_table', 1);
-INSERT INTO "migrations" ("id", "migration", "batch") VALUES (20, '2026_05_29_090234_create_badges_table', 1);
-INSERT INTO "migrations" ("id", "migration", "batch") VALUES (21, '2026_05_29_090235_create_siswa_badge_table', 1);
-INSERT INTO "migrations" ("id", "migration", "batch") VALUES (22, '2026_05_29_090641_create_cbt_exams_table', 1);
-INSERT INTO "migrations" ("id", "migration", "batch") VALUES (23, '2026_05_29_090641_create_cbt_soals_table', 1);
-INSERT INTO "migrations" ("id", "migration", "batch") VALUES (24, '2026_05_29_090642_create_cbt_jawabans_table', 1);
-INSERT INTO "migrations" ("id", "migration", "batch") VALUES (25, '2026_05_29_090642_create_olympiad_exams_table', 1);
-INSERT INTO "migrations" ("id", "migration", "batch") VALUES (26, '2026_05_29_090643_create_olympiad_soals_table', 1);
-INSERT INTO "migrations" ("id", "migration", "batch") VALUES (27, '2026_05_29_090644_create_olympiad_jawabans_table', 1);
-INSERT INTO "migrations" ("id", "migration", "batch") VALUES (28, '2026_05_29_091037_create_workbooks_table', 1);
-INSERT INTO "migrations" ("id", "migration", "batch") VALUES (29, '2026_05_29_091038_create_spps_table', 1);
-INSERT INTO "migrations" ("id", "migration", "batch") VALUES (30, '2026_05_29_091038_create_workbook_soals_table', 1);
-INSERT INTO "migrations" ("id", "migration", "batch") VALUES (31, '2026_05_29_091039_create_pembayarans_table', 1);
-INSERT INTO "migrations" ("id", "migration", "batch") VALUES (32, '2026_05_29_091040_create_workbook_jawabans_table', 1);
-INSERT INTO "migrations" ("id", "migration", "batch") VALUES (33, '2026_05_29_091041_create_log_aktivitas_table', 1);
-INSERT INTO "migrations" ("id", "migration", "batch") VALUES (34, '2026_05_29_091041_create_pengaturan_table', 1);
-INSERT INTO "migrations" ("id", "migration", "batch") VALUES (35, '2026_05_29_094118_create_materi_table', 1);
-INSERT INTO "migrations" ("id", "migration", "batch") VALUES (36, '2026_05_29_095608_create_settings_table', 1);
-INSERT INTO "migrations" ("id", "migration", "batch") VALUES (37, '2026_05_29_101731_create_pengumpulan_tugas_table', 1);
-INSERT INTO "migrations" ("id", "migration", "batch") VALUES (38, '2026_05_29_103615_add_tipe_to_cbt_exams_table', 1);
-INSERT INTO "migrations" ("id", "migration", "batch") VALUES (39, '2026_07_01_115000_add_kepala_sekolah_to_roles', 1);
-INSERT INTO "migrations" ("id", "migration", "batch") VALUES (40, '2026_07_02_160300_add_jenis_nilai_to_nilai_table', 1);
-INSERT INTO "migrations" ("id", "migration", "batch") VALUES (41, '2026_07_04_150000_add_nilai_bahasa_to_nilai_table', 1);
-INSERT INTO "migrations" ("id", "migration", "batch") VALUES (42, '2026_07_04_153000_create_tahfidz_ayat_nilai_table', 1);
-INSERT INTO "migrations" ("id", "migration", "batch") VALUES (43, '2026_07_04_154500_add_tanggal_berikutnya_to_tahfidz_setoran_table', 1);
-INSERT INTO "migrations" ("id", "migration", "batch") VALUES (44, '2026_07_04_202500_create_kondisi_kelas_table', 1);
-INSERT INTO "migrations" ("id", "migration", "batch") VALUES (45, '2026_07_04_210500_create_remedials_table', 1);
-INSERT INTO "migrations" ("id", "migration", "batch") VALUES (46, '2026_07_04_222000_create_nilai_ktis_table', 1);
-INSERT INTO "migrations" ("id", "migration", "batch") VALUES (47, '2026_07_04_232000_create_laporan_mengajars_table', 1);
-INSERT INTO "migrations" ("id", "migration", "batch") VALUES (48, '2026_07_04_235500_add_status_to_materi_table', 1);
-INSERT INTO "migrations" ("id", "migration", "batch") VALUES (49, '2026_07_05_001500_add_kesulitan_and_metode_to_cbt_tables', 1);
-INSERT INTO "migrations" ("id", "migration", "batch") VALUES (50, '2026_07_05_130000_create_banding_nilai_table', 1);
-INSERT INTO "migrations" ("id", "migration", "batch") VALUES (51, '2026_07_05_140000_extend_nilai_ktis_table', 1);
-INSERT INTO "migrations" ("id", "migration", "batch") VALUES (52, '2026_07_05_141000_create_kti_bimbingans_table', 1);
-INSERT INTO "migrations" ("id", "migration", "batch") VALUES (53, '2026_07_14_174718_change_isi_to_json_in_laporan_mengajars_table', 1);
-INSERT INTO "migrations" ("id", "migration", "batch") VALUES (54, '2026_07_15_134315_add_audit_scores_to_materi_table', 1);
-INSERT INTO "migrations" ("id", "migration", "batch") VALUES (55, '2026_07_15_184307_add_guru_id_to_kelas_table', 1);
-INSERT INTO "migrations" ("id", "migration", "batch") VALUES (56, '2026_07_17_182402_create_guru_mapel_table', 1);
-INSERT INTO "migrations" ("id", "migration", "batch") VALUES (57, '2026_07_17_191636_modify_role_enum_in_users_table', 1);
-INSERT INTO "migrations" ("id", "migration", "batch") VALUES (58, '2026_07_18_014948_create_kehadiran_gurus_table', 1);
-INSERT INTO "migrations" ("id", "migration", "batch") VALUES (59, '2026_07_20_223000_create_tahfidz_progress_table', 1);
-
-DROP TABLE IF EXISTS "nilai";
-CREATE TABLE "nilai" ("id" integer primary key autoincrement not null, "siswa_id" integer not null, "tugas_id" integer, "mapel_id" integer not null, "nilai" numeric not null, "catatan" text, "created_at" datetime, "updated_at" datetime, "jenis_nilai" varchar check ("jenis_nilai" in ('biasa', 'unggulan')) not null default 'biasa', "nilai_bahasa" numeric, foreign key("siswa_id") references "siswa"("id") on delete cascade, foreign key("tugas_id") references "tugas"("id") on delete cascade, foreign key("mapel_id") references "mapel"("id") on delete cascade);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (1, 1, NULL, 1, 97, NULL, '2026-07-21 10:44:13', '2026-07-21 10:44:13', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (2, 1, NULL, 2, 81, NULL, '2026-07-21 10:44:13', '2026-07-21 10:44:13', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (3, 1, NULL, 3, 87, NULL, '2026-07-21 10:44:13', '2026-07-21 10:44:13', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (4, 1, NULL, 4, 77, NULL, '2026-07-21 10:44:13', '2026-07-21 10:44:13', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (5, 1, NULL, 5, 80, NULL, '2026-07-21 10:44:13', '2026-07-21 10:44:13', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (6, 2, NULL, 1, 89, NULL, '2026-07-21 10:44:13', '2026-07-21 10:44:13', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (7, 2, NULL, 2, 94, NULL, '2026-07-21 10:44:13', '2026-07-21 10:44:13', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (8, 2, NULL, 3, 80, NULL, '2026-07-21 10:44:13', '2026-07-21 10:44:13', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (9, 2, NULL, 4, 87, NULL, '2026-07-21 10:44:13', '2026-07-21 10:44:13', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (10, 2, NULL, 5, 84, NULL, '2026-07-21 10:44:13', '2026-07-21 10:44:13', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (11, 3, NULL, 1, 87, NULL, '2026-07-21 10:44:13', '2026-07-21 10:44:13', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (12, 3, NULL, 2, 91, NULL, '2026-07-21 10:44:13', '2026-07-21 10:44:13', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (13, 3, NULL, 3, 81, NULL, '2026-07-21 10:44:13', '2026-07-21 10:44:13', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (14, 3, NULL, 4, 76, NULL, '2026-07-21 10:44:13', '2026-07-21 10:44:13', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (15, 3, NULL, 5, 97, NULL, '2026-07-21 10:44:13', '2026-07-21 10:44:13', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (16, 4, NULL, 1, 100, NULL, '2026-07-21 10:44:13', '2026-07-21 10:44:13', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (17, 4, NULL, 2, 80, NULL, '2026-07-21 10:44:13', '2026-07-21 10:44:13', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (18, 4, NULL, 3, 100, NULL, '2026-07-21 10:44:13', '2026-07-21 10:44:13', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (19, 4, NULL, 4, 77, NULL, '2026-07-21 10:44:13', '2026-07-21 10:44:13', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (20, 4, NULL, 5, 76, NULL, '2026-07-21 10:44:13', '2026-07-21 10:44:13', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (21, 5, NULL, 1, 92, NULL, '2026-07-21 10:44:13', '2026-07-21 10:44:13', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (22, 5, NULL, 2, 86, NULL, '2026-07-21 10:44:13', '2026-07-21 10:44:13', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (23, 5, NULL, 3, 95, NULL, '2026-07-21 10:44:13', '2026-07-21 10:44:13', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (24, 5, NULL, 4, 95, NULL, '2026-07-21 10:44:13', '2026-07-21 10:44:13', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (25, 5, NULL, 5, 93, NULL, '2026-07-21 10:44:13', '2026-07-21 10:44:13', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (26, 6, NULL, 1, 92, NULL, '2026-07-21 10:44:13', '2026-07-21 10:44:13', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (27, 6, NULL, 2, 97, NULL, '2026-07-21 10:44:13', '2026-07-21 10:44:13', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (28, 6, NULL, 3, 86, NULL, '2026-07-21 10:44:13', '2026-07-21 10:44:13', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (29, 6, NULL, 4, 86, NULL, '2026-07-21 10:44:13', '2026-07-21 10:44:13', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (30, 6, NULL, 5, 87, NULL, '2026-07-21 10:44:13', '2026-07-21 10:44:13', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (31, 7, NULL, 1, 75, NULL, '2026-07-21 10:44:13', '2026-07-21 10:44:13', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (32, 7, NULL, 2, 82, NULL, '2026-07-21 10:44:13', '2026-07-21 10:44:13', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (33, 7, NULL, 3, 90, NULL, '2026-07-21 10:44:13', '2026-07-21 10:44:13', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (34, 7, NULL, 4, 90, NULL, '2026-07-21 10:44:13', '2026-07-21 10:44:13', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (35, 7, NULL, 5, 81, NULL, '2026-07-21 10:44:13', '2026-07-21 10:44:13', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (36, 8, NULL, 1, 91, NULL, '2026-07-21 10:44:13', '2026-07-21 10:44:13', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (37, 8, NULL, 2, 76, NULL, '2026-07-21 10:44:13', '2026-07-21 10:44:13', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (38, 8, NULL, 3, 86, NULL, '2026-07-21 10:44:13', '2026-07-21 10:44:13', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (39, 8, NULL, 4, 99, NULL, '2026-07-21 10:44:13', '2026-07-21 10:44:13', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (40, 8, NULL, 5, 99, NULL, '2026-07-21 10:44:13', '2026-07-21 10:44:13', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (41, 9, NULL, 1, 76, NULL, '2026-07-21 10:44:13', '2026-07-21 10:44:13', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (42, 9, NULL, 2, 98, NULL, '2026-07-21 10:44:13', '2026-07-21 10:44:13', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (43, 9, NULL, 3, 76, NULL, '2026-07-21 10:44:13', '2026-07-21 10:44:13', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (44, 9, NULL, 4, 87, NULL, '2026-07-21 10:44:13', '2026-07-21 10:44:13', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (45, 9, NULL, 5, 83, NULL, '2026-07-21 10:44:13', '2026-07-21 10:44:13', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (46, 10, NULL, 1, 87, NULL, '2026-07-21 10:44:13', '2026-07-21 10:44:13', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (47, 10, NULL, 2, 89, NULL, '2026-07-21 10:44:13', '2026-07-21 10:44:13', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (48, 10, NULL, 3, 85, NULL, '2026-07-21 10:44:13', '2026-07-21 10:44:13', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (49, 10, NULL, 4, 90, NULL, '2026-07-21 10:44:13', '2026-07-21 10:44:13', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (50, 10, NULL, 5, 77, NULL, '2026-07-21 10:44:13', '2026-07-21 10:44:13', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (51, 11, NULL, 1, 95, NULL, '2026-07-21 10:44:13', '2026-07-21 10:44:13', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (52, 11, NULL, 2, 80, NULL, '2026-07-21 10:44:13', '2026-07-21 10:44:13', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (53, 11, NULL, 3, 89, NULL, '2026-07-21 10:44:13', '2026-07-21 10:44:13', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (54, 11, NULL, 4, 86, NULL, '2026-07-21 10:44:13', '2026-07-21 10:44:13', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (55, 11, NULL, 5, 98, NULL, '2026-07-21 10:44:13', '2026-07-21 10:44:13', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (56, 12, NULL, 1, 91, NULL, '2026-07-21 10:44:13', '2026-07-21 10:44:13', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (57, 12, NULL, 2, 77, NULL, '2026-07-21 10:44:13', '2026-07-21 10:44:13', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (58, 12, NULL, 3, 89, NULL, '2026-07-21 10:44:13', '2026-07-21 10:44:13', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (59, 12, NULL, 4, 81, NULL, '2026-07-21 10:44:13', '2026-07-21 10:44:13', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (60, 12, NULL, 5, 99, NULL, '2026-07-21 10:44:13', '2026-07-21 10:44:13', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (61, 13, NULL, 1, 95, NULL, '2026-07-21 10:44:13', '2026-07-21 10:44:13', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (62, 13, NULL, 2, 98, NULL, '2026-07-21 10:44:13', '2026-07-21 10:44:13', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (63, 13, NULL, 3, 87, NULL, '2026-07-21 10:44:13', '2026-07-21 10:44:13', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (64, 13, NULL, 4, 84, NULL, '2026-07-21 10:44:13', '2026-07-21 10:44:13', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (65, 13, NULL, 5, 89, NULL, '2026-07-21 10:44:13', '2026-07-21 10:44:13', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (66, 14, NULL, 1, 100, NULL, '2026-07-21 10:44:13', '2026-07-21 10:44:13', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (67, 14, NULL, 2, 85, NULL, '2026-07-21 10:44:13', '2026-07-21 10:44:13', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (68, 14, NULL, 3, 100, NULL, '2026-07-21 10:44:13', '2026-07-21 10:44:13', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (69, 14, NULL, 4, 99, NULL, '2026-07-21 10:44:13', '2026-07-21 10:44:13', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (70, 14, NULL, 5, 86, NULL, '2026-07-21 10:44:13', '2026-07-21 10:44:13', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (71, 15, NULL, 1, 97, NULL, '2026-07-21 10:44:13', '2026-07-21 10:44:13', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (72, 15, NULL, 2, 90, NULL, '2026-07-21 10:44:13', '2026-07-21 10:44:13', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (73, 15, NULL, 3, 84, NULL, '2026-07-21 10:44:13', '2026-07-21 10:44:13', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (74, 15, NULL, 4, 86, NULL, '2026-07-21 10:44:13', '2026-07-21 10:44:13', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (75, 15, NULL, 5, 91, NULL, '2026-07-21 10:44:13', '2026-07-21 10:44:13', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (76, 16, NULL, 1, 95, NULL, '2026-07-21 10:44:13', '2026-07-21 10:44:13', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (77, 16, NULL, 2, 83, NULL, '2026-07-21 10:44:13', '2026-07-21 10:44:13', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (78, 16, NULL, 3, 88, NULL, '2026-07-21 10:44:13', '2026-07-21 10:44:13', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (79, 16, NULL, 4, 78, NULL, '2026-07-21 10:44:13', '2026-07-21 10:44:13', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (80, 16, NULL, 5, 89, NULL, '2026-07-21 10:44:13', '2026-07-21 10:44:13', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (81, 17, NULL, 1, 87, NULL, '2026-07-21 10:44:13', '2026-07-21 10:44:13', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (82, 17, NULL, 2, 90, NULL, '2026-07-21 10:44:13', '2026-07-21 10:44:13', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (83, 17, NULL, 3, 81, NULL, '2026-07-21 10:44:13', '2026-07-21 10:44:13', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (84, 17, NULL, 4, 82, NULL, '2026-07-21 10:44:13', '2026-07-21 10:44:13', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (85, 17, NULL, 5, 76, NULL, '2026-07-21 10:44:13', '2026-07-21 10:44:13', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (86, 18, NULL, 1, 91, NULL, '2026-07-21 10:44:13', '2026-07-21 10:44:13', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (87, 18, NULL, 2, 89, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (88, 18, NULL, 3, 88, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (89, 18, NULL, 4, 100, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (90, 18, NULL, 5, 87, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (91, 19, NULL, 1, 77, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (92, 19, NULL, 2, 96, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (93, 19, NULL, 3, 82, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (94, 19, NULL, 4, 84, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (95, 19, NULL, 5, 97, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (96, 20, NULL, 1, 100, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (97, 20, NULL, 2, 90, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (98, 20, NULL, 3, 79, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (99, 20, NULL, 4, 99, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (100, 20, NULL, 5, 79, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (101, 21, NULL, 1, 82, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (102, 21, NULL, 2, 79, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (103, 21, NULL, 3, 89, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (104, 21, NULL, 4, 81, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (105, 21, NULL, 5, 81, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (106, 22, NULL, 1, 99, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (107, 22, NULL, 2, 94, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (108, 22, NULL, 3, 80, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (109, 22, NULL, 4, 88, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (110, 22, NULL, 5, 75, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (111, 23, NULL, 1, 83, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (112, 23, NULL, 2, 77, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (113, 23, NULL, 3, 90, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (114, 23, NULL, 4, 99, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (115, 23, NULL, 5, 86, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (116, 24, NULL, 1, 85, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (117, 24, NULL, 2, 80, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (118, 24, NULL, 3, 86, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (119, 24, NULL, 4, 91, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (120, 24, NULL, 5, 75, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (121, 25, NULL, 1, 83, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (122, 25, NULL, 2, 96, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (123, 25, NULL, 3, 92, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (124, 25, NULL, 4, 88, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (125, 25, NULL, 5, 80, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (126, 26, NULL, 1, 99, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (127, 26, NULL, 2, 93, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (128, 26, NULL, 3, 80, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (129, 26, NULL, 4, 93, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (130, 26, NULL, 5, 90, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (131, 27, NULL, 1, 84, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (132, 27, NULL, 2, 100, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (133, 27, NULL, 3, 96, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (134, 27, NULL, 4, 99, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (135, 27, NULL, 5, 93, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (136, 28, NULL, 1, 81, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (137, 28, NULL, 2, 85, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (138, 28, NULL, 3, 85, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (139, 28, NULL, 4, 94, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (140, 28, NULL, 5, 90, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (141, 29, NULL, 1, 86, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (142, 29, NULL, 2, 81, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (143, 29, NULL, 3, 94, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (144, 29, NULL, 4, 84, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (145, 29, NULL, 5, 86, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (146, 30, NULL, 1, 81, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (147, 30, NULL, 2, 83, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (148, 30, NULL, 3, 90, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (149, 30, NULL, 4, 100, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (150, 30, NULL, 5, 83, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (151, 31, NULL, 1, 93, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (152, 31, NULL, 2, 97, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (153, 31, NULL, 3, 87, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (154, 31, NULL, 4, 77, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (155, 31, NULL, 5, 80, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (156, 32, NULL, 1, 82, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (157, 32, NULL, 2, 96, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (158, 32, NULL, 3, 94, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (159, 32, NULL, 4, 98, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (160, 32, NULL, 5, 77, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (161, 33, NULL, 1, 96, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (162, 33, NULL, 2, 92, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (163, 33, NULL, 3, 80, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (164, 33, NULL, 4, 75, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (165, 33, NULL, 5, 96, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (166, 34, NULL, 1, 82, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (167, 34, NULL, 2, 85, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (168, 34, NULL, 3, 75, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (169, 34, NULL, 4, 92, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (170, 34, NULL, 5, 94, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (171, 35, NULL, 1, 94, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (172, 35, NULL, 2, 87, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (173, 35, NULL, 3, 94, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (174, 35, NULL, 4, 86, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (175, 35, NULL, 5, 91, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (176, 36, NULL, 1, 84, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (177, 36, NULL, 2, 78, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (178, 36, NULL, 3, 93, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (179, 36, NULL, 4, 89, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (180, 36, NULL, 5, 88, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (181, 37, NULL, 1, 76, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (182, 37, NULL, 2, 100, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (183, 37, NULL, 3, 79, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (184, 37, NULL, 4, 94, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (185, 37, NULL, 5, 77, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (186, 38, NULL, 1, 87, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (187, 38, NULL, 2, 99, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (188, 38, NULL, 3, 97, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (189, 38, NULL, 4, 89, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (190, 38, NULL, 5, 100, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (191, 39, NULL, 1, 89, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (192, 39, NULL, 2, 76, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (193, 39, NULL, 3, 89, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (194, 39, NULL, 4, 77, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (195, 39, NULL, 5, 90, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (196, 40, NULL, 1, 76, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (197, 40, NULL, 2, 96, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (198, 40, NULL, 3, 93, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (199, 40, NULL, 4, 100, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (200, 40, NULL, 5, 91, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (201, 41, NULL, 1, 100, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (202, 41, NULL, 2, 78, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (203, 41, NULL, 3, 79, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (204, 41, NULL, 4, 79, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (205, 41, NULL, 5, 81, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (206, 42, NULL, 1, 86, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (207, 42, NULL, 2, 83, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (208, 42, NULL, 3, 99, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (209, 42, NULL, 4, 80, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (210, 42, NULL, 5, 86, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (211, 43, NULL, 1, 100, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (212, 43, NULL, 2, 98, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (213, 43, NULL, 3, 85, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (214, 43, NULL, 4, 79, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (215, 43, NULL, 5, 85, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (216, 44, NULL, 1, 90, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (217, 44, NULL, 2, 75, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (218, 44, NULL, 3, 93, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (219, 44, NULL, 4, 78, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (220, 44, NULL, 5, 76, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (221, 45, NULL, 1, 77, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (222, 45, NULL, 2, 75, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (223, 45, NULL, 3, 79, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (224, 45, NULL, 4, 82, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (225, 45, NULL, 5, 80, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (226, 46, NULL, 1, 99, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (227, 46, NULL, 2, 98, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (228, 46, NULL, 3, 81, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (229, 46, NULL, 4, 94, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (230, 46, NULL, 5, 94, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (231, 47, NULL, 1, 96, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (232, 47, NULL, 2, 96, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (233, 47, NULL, 3, 94, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (234, 47, NULL, 4, 90, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (235, 47, NULL, 5, 94, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (236, 48, NULL, 1, 96, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (237, 48, NULL, 2, 93, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (238, 48, NULL, 3, 80, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (239, 48, NULL, 4, 94, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (240, 48, NULL, 5, 86, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (241, 49, NULL, 1, 88, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (242, 49, NULL, 2, 83, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (243, 49, NULL, 3, 92, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (244, 49, NULL, 4, 89, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (245, 49, NULL, 5, 85, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (246, 50, NULL, 1, 81, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (247, 50, NULL, 2, 83, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (248, 50, NULL, 3, 75, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (249, 50, NULL, 4, 80, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (250, 50, NULL, 5, 78, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (251, 51, NULL, 1, 93, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (252, 51, NULL, 2, 86, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (253, 51, NULL, 3, 83, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (254, 51, NULL, 4, 93, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (255, 51, NULL, 5, 87, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (256, 52, NULL, 1, 82, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (257, 52, NULL, 2, 77, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (258, 52, NULL, 3, 92, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (259, 52, NULL, 4, 75, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (260, 52, NULL, 5, 90, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (261, 53, NULL, 1, 98, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (262, 53, NULL, 2, 87, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (263, 53, NULL, 3, 97, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (264, 53, NULL, 4, 78, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (265, 53, NULL, 5, 89, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (266, 54, NULL, 1, 75, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (267, 54, NULL, 2, 100, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (268, 54, NULL, 3, 81, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (269, 54, NULL, 4, 89, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (270, 54, NULL, 5, 96, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (271, 55, NULL, 1, 92, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (272, 55, NULL, 2, 92, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (273, 55, NULL, 3, 90, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (274, 55, NULL, 4, 77, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (275, 55, NULL, 5, 79, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (276, 56, NULL, 1, 94, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (277, 56, NULL, 2, 90, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (278, 56, NULL, 3, 80, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (279, 56, NULL, 4, 87, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (280, 56, NULL, 5, 79, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (281, 57, NULL, 1, 78, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (282, 57, NULL, 2, 96, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (283, 57, NULL, 3, 77, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (284, 57, NULL, 4, 96, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (285, 57, NULL, 5, 95, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (286, 58, NULL, 1, 84, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (287, 58, NULL, 2, 87, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (288, 58, NULL, 3, 79, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (289, 58, NULL, 4, 80, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (290, 58, NULL, 5, 100, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (291, 59, NULL, 1, 85, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (292, 59, NULL, 2, 97, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (293, 59, NULL, 3, 90, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (294, 59, NULL, 4, 93, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (295, 59, NULL, 5, 88, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (296, 60, NULL, 1, 78, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (297, 60, NULL, 2, 83, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (298, 60, NULL, 3, 83, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (299, 60, NULL, 4, 80, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (300, 60, NULL, 5, 100, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (301, 61, NULL, 1, 96, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (302, 61, NULL, 2, 86, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (303, 61, NULL, 3, 98, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (304, 61, NULL, 4, 78, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (305, 61, NULL, 5, 97, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (306, 62, NULL, 1, 96, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (307, 62, NULL, 2, 84, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (308, 62, NULL, 3, 96, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (309, 62, NULL, 4, 75, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (310, 62, NULL, 5, 86, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (311, 63, NULL, 1, 84, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (312, 63, NULL, 2, 96, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (313, 63, NULL, 3, 80, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (314, 63, NULL, 4, 76, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (315, 63, NULL, 5, 91, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (316, 64, NULL, 1, 91, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (317, 64, NULL, 2, 86, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (318, 64, NULL, 3, 86, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (319, 64, NULL, 4, 80, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (320, 64, NULL, 5, 76, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (321, 65, NULL, 1, 79, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (322, 65, NULL, 2, 92, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (323, 65, NULL, 3, 91, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (324, 65, NULL, 4, 79, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (325, 65, NULL, 5, 84, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (326, 66, NULL, 1, 75, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (327, 66, NULL, 2, 83, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (328, 66, NULL, 3, 90, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (329, 66, NULL, 4, 84, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-INSERT INTO "nilai" ("id", "siswa_id", "tugas_id", "mapel_id", "nilai", "catatan", "created_at", "updated_at", "jenis_nilai", "nilai_bahasa") VALUES (330, 66, NULL, 5, 97, NULL, '2026-07-21 10:44:14', '2026-07-21 10:44:14', 'biasa', NULL);
-
-DROP TABLE IF EXISTS "nilai_ktis";
-CREATE TABLE "nilai_ktis" ("id" integer primary key autoincrement not null, "siswa_id" integer not null, "judul_kti" varchar not null, "nilai_proses" numeric not null, "nilai_tulisan" numeric not null, "nilai_sidang" numeric not null, "nilai_akhir" numeric not null, "catatan" text, "created_at" datetime, "updated_at" datetime, "current_bab" varchar check ("current_bab" in ('Bab 1', 'Bab 2', 'Bab 3', 'Bab 4', 'Bab 5', 'Draft Akhir', 'Siap Sidang', 'Selesai')) not null default 'Bab 1', "jadwal_sidang" datetime, foreign key("siswa_id") references "siswa"("id") on delete cascade);
-
-DROP TABLE IF EXISTS "olympiad_exams";
-CREATE TABLE "olympiad_exams" ("id" integer primary key autoincrement not null, "judul" varchar not null, "deskripsi" text, "mapel_id" integer not null, "kelas_id" integer, "guru_id" integer not null, "tingkat" varchar, "durasi" integer not null, "jumlah_soal" integer not null default '0', "status" varchar check ("status" in ('draft', 'pending', 'approved', 'rejected')) not null default 'draft', "approved_by" integer, "approved_at" datetime, "catatan_reject" text, "created_at" datetime, "updated_at" datetime, foreign key("mapel_id") references "mapel"("id"), foreign key("kelas_id") references "kelas"("id"), foreign key("guru_id") references "guru"("id"), foreign key("approved_by") references "users"("id"));
-
-DROP TABLE IF EXISTS "olympiad_jawabans";
-CREATE TABLE "olympiad_jawabans" ("id" integer primary key autoincrement not null, "olympiad_exam_id" integer not null, "olympiad_soal_id" integer not null, "siswa_id" integer not null, "jawaban" text, "nilai" numeric, "dinilai" tinyint(1) not null default '0', "created_at" datetime, "updated_at" datetime, foreign key("olympiad_exam_id") references "olympiad_exams"("id") on delete cascade, foreign key("olympiad_soal_id") references "olympiad_soals"("id") on delete cascade, foreign key("siswa_id") references "siswa"("id"));
-
-DROP TABLE IF EXISTS "olympiad_soals";
-CREATE TABLE "olympiad_soals" ("id" integer primary key autoincrement not null, "olympiad_exam_id" integer not null, "nomor" integer not null, "soal" text not null, "tipe" varchar check ("tipe" in ('pg', 'essay')) not null default 'pg', "pilihan_a" text, "pilihan_b" text, "pilihan_c" text, "pilihan_d" text, "jawaban_benar" varchar, "bobot" integer not null default '1', "created_at" datetime, "updated_at" datetime, foreign key("olympiad_exam_id") references "olympiad_exams"("id") on delete cascade);
-
-DROP TABLE IF EXISTS "orang_tua";
-CREATE TABLE "orang_tua" ("id" integer primary key autoincrement not null, "user_id" integer not null, "nama" varchar not null, "no_telp" varchar, "alamat" text, "created_at" datetime, "updated_at" datetime, foreign key("user_id") references "users"("id") on delete cascade);
-INSERT INTO "orang_tua" ("id", "user_id", "nama", "no_telp", "alamat", "created_at", "updated_at") VALUES (1, 78, 'Ibu Sari Rahmawati', NULL, NULL, '2026-07-21 10:44:13', '2026-07-21 10:44:13');
-
-DROP TABLE IF EXISTS "orang_tua_siswa";
-CREATE TABLE "orang_tua_siswa" ("id" integer primary key autoincrement not null, "orang_tua_id" integer not null, "siswa_id" integer not null, "created_at" datetime, "updated_at" datetime, foreign key("orang_tua_id") references "orang_tua"("id") on delete cascade, foreign key("siswa_id") references "siswa"("id") on delete cascade);
-
-DROP TABLE IF EXISTS "password_reset_tokens";
-CREATE TABLE "password_reset_tokens" ("email" varchar not null, "token" varchar not null, "created_at" datetime, primary key ("email"));
-
-DROP TABLE IF EXISTS "pembayarans";
-CREATE TABLE "pembayarans" ("id" integer primary key autoincrement not null, "spp_id" integer not null, "orang_tua_id" integer not null, "tanggal_bayar" date not null, "jumlah" numeric not null, "metode" varchar not null default 'transfer', "bukti" varchar, "status" varchar check ("status" in ('confirmed', 'pending')) not null default 'pending', "created_at" datetime, "updated_at" datetime, foreign key("spp_id") references "spps"("id"), foreign key("orang_tua_id") references "orang_tua"("id"));
-INSERT INTO "pembayarans" ("id", "spp_id", "orang_tua_id", "tanggal_bayar", "jumlah", "metode", "bukti", "status", "created_at", "updated_at") VALUES (1, 1, 1, '2026-01-05', 250000, 'transfer', NULL, 'confirmed', '2026-07-21 10:44:15', '2026-07-21 10:44:15');
-INSERT INTO "pembayarans" ("id", "spp_id", "orang_tua_id", "tanggal_bayar", "jumlah", "metode", "bukti", "status", "created_at", "updated_at") VALUES (2, 2, 1, '2026-02-05', 250000, 'transfer', NULL, 'confirmed', '2026-07-21 10:44:15', '2026-07-21 10:44:15');
-INSERT INTO "pembayarans" ("id", "spp_id", "orang_tua_id", "tanggal_bayar", "jumlah", "metode", "bukti", "status", "created_at", "updated_at") VALUES (3, 3, 1, '2026-03-05', 250000, 'transfer', NULL, 'confirmed', '2026-07-21 10:44:15', '2026-07-21 10:44:15');
-INSERT INTO "pembayarans" ("id", "spp_id", "orang_tua_id", "tanggal_bayar", "jumlah", "metode", "bukti", "status", "created_at", "updated_at") VALUES (4, 4, 1, '2026-04-05', 250000, 'transfer', NULL, 'confirmed', '2026-07-21 10:44:15', '2026-07-21 10:44:15');
-INSERT INTO "pembayarans" ("id", "spp_id", "orang_tua_id", "tanggal_bayar", "jumlah", "metode", "bukti", "status", "created_at", "updated_at") VALUES (5, 5, 1, '2026-05-05', 250000, 'transfer', NULL, 'confirmed', '2026-07-21 10:44:15', '2026-07-21 10:44:15');
-INSERT INTO "pembayarans" ("id", "spp_id", "orang_tua_id", "tanggal_bayar", "jumlah", "metode", "bukti", "status", "created_at", "updated_at") VALUES (6, 6, 1, '2026-06-05', 250000, 'transfer', NULL, 'confirmed', '2026-07-21 10:44:15', '2026-07-21 10:44:15');
-INSERT INTO "pembayarans" ("id", "spp_id", "orang_tua_id", "tanggal_bayar", "jumlah", "metode", "bukti", "status", "created_at", "updated_at") VALUES (7, 8, 1, '2026-01-05', 250000, 'transfer', NULL, 'confirmed', '2026-07-21 10:44:15', '2026-07-21 10:44:15');
-INSERT INTO "pembayarans" ("id", "spp_id", "orang_tua_id", "tanggal_bayar", "jumlah", "metode", "bukti", "status", "created_at", "updated_at") VALUES (8, 9, 1, '2026-02-05', 250000, 'transfer', NULL, 'confirmed', '2026-07-21 10:44:15', '2026-07-21 10:44:15');
-INSERT INTO "pembayarans" ("id", "spp_id", "orang_tua_id", "tanggal_bayar", "jumlah", "metode", "bukti", "status", "created_at", "updated_at") VALUES (9, 10, 1, '2026-03-05', 250000, 'transfer', NULL, 'confirmed', '2026-07-21 10:44:15', '2026-07-21 10:44:15');
-INSERT INTO "pembayarans" ("id", "spp_id", "orang_tua_id", "tanggal_bayar", "jumlah", "metode", "bukti", "status", "created_at", "updated_at") VALUES (10, 11, 1, '2026-04-05', 250000, 'transfer', NULL, 'confirmed', '2026-07-21 10:44:15', '2026-07-21 10:44:15');
-INSERT INTO "pembayarans" ("id", "spp_id", "orang_tua_id", "tanggal_bayar", "jumlah", "metode", "bukti", "status", "created_at", "updated_at") VALUES (11, 12, 1, '2026-05-05', 250000, 'transfer', NULL, 'confirmed', '2026-07-21 10:44:15', '2026-07-21 10:44:15');
-INSERT INTO "pembayarans" ("id", "spp_id", "orang_tua_id", "tanggal_bayar", "jumlah", "metode", "bukti", "status", "created_at", "updated_at") VALUES (12, 13, 1, '2026-06-05', 250000, 'transfer', NULL, 'confirmed', '2026-07-21 10:44:15', '2026-07-21 10:44:15');
-INSERT INTO "pembayarans" ("id", "spp_id", "orang_tua_id", "tanggal_bayar", "jumlah", "metode", "bukti", "status", "created_at", "updated_at") VALUES (13, 15, 1, '2026-01-05', 250000, 'transfer', NULL, 'confirmed', '2026-07-21 10:44:15', '2026-07-21 10:44:15');
-INSERT INTO "pembayarans" ("id", "spp_id", "orang_tua_id", "tanggal_bayar", "jumlah", "metode", "bukti", "status", "created_at", "updated_at") VALUES (14, 16, 1, '2026-02-05', 250000, 'transfer', NULL, 'confirmed', '2026-07-21 10:44:15', '2026-07-21 10:44:15');
-INSERT INTO "pembayarans" ("id", "spp_id", "orang_tua_id", "tanggal_bayar", "jumlah", "metode", "bukti", "status", "created_at", "updated_at") VALUES (15, 17, 1, '2026-03-05', 250000, 'transfer', NULL, 'confirmed', '2026-07-21 10:44:15', '2026-07-21 10:44:15');
-INSERT INTO "pembayarans" ("id", "spp_id", "orang_tua_id", "tanggal_bayar", "jumlah", "metode", "bukti", "status", "created_at", "updated_at") VALUES (16, 18, 1, '2026-04-05', 250000, 'transfer', NULL, 'confirmed', '2026-07-21 10:44:15', '2026-07-21 10:44:15');
-INSERT INTO "pembayarans" ("id", "spp_id", "orang_tua_id", "tanggal_bayar", "jumlah", "metode", "bukti", "status", "created_at", "updated_at") VALUES (17, 19, 1, '2026-05-05', 250000, 'transfer', NULL, 'confirmed', '2026-07-21 10:44:15', '2026-07-21 10:44:15');
-INSERT INTO "pembayarans" ("id", "spp_id", "orang_tua_id", "tanggal_bayar", "jumlah", "metode", "bukti", "status", "created_at", "updated_at") VALUES (18, 20, 1, '2026-06-05', 250000, 'transfer', NULL, 'confirmed', '2026-07-21 10:44:15', '2026-07-21 10:44:15');
-
-DROP TABLE IF EXISTS "pengaturan";
-CREATE TABLE "pengaturan" ("id" integer primary key autoincrement not null, "key" varchar not null, "value" text not null, "created_at" datetime, "updated_at" datetime);
-INSERT INTO "pengaturan" ("id", "key", "value", "created_at", "updated_at") VALUES (1, 'nama_sekolah', 'SMPIT Al Azhar Jaya Indonesia', '2026-07-21 10:44:15', '2026-07-21 10:44:15');
-INSERT INTO "pengaturan" ("id", "key", "value", "created_at", "updated_at") VALUES (2, 'tahun_ajaran', '2025/2026', '2026-07-21 10:44:15', '2026-07-21 10:44:15');
-INSERT INTO "pengaturan" ("id", "key", "value", "created_at", "updated_at") VALUES (3, 'semester', 'Genap', '2026-07-21 10:44:15', '2026-07-21 10:44:15');
-INSERT INTO "pengaturan" ("id", "key", "value", "created_at", "updated_at") VALUES (4, 'alamat_sekolah', 'Jl. Raya Cendana No. 123, Kota Tangerang Selatan, Banten', '2026-07-21 10:44:15', '2026-07-21 10:44:15');
-INSERT INTO "pengaturan" ("id", "key", "value", "created_at", "updated_at") VALUES (5, 'kkm_default', '70', '2026-07-21 10:44:15', '2026-07-21 10:44:15');
-
-DROP TABLE IF EXISTS "pengumpulan_tugas";
-CREATE TABLE "pengumpulan_tugas" ("id" integer primary key autoincrement not null, "tugas_id" integer not null, "siswa_id" integer not null, "file_path" varchar, "catatan_siswa" text, "nilai" numeric, "catatan_guru" text, "dikumpulkan_at" datetime, "created_at" datetime, "updated_at" datetime, foreign key("tugas_id") references "tugas"("id") on delete cascade, foreign key("siswa_id") references "siswa"("id"));
-
-DROP TABLE IF EXISTS "pengumuman";
-CREATE TABLE "pengumuman" ("id" integer primary key autoincrement not null, "judul" varchar not null, "konten" text not null, "created_by" integer not null, "target_role" varchar, "created_at" datetime, "updated_at" datetime, foreign key("created_by") references "users"("id") on delete cascade);
-INSERT INTO "pengumuman" ("id", "judul", "konten", "created_by", "target_role", "created_at", "updated_at") VALUES (1, 'Libur Hari Raya Nyepi', 'Sekolah libur pada tanggal 30 Maret 2026.', 79, NULL, '2026-03-25 00:00:00', '2026-03-25 00:00:00');
-INSERT INTO "pengumuman" ("id", "judul", "konten", "created_by", "target_role", "created_at", "updated_at") VALUES (2, 'Pesantren Kilat Ramadhan', 'Kegiatan pesantren kilat akan diadakan pada minggu kedua April.', 79, NULL, '2026-03-20 00:00:00', '2026-03-20 00:00:00');
-
-DROP TABLE IF EXISTS "pesan";
-CREATE TABLE "pesan" ("id" integer primary key autoincrement not null, "pengirim_id" integer not null, "penerima_id" integer not null, "subjek" varchar, "isi" text not null, "dibaca" tinyint(1) not null default '0', "created_at" datetime, "updated_at" datetime, foreign key("pengirim_id") references "users"("id") on delete cascade, foreign key("penerima_id") references "users"("id") on delete cascade);
-INSERT INTO "pesan" ("id", "pengirim_id", "penerima_id", "subjek", "isi", "dibaca", "created_at", "updated_at") VALUES (1, 1, 12, 'PR Matematika', 'Jangan lupa kumpulkan PR besok!', 0, '2026-07-21 10:44:15', '2026-07-21 10:44:15');
-
-DROP TABLE IF EXISTS "remedials";
-CREATE TABLE "remedials" ("id" integer primary key autoincrement not null, "siswa_id" integer not null, "mapel_id" integer not null, "nilai_id" integer not null, "nilai_asal" numeric not null, "deadline" date not null, "status" varchar not null default 'pending', "created_at" datetime, "updated_at" datetime, foreign key("siswa_id") references "siswa"("id") on delete cascade, foreign key("mapel_id") references "mapel"("id") on delete cascade, foreign key("nilai_id") references "nilai"("id") on delete cascade);
-
-DROP TABLE IF EXISTS "sessions";
-CREATE TABLE "sessions" ("id" varchar not null, "user_id" integer, "ip_address" varchar, "user_agent" text, "payload" text not null, "last_activity" integer not null, primary key ("id"));
-
-DROP TABLE IF EXISTS "settings";
-CREATE TABLE "settings" ("id" integer primary key autoincrement not null, "key" varchar not null, "value" text, "created_at" datetime, "updated_at" datetime);
-INSERT INTO "settings" ("id", "key", "value", "created_at", "updated_at") VALUES (1, 'kkm_sd', '70', NULL, NULL);
-INSERT INTO "settings" ("id", "key", "value", "created_at", "updated_at") VALUES (2, 'kkm_smp', '75', NULL, NULL);
-INSERT INTO "settings" ("id", "key", "value", "created_at", "updated_at") VALUES (3, 'school_name', 'Al Azhar Jaya Indonesia', NULL, NULL);
-INSERT INTO "settings" ("id", "key", "value", "created_at", "updated_at") VALUES (4, 'semester_aktif', 'Genap 2025/2026', NULL, NULL);
-INSERT INTO "settings" ("id", "key", "value", "created_at", "updated_at") VALUES (5, 'alamat_sekolah', 'Jl. Al Azhar No. 1, Bekasi', NULL, NULL);
-
-DROP TABLE IF EXISTS "siswa";
-CREATE TABLE "siswa" ("id" integer primary key autoincrement not null, "user_id" integer not null, "nis" varchar not null, "nama" varchar not null, "kelas_id" integer, "kelas_quran_id" integer, "jenis_kelamin" varchar check ("jenis_kelamin" in ('L', 'P')) not null, "tempat_lahir" varchar, "tanggal_lahir" date, "alamat" text, "nama_ayah" varchar, "nama_ibu" varchar, "status" varchar check ("status" in ('aktif', 'nonaktif')) not null default 'aktif', "created_at" datetime, "updated_at" datetime, foreign key("user_id") references "users"("id") on delete cascade, foreign key("kelas_id") references "kelas"("id") on delete set null on update cascade, foreign key("kelas_quran_id") references "kelas_quran"("id") on delete set null on update cascade);
-INSERT INTO "siswa" ("id", "user_id", "nis", "nama", "kelas_id", "kelas_quran_id", "jenis_kelamin", "tempat_lahir", "tanggal_lahir", "alamat", "nama_ayah", "nama_ibu", "status", "created_at", "updated_at") VALUES (1, 12, '26001', 'Abdul Latif', 2, 1, 'L', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-21 10:43:55', '2026-07-21 10:43:55');
-INSERT INTO "siswa" ("id", "user_id", "nis", "nama", "kelas_id", "kelas_quran_id", "jenis_kelamin", "tempat_lahir", "tanggal_lahir", "alamat", "nama_ayah", "nama_ibu", "status", "created_at", "updated_at") VALUES (2, 13, '26002', 'Abid Abyan Tsany Solihansyah', 2, 1, 'L', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-21 10:43:56', '2026-07-21 10:43:56');
-INSERT INTO "siswa" ("id", "user_id", "nis", "nama", "kelas_id", "kelas_quran_id", "jenis_kelamin", "tempat_lahir", "tanggal_lahir", "alamat", "nama_ayah", "nama_ibu", "status", "created_at", "updated_at") VALUES (3, 14, '26003', 'Aldeen Hadwan Shirazi', 2, 1, 'L', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-21 10:43:56', '2026-07-21 10:43:56');
-INSERT INTO "siswa" ("id", "user_id", "nis", "nama", "kelas_id", "kelas_quran_id", "jenis_kelamin", "tempat_lahir", "tanggal_lahir", "alamat", "nama_ayah", "nama_ibu", "status", "created_at", "updated_at") VALUES (4, 15, '26004', 'Chaidar Rafisqy Hermawan', 2, 1, 'L', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-21 10:43:56', '2026-07-21 10:43:56');
-INSERT INTO "siswa" ("id", "user_id", "nis", "nama", "kelas_id", "kelas_quran_id", "jenis_kelamin", "tempat_lahir", "tanggal_lahir", "alamat", "nama_ayah", "nama_ibu", "status", "created_at", "updated_at") VALUES (5, 16, '26005', 'Daffa Zaidan Pratama', 4, 1, 'L', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-21 10:43:56', '2026-07-21 10:43:56');
-INSERT INTO "siswa" ("id", "user_id", "nis", "nama", "kelas_id", "kelas_quran_id", "jenis_kelamin", "tempat_lahir", "tanggal_lahir", "alamat", "nama_ayah", "nama_ibu", "status", "created_at", "updated_at") VALUES (6, 17, '26006', 'Fauzi Abdu Rohman', 4, 1, 'L', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-21 10:43:57', '2026-07-21 10:43:57');
-INSERT INTO "siswa" ("id", "user_id", "nis", "nama", "kelas_id", "kelas_quran_id", "jenis_kelamin", "tempat_lahir", "tanggal_lahir", "alamat", "nama_ayah", "nama_ibu", "status", "created_at", "updated_at") VALUES (7, 18, '26007', 'Galang Hernandes', 4, 1, 'L', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-21 10:43:57', '2026-07-21 10:43:57');
-INSERT INTO "siswa" ("id", "user_id", "nis", "nama", "kelas_id", "kelas_quran_id", "jenis_kelamin", "tempat_lahir", "tanggal_lahir", "alamat", "nama_ayah", "nama_ibu", "status", "created_at", "updated_at") VALUES (8, 19, '26008', 'Hamzah Irfan Fadillah', 4, 1, 'L', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-21 10:43:57', '2026-07-21 10:43:57');
-INSERT INTO "siswa" ("id", "user_id", "nis", "nama", "kelas_id", "kelas_quran_id", "jenis_kelamin", "tempat_lahir", "tanggal_lahir", "alamat", "nama_ayah", "nama_ibu", "status", "created_at", "updated_at") VALUES (9, 20, '26009', 'Kelvin Adel Pratama', 4, 1, 'L', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-21 10:43:57', '2026-07-21 10:43:57');
-INSERT INTO "siswa" ("id", "user_id", "nis", "nama", "kelas_id", "kelas_quran_id", "jenis_kelamin", "tempat_lahir", "tanggal_lahir", "alamat", "nama_ayah", "nama_ibu", "status", "created_at", "updated_at") VALUES (10, 21, '26010', 'Maherdes Attaufiq Riziqlillah', 4, 1, 'L', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-21 10:43:58', '2026-07-21 10:43:58');
-INSERT INTO "siswa" ("id", "user_id", "nis", "nama", "kelas_id", "kelas_quran_id", "jenis_kelamin", "tempat_lahir", "tanggal_lahir", "alamat", "nama_ayah", "nama_ibu", "status", "created_at", "updated_at") VALUES (11, 22, '26011', 'Muhammad Albyan', 4, 1, 'L', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-21 10:43:58', '2026-07-21 10:43:58');
-INSERT INTO "siswa" ("id", "user_id", "nis", "nama", "kelas_id", "kelas_quran_id", "jenis_kelamin", "tempat_lahir", "tanggal_lahir", "alamat", "nama_ayah", "nama_ibu", "status", "created_at", "updated_at") VALUES (12, 23, '26012', 'Muhammad Alhafidz', 4, 1, 'L', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-21 10:43:58', '2026-07-21 10:43:58');
-INSERT INTO "siswa" ("id", "user_id", "nis", "nama", "kelas_id", "kelas_quran_id", "jenis_kelamin", "tempat_lahir", "tanggal_lahir", "alamat", "nama_ayah", "nama_ibu", "status", "created_at", "updated_at") VALUES (13, 24, '26013', 'Muhammad Aslam Zayyan', 4, 1, 'L', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-21 10:43:58', '2026-07-21 10:43:58');
-INSERT INTO "siswa" ("id", "user_id", "nis", "nama", "kelas_id", "kelas_quran_id", "jenis_kelamin", "tempat_lahir", "tanggal_lahir", "alamat", "nama_ayah", "nama_ibu", "status", "created_at", "updated_at") VALUES (14, 25, '26014', 'Rizky Maulana As Shidiq', 2, 1, 'L', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-21 10:43:58', '2026-07-21 10:43:58');
-INSERT INTO "siswa" ("id", "user_id", "nis", "nama", "kelas_id", "kelas_quran_id", "jenis_kelamin", "tempat_lahir", "tanggal_lahir", "alamat", "nama_ayah", "nama_ibu", "status", "created_at", "updated_at") VALUES (15, 26, '26015', 'Muhammad Azzam Nufail', 2, 2, 'L', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-21 10:43:59', '2026-07-21 10:43:59');
-INSERT INTO "siswa" ("id", "user_id", "nis", "nama", "kelas_id", "kelas_quran_id", "jenis_kelamin", "tempat_lahir", "tanggal_lahir", "alamat", "nama_ayah", "nama_ibu", "status", "created_at", "updated_at") VALUES (16, 27, '26016', 'Muhammad Daffa Al Ghifari', 4, 2, 'L', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-21 10:43:59', '2026-07-21 10:43:59');
-INSERT INTO "siswa" ("id", "user_id", "nis", "nama", "kelas_id", "kelas_quran_id", "jenis_kelamin", "tempat_lahir", "tanggal_lahir", "alamat", "nama_ayah", "nama_ibu", "status", "created_at", "updated_at") VALUES (17, 28, '26017', 'Muhammad Eldafi Satya Irawan', 4, 2, 'L', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-21 10:43:59', '2026-07-21 10:43:59');
-INSERT INTO "siswa" ("id", "user_id", "nis", "nama", "kelas_id", "kelas_quran_id", "jenis_kelamin", "tempat_lahir", "tanggal_lahir", "alamat", "nama_ayah", "nama_ibu", "status", "created_at", "updated_at") VALUES (18, 29, '26018', 'Muhammad Falah Pratama Mulya', 2, 2, 'L', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-21 10:43:59', '2026-07-21 10:43:59');
-INSERT INTO "siswa" ("id", "user_id", "nis", "nama", "kelas_id", "kelas_quran_id", "jenis_kelamin", "tempat_lahir", "tanggal_lahir", "alamat", "nama_ayah", "nama_ibu", "status", "created_at", "updated_at") VALUES (19, 30, '26019', 'Muhammad Maher', 2, 2, 'L', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-21 10:44:00', '2026-07-21 10:44:00');
-INSERT INTO "siswa" ("id", "user_id", "nis", "nama", "kelas_id", "kelas_quran_id", "jenis_kelamin", "tempat_lahir", "tanggal_lahir", "alamat", "nama_ayah", "nama_ibu", "status", "created_at", "updated_at") VALUES (20, 31, '26020', 'Muhammad Quincy Satyamulya', 2, 2, 'L', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-21 10:44:00', '2026-07-21 10:44:00');
-INSERT INTO "siswa" ("id", "user_id", "nis", "nama", "kelas_id", "kelas_quran_id", "jenis_kelamin", "tempat_lahir", "tanggal_lahir", "alamat", "nama_ayah", "nama_ibu", "status", "created_at", "updated_at") VALUES (21, 32, '26021', 'Muhammad Rakha Solihansyah', 4, 2, 'L', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-21 10:44:00', '2026-07-21 10:44:00');
-INSERT INTO "siswa" ("id", "user_id", "nis", "nama", "kelas_id", "kelas_quran_id", "jenis_kelamin", "tempat_lahir", "tanggal_lahir", "alamat", "nama_ayah", "nama_ibu", "status", "created_at", "updated_at") VALUES (22, 33, '26022', 'Muhammad Wafi Alkiram', 2, 2, 'L', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-21 10:44:00', '2026-07-21 10:44:00');
-INSERT INTO "siswa" ("id", "user_id", "nis", "nama", "kelas_id", "kelas_quran_id", "jenis_kelamin", "tempat_lahir", "tanggal_lahir", "alamat", "nama_ayah", "nama_ibu", "status", "created_at", "updated_at") VALUES (23, 34, '26023', 'Naufal Djaky Ardani', 4, 2, 'L', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-21 10:44:01', '2026-07-21 10:44:01');
-INSERT INTO "siswa" ("id", "user_id", "nis", "nama", "kelas_id", "kelas_quran_id", "jenis_kelamin", "tempat_lahir", "tanggal_lahir", "alamat", "nama_ayah", "nama_ibu", "status", "created_at", "updated_at") VALUES (24, 35, '26024', 'Pandu Bagus Damar Wiyono', 4, 2, 'L', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-21 10:44:01', '2026-07-21 10:44:01');
-INSERT INTO "siswa" ("id", "user_id", "nis", "nama", "kelas_id", "kelas_quran_id", "jenis_kelamin", "tempat_lahir", "tanggal_lahir", "alamat", "nama_ayah", "nama_ibu", "status", "created_at", "updated_at") VALUES (25, 36, '26025', 'Tsabit Wafi Musyaffa', 2, 2, 'L', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-21 10:44:01', '2026-07-21 10:44:01');
-INSERT INTO "siswa" ("id", "user_id", "nis", "nama", "kelas_id", "kelas_quran_id", "jenis_kelamin", "tempat_lahir", "tanggal_lahir", "alamat", "nama_ayah", "nama_ibu", "status", "created_at", "updated_at") VALUES (26, 37, '26026', 'Zahran Farid Firdaus', 2, 2, 'L', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-21 10:44:01', '2026-07-21 10:44:01');
-INSERT INTO "siswa" ("id", "user_id", "nis", "nama", "kelas_id", "kelas_quran_id", "jenis_kelamin", "tempat_lahir", "tanggal_lahir", "alamat", "nama_ayah", "nama_ibu", "status", "created_at", "updated_at") VALUES (27, 38, '26027', 'Zein Maulana Muaffin', 4, 2, 'L', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-21 10:44:02', '2026-07-21 10:44:02');
-INSERT INTO "siswa" ("id", "user_id", "nis", "nama", "kelas_id", "kelas_quran_id", "jenis_kelamin", "tempat_lahir", "tanggal_lahir", "alamat", "nama_ayah", "nama_ibu", "status", "created_at", "updated_at") VALUES (28, 39, '26028', 'Alviandra Chesta Radityatama', 1, 3, 'L', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-21 10:44:02', '2026-07-21 10:44:02');
-INSERT INTO "siswa" ("id", "user_id", "nis", "nama", "kelas_id", "kelas_quran_id", "jenis_kelamin", "tempat_lahir", "tanggal_lahir", "alamat", "nama_ayah", "nama_ibu", "status", "created_at", "updated_at") VALUES (29, 40, '26029', 'Argia Raya Adz Dzikra', 1, 3, 'L', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-21 10:44:02', '2026-07-21 10:44:02');
-INSERT INTO "siswa" ("id", "user_id", "nis", "nama", "kelas_id", "kelas_quran_id", "jenis_kelamin", "tempat_lahir", "tanggal_lahir", "alamat", "nama_ayah", "nama_ibu", "status", "created_at", "updated_at") VALUES (30, 41, '26030', 'Muhammad Hafidz Alfahrezi', 1, 3, 'L', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-21 10:44:02', '2026-07-21 10:44:02');
-INSERT INTO "siswa" ("id", "user_id", "nis", "nama", "kelas_id", "kelas_quran_id", "jenis_kelamin", "tempat_lahir", "tanggal_lahir", "alamat", "nama_ayah", "nama_ibu", "status", "created_at", "updated_at") VALUES (31, 42, '26031', 'Muhammad Al Farizy Setyanto', 1, 3, 'L', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-21 10:44:02', '2026-07-21 10:44:02');
-INSERT INTO "siswa" ("id", "user_id", "nis", "nama", "kelas_id", "kelas_quran_id", "jenis_kelamin", "tempat_lahir", "tanggal_lahir", "alamat", "nama_ayah", "nama_ibu", "status", "created_at", "updated_at") VALUES (32, 43, '26032', 'Muhammad Al Fatih', 1, 3, 'L', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-21 10:44:03', '2026-07-21 10:44:03');
-INSERT INTO "siswa" ("id", "user_id", "nis", "nama", "kelas_id", "kelas_quran_id", "jenis_kelamin", "tempat_lahir", "tanggal_lahir", "alamat", "nama_ayah", "nama_ibu", "status", "created_at", "updated_at") VALUES (33, 44, '26033', 'Muhammad Fadlan Adelmar', 1, 3, 'L', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-21 10:44:03', '2026-07-21 10:44:03');
-INSERT INTO "siswa" ("id", "user_id", "nis", "nama", "kelas_id", "kelas_quran_id", "jenis_kelamin", "tempat_lahir", "tanggal_lahir", "alamat", "nama_ayah", "nama_ibu", "status", "created_at", "updated_at") VALUES (34, 45, '26034', 'Reval Rama Sulistiyo', 1, 3, 'L', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-21 10:44:03', '2026-07-21 10:44:03');
-INSERT INTO "siswa" ("id", "user_id", "nis", "nama", "kelas_id", "kelas_quran_id", "jenis_kelamin", "tempat_lahir", "tanggal_lahir", "alamat", "nama_ayah", "nama_ibu", "status", "created_at", "updated_at") VALUES (35, 46, '26035', 'Aila Zahwa Aqilah', 3, 4, 'P', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-21 10:44:03', '2026-07-21 10:44:03');
-INSERT INTO "siswa" ("id", "user_id", "nis", "nama", "kelas_id", "kelas_quran_id", "jenis_kelamin", "tempat_lahir", "tanggal_lahir", "alamat", "nama_ayah", "nama_ibu", "status", "created_at", "updated_at") VALUES (36, 47, '26036', 'Aisyah Rahma Haniya', 3, 4, 'P', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-21 10:44:04', '2026-07-21 10:44:04');
-INSERT INTO "siswa" ("id", "user_id", "nis", "nama", "kelas_id", "kelas_quran_id", "jenis_kelamin", "tempat_lahir", "tanggal_lahir", "alamat", "nama_ayah", "nama_ibu", "status", "created_at", "updated_at") VALUES (37, 48, '26037', 'Anindita Valencia Aurora', 5, 4, 'P', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-21 10:44:04', '2026-07-21 10:44:04');
-INSERT INTO "siswa" ("id", "user_id", "nis", "nama", "kelas_id", "kelas_quran_id", "jenis_kelamin", "tempat_lahir", "tanggal_lahir", "alamat", "nama_ayah", "nama_ibu", "status", "created_at", "updated_at") VALUES (38, 49, '26038', 'Atsilah Azka Ramadhani', 5, 4, 'P', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-21 10:44:04', '2026-07-21 10:44:04');
-INSERT INTO "siswa" ("id", "user_id", "nis", "nama", "kelas_id", "kelas_quran_id", "jenis_kelamin", "tempat_lahir", "tanggal_lahir", "alamat", "nama_ayah", "nama_ibu", "status", "created_at", "updated_at") VALUES (39, 50, '26039', 'Dara Medina Putri', 5, 4, 'P', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-21 10:44:04', '2026-07-21 10:44:04');
-INSERT INTO "siswa" ("id", "user_id", "nis", "nama", "kelas_id", "kelas_quran_id", "jenis_kelamin", "tempat_lahir", "tanggal_lahir", "alamat", "nama_ayah", "nama_ibu", "status", "created_at", "updated_at") VALUES (40, 51, '26040', 'Elsa Sri Isyana', 5, 4, 'P', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-21 10:44:05', '2026-07-21 10:44:05');
-INSERT INTO "siswa" ("id", "user_id", "nis", "nama", "kelas_id", "kelas_quran_id", "jenis_kelamin", "tempat_lahir", "tanggal_lahir", "alamat", "nama_ayah", "nama_ibu", "status", "created_at", "updated_at") VALUES (41, 52, '26041', 'Fadhilah Ramadhani', 5, 4, 'P', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-21 10:44:05', '2026-07-21 10:44:05');
-INSERT INTO "siswa" ("id", "user_id", "nis", "nama", "kelas_id", "kelas_quran_id", "jenis_kelamin", "tempat_lahir", "tanggal_lahir", "alamat", "nama_ayah", "nama_ibu", "status", "created_at", "updated_at") VALUES (42, 53, '26042', 'Fakhirah Khansa Anditasyah', 5, 4, 'P', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-21 10:44:05', '2026-07-21 10:44:05');
-INSERT INTO "siswa" ("id", "user_id", "nis", "nama", "kelas_id", "kelas_quran_id", "jenis_kelamin", "tempat_lahir", "tanggal_lahir", "alamat", "nama_ayah", "nama_ibu", "status", "created_at", "updated_at") VALUES (43, 54, '26043', 'Fauziah Adawiyah', 5, 4, 'P', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-21 10:44:05', '2026-07-21 10:44:05');
-INSERT INTO "siswa" ("id", "user_id", "nis", "nama", "kelas_id", "kelas_quran_id", "jenis_kelamin", "tempat_lahir", "tanggal_lahir", "alamat", "nama_ayah", "nama_ibu", "status", "created_at", "updated_at") VALUES (44, 55, '26044', 'Gadis Bening Arsandi', 5, 4, 'P', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-21 10:44:06', '2026-07-21 10:44:06');
-INSERT INTO "siswa" ("id", "user_id", "nis", "nama", "kelas_id", "kelas_quran_id", "jenis_kelamin", "tempat_lahir", "tanggal_lahir", "alamat", "nama_ayah", "nama_ibu", "status", "created_at", "updated_at") VALUES (45, 56, '26045', 'Gian Naifa Shofa', 5, 4, 'P', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-21 10:44:06', '2026-07-21 10:44:06');
-INSERT INTO "siswa" ("id", "user_id", "nis", "nama", "kelas_id", "kelas_quran_id", "jenis_kelamin", "tempat_lahir", "tanggal_lahir", "alamat", "nama_ayah", "nama_ibu", "status", "created_at", "updated_at") VALUES (46, 57, '26046', 'Jihan Makaila Fakhirah', 5, 4, 'P', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-21 10:44:06', '2026-07-21 10:44:06');
-INSERT INTO "siswa" ("id", "user_id", "nis", "nama", "kelas_id", "kelas_quran_id", "jenis_kelamin", "tempat_lahir", "tanggal_lahir", "alamat", "nama_ayah", "nama_ibu", "status", "created_at", "updated_at") VALUES (47, 58, '26047', 'Jillan Azra Hakimah', 3, 4, 'P', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-21 10:44:06', '2026-07-21 10:44:06');
-INSERT INTO "siswa" ("id", "user_id", "nis", "nama", "kelas_id", "kelas_quran_id", "jenis_kelamin", "tempat_lahir", "tanggal_lahir", "alamat", "nama_ayah", "nama_ibu", "status", "created_at", "updated_at") VALUES (48, 59, '26048', 'Kalula Ayesha Alkanza', 3, 5, 'P', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-21 10:44:07', '2026-07-21 10:44:07');
-INSERT INTO "siswa" ("id", "user_id", "nis", "nama", "kelas_id", "kelas_quran_id", "jenis_kelamin", "tempat_lahir", "tanggal_lahir", "alamat", "nama_ayah", "nama_ibu", "status", "created_at", "updated_at") VALUES (49, 60, '26049', 'Kayyasah Sholiha', 5, 5, 'P', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-21 10:44:07', '2026-07-21 10:44:07');
-INSERT INTO "siswa" ("id", "user_id", "nis", "nama", "kelas_id", "kelas_quran_id", "jenis_kelamin", "tempat_lahir", "tanggal_lahir", "alamat", "nama_ayah", "nama_ibu", "status", "created_at", "updated_at") VALUES (50, 61, '26050', 'Khayla Almira Maritza H', 5, 5, 'P', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-21 10:44:07', '2026-07-21 10:44:07');
-INSERT INTO "siswa" ("id", "user_id", "nis", "nama", "kelas_id", "kelas_quran_id", "jenis_kelamin", "tempat_lahir", "tanggal_lahir", "alamat", "nama_ayah", "nama_ibu", "status", "created_at", "updated_at") VALUES (51, 62, '26051', 'Muhdatus Sa''idah', 3, 5, 'P', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-21 10:44:07', '2026-07-21 10:44:07');
-INSERT INTO "siswa" ("id", "user_id", "nis", "nama", "kelas_id", "kelas_quran_id", "jenis_kelamin", "tempat_lahir", "tanggal_lahir", "alamat", "nama_ayah", "nama_ibu", "status", "created_at", "updated_at") VALUES (52, 63, '26052', 'Nadia Aqila Shanum', 5, 5, 'P', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-21 10:44:08', '2026-07-21 10:44:08');
-INSERT INTO "siswa" ("id", "user_id", "nis", "nama", "kelas_id", "kelas_quran_id", "jenis_kelamin", "tempat_lahir", "tanggal_lahir", "alamat", "nama_ayah", "nama_ibu", "status", "created_at", "updated_at") VALUES (53, 64, '26053', 'Naila Syahira Mumtazah', 5, 5, 'P', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-21 10:44:08', '2026-07-21 10:44:08');
-INSERT INTO "siswa" ("id", "user_id", "nis", "nama", "kelas_id", "kelas_quran_id", "jenis_kelamin", "tempat_lahir", "tanggal_lahir", "alamat", "nama_ayah", "nama_ibu", "status", "created_at", "updated_at") VALUES (54, 65, '26054', 'Nasywa Maulida', 5, 5, 'P', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-21 10:44:08', '2026-07-21 10:44:08');
-INSERT INTO "siswa" ("id", "user_id", "nis", "nama", "kelas_id", "kelas_quran_id", "jenis_kelamin", "tempat_lahir", "tanggal_lahir", "alamat", "nama_ayah", "nama_ibu", "status", "created_at", "updated_at") VALUES (55, 66, '26055', 'Nurul Hanis Nahilah', 5, 5, 'P', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-21 10:44:08', '2026-07-21 10:44:08');
-INSERT INTO "siswa" ("id", "user_id", "nis", "nama", "kelas_id", "kelas_quran_id", "jenis_kelamin", "tempat_lahir", "tanggal_lahir", "alamat", "nama_ayah", "nama_ibu", "status", "created_at", "updated_at") VALUES (56, 67, '26056', 'Nurul Kasyfatul Mahjubiyyah', 5, 5, 'P', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-21 10:44:08', '2026-07-21 10:44:08');
-INSERT INTO "siswa" ("id", "user_id", "nis", "nama", "kelas_id", "kelas_quran_id", "jenis_kelamin", "tempat_lahir", "tanggal_lahir", "alamat", "nama_ayah", "nama_ibu", "status", "created_at", "updated_at") VALUES (57, 68, '26057', 'Putri Yara', 5, 5, 'P', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-21 10:44:09', '2026-07-21 10:44:09');
-INSERT INTO "siswa" ("id", "user_id", "nis", "nama", "kelas_id", "kelas_quran_id", "jenis_kelamin", "tempat_lahir", "tanggal_lahir", "alamat", "nama_ayah", "nama_ibu", "status", "created_at", "updated_at") VALUES (58, 69, '26058', 'Ribkha Pramesti Wijaya', 3, 5, 'P', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-21 10:44:09', '2026-07-21 10:44:09');
-INSERT INTO "siswa" ("id", "user_id", "nis", "nama", "kelas_id", "kelas_quran_id", "jenis_kelamin", "tempat_lahir", "tanggal_lahir", "alamat", "nama_ayah", "nama_ibu", "status", "created_at", "updated_at") VALUES (59, 70, '26059', 'Syaila Unatsa Putri', 3, 5, 'P', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-21 10:44:09', '2026-07-21 10:44:09');
-INSERT INTO "siswa" ("id", "user_id", "nis", "nama", "kelas_id", "kelas_quran_id", "jenis_kelamin", "tempat_lahir", "tanggal_lahir", "alamat", "nama_ayah", "nama_ibu", "status", "created_at", "updated_at") VALUES (60, 71, '26060', 'Syakira Sausan Khairunnisa', 5, 5, 'P', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-21 10:44:09', '2026-07-21 10:44:09');
-INSERT INTO "siswa" ("id", "user_id", "nis", "nama", "kelas_id", "kelas_quran_id", "jenis_kelamin", "tempat_lahir", "tanggal_lahir", "alamat", "nama_ayah", "nama_ibu", "status", "created_at", "updated_at") VALUES (61, 72, '26061', 'Violine Atha Al-Husna', 3, 5, 'P', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-21 10:44:10', '2026-07-21 10:44:10');
-INSERT INTO "siswa" ("id", "user_id", "nis", "nama", "kelas_id", "kelas_quran_id", "jenis_kelamin", "tempat_lahir", "tanggal_lahir", "alamat", "nama_ayah", "nama_ibu", "status", "created_at", "updated_at") VALUES (62, 73, '26062', 'Aqilah Naurah', 1, 6, 'P', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-21 10:44:10', '2026-07-21 10:44:10');
-INSERT INTO "siswa" ("id", "user_id", "nis", "nama", "kelas_id", "kelas_quran_id", "jenis_kelamin", "tempat_lahir", "tanggal_lahir", "alamat", "nama_ayah", "nama_ibu", "status", "created_at", "updated_at") VALUES (63, 74, '26063', 'Sahla Azka Hafizah', 1, 6, 'P', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-21 10:44:10', '2026-07-21 10:44:10');
-INSERT INTO "siswa" ("id", "user_id", "nis", "nama", "kelas_id", "kelas_quran_id", "jenis_kelamin", "tempat_lahir", "tanggal_lahir", "alamat", "nama_ayah", "nama_ibu", "status", "created_at", "updated_at") VALUES (64, 75, '26064', 'Hanna Mufidah', 1, 6, 'P', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-21 10:44:10', '2026-07-21 10:44:10');
-INSERT INTO "siswa" ("id", "user_id", "nis", "nama", "kelas_id", "kelas_quran_id", "jenis_kelamin", "tempat_lahir", "tanggal_lahir", "alamat", "nama_ayah", "nama_ibu", "status", "created_at", "updated_at") VALUES (65, 76, '26065', 'Khanza Izzatunnisa', 1, 6, 'P', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-INSERT INTO "siswa" ("id", "user_id", "nis", "nama", "kelas_id", "kelas_quran_id", "jenis_kelamin", "tempat_lahir", "tanggal_lahir", "alamat", "nama_ayah", "nama_ibu", "status", "created_at", "updated_at") VALUES (66, 77, '26066', 'Ziya Zivana Zubi', 1, 6, 'P', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-21 10:44:11', '2026-07-21 10:44:11');
-
-DROP TABLE IF EXISTS "siswa_badge";
-CREATE TABLE "siswa_badge" ("id" integer primary key autoincrement not null, "siswa_id" integer not null, "badge_id" integer not null, "achieved_at" datetime not null default CURRENT_TIMESTAMP, foreign key("siswa_id") references "siswa"("id") on delete cascade, foreign key("badge_id") references "badges"("id") on delete cascade);
-INSERT INTO "siswa_badge" ("id", "siswa_id", "badge_id", "achieved_at") VALUES (1, 1, 4, '2026-07-21 03:44:15');
-INSERT INTO "siswa_badge" ("id", "siswa_id", "badge_id", "achieved_at") VALUES (2, 2, 4, '2026-07-21 03:44:15');
-INSERT INTO "siswa_badge" ("id", "siswa_id", "badge_id", "achieved_at") VALUES (3, 3, 1, '2026-07-21 03:44:15');
-INSERT INTO "siswa_badge" ("id", "siswa_id", "badge_id", "achieved_at") VALUES (4, 4, 4, '2026-07-21 03:44:15');
-INSERT INTO "siswa_badge" ("id", "siswa_id", "badge_id", "achieved_at") VALUES (5, 5, 3, '2026-07-21 03:44:15');
-
-DROP TABLE IF EXISTS "spps";
-CREATE TABLE "spps" ("id" integer primary key autoincrement not null, "siswa_id" integer not null, "bulan" integer not null, "tahun" integer not null, "jumlah" numeric not null, "tenggat" date, "status" varchar check ("status" in ('lunas', 'belum')) not null default 'belum', "created_at" datetime, "updated_at" datetime, foreign key("siswa_id") references "siswa"("id"));
-INSERT INTO "spps" ("id", "siswa_id", "bulan", "tahun", "jumlah", "tenggat", "status", "created_at", "updated_at") VALUES (1, 1, 1, 2026, 250000, '2026-01-10', 'lunas', '2026-07-21 10:44:15', '2026-07-21 10:44:15');
-INSERT INTO "spps" ("id", "siswa_id", "bulan", "tahun", "jumlah", "tenggat", "status", "created_at", "updated_at") VALUES (2, 1, 2, 2026, 250000, '2026-02-10', 'lunas', '2026-07-21 10:44:15', '2026-07-21 10:44:15');
-INSERT INTO "spps" ("id", "siswa_id", "bulan", "tahun", "jumlah", "tenggat", "status", "created_at", "updated_at") VALUES (3, 1, 3, 2026, 250000, '2026-03-10', 'lunas', '2026-07-21 10:44:15', '2026-07-21 10:44:15');
-INSERT INTO "spps" ("id", "siswa_id", "bulan", "tahun", "jumlah", "tenggat", "status", "created_at", "updated_at") VALUES (4, 1, 4, 2026, 250000, '2026-04-10', 'lunas', '2026-07-21 10:44:15', '2026-07-21 10:44:15');
-INSERT INTO "spps" ("id", "siswa_id", "bulan", "tahun", "jumlah", "tenggat", "status", "created_at", "updated_at") VALUES (5, 1, 5, 2026, 250000, '2026-05-10', 'lunas', '2026-07-21 10:44:15', '2026-07-21 10:44:15');
-INSERT INTO "spps" ("id", "siswa_id", "bulan", "tahun", "jumlah", "tenggat", "status", "created_at", "updated_at") VALUES (6, 1, 6, 2026, 250000, '2026-06-10', 'lunas', '2026-07-21 10:44:15', '2026-07-21 10:44:15');
-INSERT INTO "spps" ("id", "siswa_id", "bulan", "tahun", "jumlah", "tenggat", "status", "created_at", "updated_at") VALUES (7, 1, 7, 2026, 250000, '2026-07-10', 'belum', '2026-07-21 10:44:15', '2026-07-21 10:44:15');
-INSERT INTO "spps" ("id", "siswa_id", "bulan", "tahun", "jumlah", "tenggat", "status", "created_at", "updated_at") VALUES (8, 2, 1, 2026, 250000, '2026-01-10', 'lunas', '2026-07-21 10:44:15', '2026-07-21 10:44:15');
-INSERT INTO "spps" ("id", "siswa_id", "bulan", "tahun", "jumlah", "tenggat", "status", "created_at", "updated_at") VALUES (9, 2, 2, 2026, 250000, '2026-02-10', 'lunas', '2026-07-21 10:44:15', '2026-07-21 10:44:15');
-INSERT INTO "spps" ("id", "siswa_id", "bulan", "tahun", "jumlah", "tenggat", "status", "created_at", "updated_at") VALUES (10, 2, 3, 2026, 250000, '2026-03-10', 'lunas', '2026-07-21 10:44:15', '2026-07-21 10:44:15');
-INSERT INTO "spps" ("id", "siswa_id", "bulan", "tahun", "jumlah", "tenggat", "status", "created_at", "updated_at") VALUES (11, 2, 4, 2026, 250000, '2026-04-10', 'lunas', '2026-07-21 10:44:15', '2026-07-21 10:44:15');
-INSERT INTO "spps" ("id", "siswa_id", "bulan", "tahun", "jumlah", "tenggat", "status", "created_at", "updated_at") VALUES (12, 2, 5, 2026, 250000, '2026-05-10', 'lunas', '2026-07-21 10:44:15', '2026-07-21 10:44:15');
-INSERT INTO "spps" ("id", "siswa_id", "bulan", "tahun", "jumlah", "tenggat", "status", "created_at", "updated_at") VALUES (13, 2, 6, 2026, 250000, '2026-06-10', 'lunas', '2026-07-21 10:44:15', '2026-07-21 10:44:15');
-INSERT INTO "spps" ("id", "siswa_id", "bulan", "tahun", "jumlah", "tenggat", "status", "created_at", "updated_at") VALUES (14, 2, 7, 2026, 250000, '2026-07-10', 'belum', '2026-07-21 10:44:15', '2026-07-21 10:44:15');
-INSERT INTO "spps" ("id", "siswa_id", "bulan", "tahun", "jumlah", "tenggat", "status", "created_at", "updated_at") VALUES (15, 3, 1, 2026, 250000, '2026-01-10', 'lunas', '2026-07-21 10:44:15', '2026-07-21 10:44:15');
-INSERT INTO "spps" ("id", "siswa_id", "bulan", "tahun", "jumlah", "tenggat", "status", "created_at", "updated_at") VALUES (16, 3, 2, 2026, 250000, '2026-02-10', 'lunas', '2026-07-21 10:44:15', '2026-07-21 10:44:15');
-INSERT INTO "spps" ("id", "siswa_id", "bulan", "tahun", "jumlah", "tenggat", "status", "created_at", "updated_at") VALUES (17, 3, 3, 2026, 250000, '2026-03-10', 'lunas', '2026-07-21 10:44:15', '2026-07-21 10:44:15');
-INSERT INTO "spps" ("id", "siswa_id", "bulan", "tahun", "jumlah", "tenggat", "status", "created_at", "updated_at") VALUES (18, 3, 4, 2026, 250000, '2026-04-10', 'lunas', '2026-07-21 10:44:15', '2026-07-21 10:44:15');
-INSERT INTO "spps" ("id", "siswa_id", "bulan", "tahun", "jumlah", "tenggat", "status", "created_at", "updated_at") VALUES (19, 3, 5, 2026, 250000, '2026-05-10', 'lunas', '2026-07-21 10:44:15', '2026-07-21 10:44:15');
-INSERT INTO "spps" ("id", "siswa_id", "bulan", "tahun", "jumlah", "tenggat", "status", "created_at", "updated_at") VALUES (20, 3, 6, 2026, 250000, '2026-06-10', 'lunas', '2026-07-21 10:44:15', '2026-07-21 10:44:15');
-INSERT INTO "spps" ("id", "siswa_id", "bulan", "tahun", "jumlah", "tenggat", "status", "created_at", "updated_at") VALUES (21, 3, 7, 2026, 250000, '2026-07-10', 'belum', '2026-07-21 10:44:15', '2026-07-21 10:44:15');
-
-DROP TABLE IF EXISTS "tahfidz_ayat_nilai";
-CREATE TABLE "tahfidz_ayat_nilai" ("id" integer primary key autoincrement not null, "tahfidz_setoran_id" integer not null, "guru_id" integer not null, "nomor_ayat" integer not null, "makhroj" integer not null, "tajwid" integer not null, "kelancaran" integer not null, "created_at" datetime, "updated_at" datetime, foreign key("tahfidz_setoran_id") references "tahfidz_setoran"("id") on delete cascade, foreign key("guru_id") references "guru"("id") on delete cascade);
-
-DROP TABLE IF EXISTS "tahfidz_progress";
-CREATE TABLE "tahfidz_progress" ("id" integer primary key autoincrement not null, "siswa_id" integer not null, "kelas_id" integer, "kelas_quran_id" integer, "surah" varchar, "ayat_mulai" integer, "ayat_selesai" integer, "juz_dihafal" integer not null default '0', "total_ayat" integer, "progress_percent" numeric not null default '0', "target_deskripsi" varchar, "status" varchar check ("status" in ('belum_mulai', 'berproses', 'lancar', 'perlu_murojaah')) not null default 'berproses', "catatan" text, "updated_by" integer, "created_at" datetime, "updated_at" datetime, foreign key("siswa_id") references "siswa"("id") on delete cascade, foreign key("kelas_id") references "kelas"("id") on delete set null, foreign key("kelas_quran_id") references "kelas_quran"("id") on delete set null, foreign key("updated_by") references "users"("id") on delete set null);
-
-DROP TABLE IF EXISTS "tahfidz_setoran";
-CREATE TABLE "tahfidz_setoran" ("id" integer primary key autoincrement not null, "siswa_id" integer not null, "guru_id" integer not null, "tanggal" date not null, "surah" varchar not null, "ayat_mulai" integer not null, "ayat_selesai" integer not null, "jumlah_ayat" integer not null, "status" varchar check ("status" in ('baru', 'murojaah')) not null default 'baru', "nilai" integer, "catatan_guru" text, "created_at" datetime, "updated_at" datetime, "tanggal_berikutnya" date, foreign key("siswa_id") references "siswa"("id") on delete cascade, foreign key("guru_id") references "guru"("id") on delete cascade);
-INSERT INTO "tahfidz_setoran" ("id", "siswa_id", "guru_id", "tanggal", "surah", "ayat_mulai", "ayat_selesai", "jumlah_ayat", "status", "nilai", "catatan_guru", "created_at", "updated_at", "tanggal_berikutnya") VALUES (1, 1, 1, '2026-03-03', 'An-Nazi''at', 1, 5, 7, 'murojaah', 83, NULL, '2026-07-21 10:44:15', '2026-07-21 10:44:15', NULL);
-INSERT INTO "tahfidz_setoran" ("id", "siswa_id", "guru_id", "tanggal", "surah", "ayat_mulai", "ayat_selesai", "jumlah_ayat", "status", "nilai", "catatan_guru", "created_at", "updated_at", "tanggal_berikutnya") VALUES (2, 1, 1, '2026-03-02', 'An-Nazi''at', 1, 14, 15, 'baru', 89, NULL, '2026-07-21 10:44:15', '2026-07-21 10:44:15', NULL);
-INSERT INTO "tahfidz_setoran" ("id", "siswa_id", "guru_id", "tanggal", "surah", "ayat_mulai", "ayat_selesai", "jumlah_ayat", "status", "nilai", "catatan_guru", "created_at", "updated_at", "tanggal_berikutnya") VALUES (3, 1, 7, '2026-03-26', 'An-Nazi''at', 1, 10, 7, 'murojaah', 91, NULL, '2026-07-21 10:44:15', '2026-07-21 10:44:15', NULL);
-INSERT INTO "tahfidz_setoran" ("id", "siswa_id", "guru_id", "tanggal", "surah", "ayat_mulai", "ayat_selesai", "jumlah_ayat", "status", "nilai", "catatan_guru", "created_at", "updated_at", "tanggal_berikutnya") VALUES (4, 2, 8, '2026-03-20', 'An-Nazi''at', 1, 6, 13, 'baru', 89, NULL, '2026-07-21 10:44:15', '2026-07-21 10:44:15', NULL);
-INSERT INTO "tahfidz_setoran" ("id", "siswa_id", "guru_id", "tanggal", "surah", "ayat_mulai", "ayat_selesai", "jumlah_ayat", "status", "nilai", "catatan_guru", "created_at", "updated_at", "tanggal_berikutnya") VALUES (5, 2, 8, '2026-03-22', 'An-Nazi''at', 1, 6, 12, 'baru', 88, NULL, '2026-07-21 10:44:15', '2026-07-21 10:44:15', NULL);
-INSERT INTO "tahfidz_setoran" ("id", "siswa_id", "guru_id", "tanggal", "surah", "ayat_mulai", "ayat_selesai", "jumlah_ayat", "status", "nilai", "catatan_guru", "created_at", "updated_at", "tanggal_berikutnya") VALUES (6, 2, 4, '2026-03-05', 'Abasa', 1, 12, 8, 'baru', 100, NULL, '2026-07-21 10:44:15', '2026-07-21 10:44:15', NULL);
-INSERT INTO "tahfidz_setoran" ("id", "siswa_id", "guru_id", "tanggal", "surah", "ayat_mulai", "ayat_selesai", "jumlah_ayat", "status", "nilai", "catatan_guru", "created_at", "updated_at", "tanggal_berikutnya") VALUES (7, 3, 9, '2026-03-23', 'An-Naba''', 1, 15, 15, 'baru', 84, NULL, '2026-07-21 10:44:15', '2026-07-21 10:44:15', NULL);
-INSERT INTO "tahfidz_setoran" ("id", "siswa_id", "guru_id", "tanggal", "surah", "ayat_mulai", "ayat_selesai", "jumlah_ayat", "status", "nilai", "catatan_guru", "created_at", "updated_at", "tanggal_berikutnya") VALUES (8, 3, 6, '2026-03-07', 'An-Nazi''at', 1, 9, 9, 'baru', 95, NULL, '2026-07-21 10:44:15', '2026-07-21 10:44:15', NULL);
-INSERT INTO "tahfidz_setoran" ("id", "siswa_id", "guru_id", "tanggal", "surah", "ayat_mulai", "ayat_selesai", "jumlah_ayat", "status", "nilai", "catatan_guru", "created_at", "updated_at", "tanggal_berikutnya") VALUES (9, 3, 4, '2026-03-13', 'An-Naba''', 1, 5, 5, 'murojaah', 88, NULL, '2026-07-21 10:44:15', '2026-07-21 10:44:15', NULL);
-INSERT INTO "tahfidz_setoran" ("id", "siswa_id", "guru_id", "tanggal", "surah", "ayat_mulai", "ayat_selesai", "jumlah_ayat", "status", "nilai", "catatan_guru", "created_at", "updated_at", "tanggal_berikutnya") VALUES (10, 4, 1, '2026-03-25', 'An-Naba''', 1, 14, 15, 'murojaah', 95, NULL, '2026-07-21 10:44:15', '2026-07-21 10:44:15', NULL);
-INSERT INTO "tahfidz_setoran" ("id", "siswa_id", "guru_id", "tanggal", "surah", "ayat_mulai", "ayat_selesai", "jumlah_ayat", "status", "nilai", "catatan_guru", "created_at", "updated_at", "tanggal_berikutnya") VALUES (11, 4, 8, '2026-03-14', 'An-Naba''', 1, 12, 11, 'baru', 90, NULL, '2026-07-21 10:44:15', '2026-07-21 10:44:15', NULL);
-INSERT INTO "tahfidz_setoran" ("id", "siswa_id", "guru_id", "tanggal", "surah", "ayat_mulai", "ayat_selesai", "jumlah_ayat", "status", "nilai", "catatan_guru", "created_at", "updated_at", "tanggal_berikutnya") VALUES (12, 4, 9, '2026-03-18', 'An-Naba''', 1, 15, 7, 'murojaah', 83, NULL, '2026-07-21 10:44:15', '2026-07-21 10:44:15', NULL);
-INSERT INTO "tahfidz_setoran" ("id", "siswa_id", "guru_id", "tanggal", "surah", "ayat_mulai", "ayat_selesai", "jumlah_ayat", "status", "nilai", "catatan_guru", "created_at", "updated_at", "tanggal_berikutnya") VALUES (13, 5, 6, '2026-03-14', 'An-Nazi''at', 1, 5, 8, 'murojaah', 81, NULL, '2026-07-21 10:44:15', '2026-07-21 10:44:15', NULL);
-INSERT INTO "tahfidz_setoran" ("id", "siswa_id", "guru_id", "tanggal", "surah", "ayat_mulai", "ayat_selesai", "jumlah_ayat", "status", "nilai", "catatan_guru", "created_at", "updated_at", "tanggal_berikutnya") VALUES (14, 5, 10, '2026-03-04', 'An-Naba''', 1, 7, 13, 'murojaah', 97, NULL, '2026-07-21 10:44:15', '2026-07-21 10:44:15', NULL);
-INSERT INTO "tahfidz_setoran" ("id", "siswa_id", "guru_id", "tanggal", "surah", "ayat_mulai", "ayat_selesai", "jumlah_ayat", "status", "nilai", "catatan_guru", "created_at", "updated_at", "tanggal_berikutnya") VALUES (15, 5, 10, '2026-03-04', 'Abasa', 1, 9, 11, 'baru', 96, NULL, '2026-07-21 10:44:15', '2026-07-21 10:44:15', NULL);
-INSERT INTO "tahfidz_setoran" ("id", "siswa_id", "guru_id", "tanggal", "surah", "ayat_mulai", "ayat_selesai", "jumlah_ayat", "status", "nilai", "catatan_guru", "created_at", "updated_at", "tanggal_berikutnya") VALUES (16, 6, 1, '2026-03-05', 'Abasa', 1, 12, 10, 'baru', 94, NULL, '2026-07-21 10:44:15', '2026-07-21 10:44:15', NULL);
-INSERT INTO "tahfidz_setoran" ("id", "siswa_id", "guru_id", "tanggal", "surah", "ayat_mulai", "ayat_selesai", "jumlah_ayat", "status", "nilai", "catatan_guru", "created_at", "updated_at", "tanggal_berikutnya") VALUES (17, 6, 6, '2026-03-22', 'Abasa', 1, 15, 11, 'murojaah', 94, NULL, '2026-07-21 10:44:15', '2026-07-21 10:44:15', NULL);
-INSERT INTO "tahfidz_setoran" ("id", "siswa_id", "guru_id", "tanggal", "surah", "ayat_mulai", "ayat_selesai", "jumlah_ayat", "status", "nilai", "catatan_guru", "created_at", "updated_at", "tanggal_berikutnya") VALUES (18, 6, 8, '2026-03-17', 'An-Nazi''at', 1, 15, 8, 'baru', 85, NULL, '2026-07-21 10:44:15', '2026-07-21 10:44:15', NULL);
-INSERT INTO "tahfidz_setoran" ("id", "siswa_id", "guru_id", "tanggal", "surah", "ayat_mulai", "ayat_selesai", "jumlah_ayat", "status", "nilai", "catatan_guru", "created_at", "updated_at", "tanggal_berikutnya") VALUES (19, 7, 11, '2026-03-15', 'An-Naba''', 1, 6, 13, 'baru', 81, NULL, '2026-07-21 10:44:15', '2026-07-21 10:44:15', NULL);
-INSERT INTO "tahfidz_setoran" ("id", "siswa_id", "guru_id", "tanggal", "surah", "ayat_mulai", "ayat_selesai", "jumlah_ayat", "status", "nilai", "catatan_guru", "created_at", "updated_at", "tanggal_berikutnya") VALUES (20, 7, 1, '2026-03-26', 'Abasa', 1, 8, 9, 'baru', 85, NULL, '2026-07-21 10:44:15', '2026-07-21 10:44:15', NULL);
-INSERT INTO "tahfidz_setoran" ("id", "siswa_id", "guru_id", "tanggal", "surah", "ayat_mulai", "ayat_selesai", "jumlah_ayat", "status", "nilai", "catatan_guru", "created_at", "updated_at", "tanggal_berikutnya") VALUES (21, 7, 4, '2026-03-27', 'An-Nazi''at', 1, 8, 10, 'baru', 80, NULL, '2026-07-21 10:44:15', '2026-07-21 10:44:15', NULL);
-INSERT INTO "tahfidz_setoran" ("id", "siswa_id", "guru_id", "tanggal", "surah", "ayat_mulai", "ayat_selesai", "jumlah_ayat", "status", "nilai", "catatan_guru", "created_at", "updated_at", "tanggal_berikutnya") VALUES (22, 8, 1, '2026-03-20', 'An-Nazi''at', 1, 5, 7, 'murojaah', 100, NULL, '2026-07-21 10:44:15', '2026-07-21 10:44:15', NULL);
-INSERT INTO "tahfidz_setoran" ("id", "siswa_id", "guru_id", "tanggal", "surah", "ayat_mulai", "ayat_selesai", "jumlah_ayat", "status", "nilai", "catatan_guru", "created_at", "updated_at", "tanggal_berikutnya") VALUES (23, 8, 9, '2026-03-23', 'Abasa', 1, 10, 9, 'murojaah', 91, NULL, '2026-07-21 10:44:15', '2026-07-21 10:44:15', NULL);
-INSERT INTO "tahfidz_setoran" ("id", "siswa_id", "guru_id", "tanggal", "surah", "ayat_mulai", "ayat_selesai", "jumlah_ayat", "status", "nilai", "catatan_guru", "created_at", "updated_at", "tanggal_berikutnya") VALUES (24, 8, 9, '2026-03-19', 'Abasa', 1, 9, 12, 'baru', 83, NULL, '2026-07-21 10:44:15', '2026-07-21 10:44:15', NULL);
-INSERT INTO "tahfidz_setoran" ("id", "siswa_id", "guru_id", "tanggal", "surah", "ayat_mulai", "ayat_selesai", "jumlah_ayat", "status", "nilai", "catatan_guru", "created_at", "updated_at", "tanggal_berikutnya") VALUES (25, 9, 8, '2026-03-09', 'Abasa', 1, 6, 7, 'murojaah', 97, NULL, '2026-07-21 10:44:15', '2026-07-21 10:44:15', NULL);
-INSERT INTO "tahfidz_setoran" ("id", "siswa_id", "guru_id", "tanggal", "surah", "ayat_mulai", "ayat_selesai", "jumlah_ayat", "status", "nilai", "catatan_guru", "created_at", "updated_at", "tanggal_berikutnya") VALUES (26, 9, 4, '2026-03-21', 'An-Nazi''at', 1, 7, 14, 'murojaah', 96, NULL, '2026-07-21 10:44:15', '2026-07-21 10:44:15', NULL);
-INSERT INTO "tahfidz_setoran" ("id", "siswa_id", "guru_id", "tanggal", "surah", "ayat_mulai", "ayat_selesai", "jumlah_ayat", "status", "nilai", "catatan_guru", "created_at", "updated_at", "tanggal_berikutnya") VALUES (27, 9, 10, '2026-03-11', 'An-Naba''', 1, 10, 5, 'baru', 82, NULL, '2026-07-21 10:44:15', '2026-07-21 10:44:15', NULL);
-INSERT INTO "tahfidz_setoran" ("id", "siswa_id", "guru_id", "tanggal", "surah", "ayat_mulai", "ayat_selesai", "jumlah_ayat", "status", "nilai", "catatan_guru", "created_at", "updated_at", "tanggal_berikutnya") VALUES (28, 10, 10, '2026-03-09', 'An-Naba''', 1, 6, 5, 'baru', 84, NULL, '2026-07-21 10:44:15', '2026-07-21 10:44:15', NULL);
-INSERT INTO "tahfidz_setoran" ("id", "siswa_id", "guru_id", "tanggal", "surah", "ayat_mulai", "ayat_selesai", "jumlah_ayat", "status", "nilai", "catatan_guru", "created_at", "updated_at", "tanggal_berikutnya") VALUES (29, 10, 2, '2026-03-15', 'An-Nazi''at', 1, 7, 8, 'baru', 85, NULL, '2026-07-21 10:44:15', '2026-07-21 10:44:15', NULL);
-INSERT INTO "tahfidz_setoran" ("id", "siswa_id", "guru_id", "tanggal", "surah", "ayat_mulai", "ayat_selesai", "jumlah_ayat", "status", "nilai", "catatan_guru", "created_at", "updated_at", "tanggal_berikutnya") VALUES (30, 10, 9, '2026-03-07', 'An-Naba''', 1, 15, 11, 'murojaah', 97, NULL, '2026-07-21 10:44:15', '2026-07-21 10:44:15', NULL);
-
-DROP TABLE IF EXISTS "tugas";
-CREATE TABLE "tugas" ("id" integer primary key autoincrement not null, "judul" varchar not null, "deskripsi" text, "mapel_id" integer not null, "kelas_id" integer not null, "guru_id" integer not null, "tipe" varchar check ("tipe" in ('tugas', 'ulangan')) not null default 'tugas', "tanggal_deadline" date, "file_path" varchar, "created_at" datetime, "updated_at" datetime, foreign key("mapel_id") references "mapel"("id") on delete cascade, foreign key("kelas_id") references "kelas"("id") on delete cascade, foreign key("guru_id") references "guru"("id") on delete cascade);
-INSERT INTO "tugas" ("id", "judul", "deskripsi", "mapel_id", "kelas_id", "guru_id", "tipe", "tanggal_deadline", "file_path", "created_at", "updated_at") VALUES (1, 'Tugas Praktek Sholat', NULL, 40, 1, 2, 'tugas', '2026-04-02', NULL, '2026-07-21 10:44:13', '2026-07-21 10:44:13');
-INSERT INTO "tugas" ("id", "judul", "deskripsi", "mapel_id", "kelas_id", "guru_id", "tipe", "tanggal_deadline", "file_path", "created_at", "updated_at") VALUES (2, 'PR Persamaan Linear', NULL, 40, 4, 9, 'tugas', '2026-04-05', NULL, '2026-07-21 10:44:13', '2026-07-21 10:44:13');
-INSERT INTO "tugas" ("id", "judul", "deskripsi", "mapel_id", "kelas_id", "guru_id", "tipe", "tanggal_deadline", "file_path", "created_at", "updated_at") VALUES (3, 'Laporan Pengamatan', NULL, 10, 5, 1, 'tugas', '2026-04-10', NULL, '2026-07-21 10:44:13', '2026-07-21 10:44:13');
-INSERT INTO "tugas" ("id", "judul", "deskripsi", "mapel_id", "kelas_id", "guru_id", "tipe", "tanggal_deadline", "file_path", "created_at", "updated_at") VALUES (4, 'Esai Liburan', NULL, 13, 4, 10, 'tugas', '2026-04-15', NULL, '2026-07-21 10:44:13', '2026-07-21 10:44:13');
-INSERT INTO "tugas" ("id", "judul", "deskripsi", "mapel_id", "kelas_id", "guru_id", "tipe", "tanggal_deadline", "file_path", "created_at", "updated_at") VALUES (5, 'Vocabulary Quiz', NULL, 13, 3, 4, 'tugas', '2026-04-12', NULL, '2026-07-21 10:44:13', '2026-07-21 10:44:13');
-INSERT INTO "tugas" ("id", "judul", "deskripsi", "mapel_id", "kelas_id", "guru_id", "tipe", "tanggal_deadline", "file_path", "created_at", "updated_at") VALUES (6, 'Ulangan Harian Bab 4', NULL, 14, 1, 10, 'ulangan', '2026-04-08', NULL, '2026-07-21 10:44:13', '2026-07-21 10:44:13');
-INSERT INTO "tugas" ("id", "judul", "deskripsi", "mapel_id", "kelas_id", "guru_id", "tipe", "tanggal_deadline", "file_path", "created_at", "updated_at") VALUES (7, 'UTS Genap', NULL, 1, 5, 10, 'ulangan', '2026-04-20', NULL, '2026-07-21 10:44:13', '2026-07-21 10:44:13');
-INSERT INTO "tugas" ("id", "judul", "deskripsi", "mapel_id", "kelas_id", "guru_id", "tipe", "tanggal_deadline", "file_path", "created_at", "updated_at") VALUES (8, 'Ulangan Harian Bab 3', NULL, 39, 3, 9, 'ulangan', '2026-03-15', NULL, '2026-07-21 10:44:13', '2026-07-21 10:44:13');
-
-DROP TABLE IF EXISTS "users";
-CREATE TABLE "users" ("id" integer primary key autoincrement not null, "name" varchar not null, "email" varchar not null, "email_verified_at" datetime, "password" varchar not null, "remember_token" varchar, "created_at" datetime, "updated_at" datetime, "role" varchar check ("role" in ('siswa_sd', 'siswa_smp', 'guru', 'orang_tua', 'admin', 'kepala_sekolah')) not null default 'siswa_smp');
-INSERT INTO "users" ("id", "name", "email", "email_verified_at", "password", "remember_token", "created_at", "updated_at", "role") VALUES (1, 'Sahrial Pulungan, M.Pd', 'sahrialpulunganmpd@alazharjayaindonesia.sch.id', NULL, '$2y$12$msVHuxo1yT0VZEZ2vN89VO5q5PBmaiFryL4VpCt/ydjsnlq9FAZZ6', NULL, '2026-07-21 10:43:53', '2026-07-21 10:43:53', 'guru');
-INSERT INTO "users" ("id", "name", "email", "email_verified_at", "password", "remember_token", "created_at", "updated_at", "role") VALUES (2, 'Riva Riana, S.Pd', 'rivarianaspd@alazharjayaindonesia.sch.id', NULL, '$2y$12$qOyg0mQPUxyxpgRbGqXybOlJdy60fdhtQBWSdfGzXvft5jvyTcjZS', NULL, '2026-07-21 10:43:53', '2026-07-21 10:43:53', 'guru');
-INSERT INTO "users" ("id", "name", "email", "email_verified_at", "password", "remember_token", "created_at", "updated_at", "role") VALUES (3, 'Adinda Oktavhiani S.Pd', 'adindaoktavhianispd@alazharjayaindonesia.sch.id', NULL, '$2y$12$6I/vpRqwDn65PKJSUlfPaOvlB2hLOsd5rDXsLnirYF6psAUtEdV3G', NULL, '2026-07-21 10:43:53', '2026-07-21 10:43:53', 'guru');
-INSERT INTO "users" ("id", "name", "email", "email_verified_at", "password", "remember_token", "created_at", "updated_at", "role") VALUES (4, 'Intan Kusuma Dera, S.Ag', 'intankusumaderasag@alazharjayaindonesia.sch.id', NULL, '$2y$12$5IObrVMfyQboVu/L2zm.VOypu1N8DhU1yYRQZG97EgWSRQjr33WKm', NULL, '2026-07-21 10:43:53', '2026-07-21 10:43:53', 'guru');
-INSERT INTO "users" ("id", "name", "email", "email_verified_at", "password", "remember_token", "created_at", "updated_at", "role") VALUES (5, 'Vika Wati Dzulciha, S.Ag', 'vikawatidzulcihasag@alazharjayaindonesia.sch.id', NULL, '$2y$12$gLHTwztea7tmrlCQm/.u3OVmSD8JwsOZQUl1RlrNpgu3j2pys7i9u', NULL, '2026-07-21 10:43:54', '2026-07-21 10:43:54', 'guru');
-INSERT INTO "users" ("id", "name", "email", "email_verified_at", "password", "remember_token", "created_at", "updated_at", "role") VALUES (6, 'Irnika Widiyan Dini, S.Li', 'irnikawidiyandinisli@alazharjayaindonesia.sch.id', NULL, '$2y$12$EkifDACNMJFt1N7EPf.io.F.kbtmYDJH.OHh9BIIbYrxfTBlUJg.a', NULL, '2026-07-21 10:43:54', '2026-07-21 10:43:54', 'guru');
-INSERT INTO "users" ("id", "name", "email", "email_verified_at", "password", "remember_token", "created_at", "updated_at", "role") VALUES (7, 'Ajeng Putyri Aryantika, S.Pd', 'ajengputyriaryantikaspd@alazharjayaindonesia.sch.id', NULL, '$2y$12$ODusmX7CpQ1fgVN0wHlV/eMprxb6ED.lLthuTa0fnQWs2mfo7CpjW', NULL, '2026-07-21 10:43:54', '2026-07-21 10:43:54', 'guru');
-INSERT INTO "users" ("id", "name", "email", "email_verified_at", "password", "remember_token", "created_at", "updated_at", "role") VALUES (8, 'Nurhayati, S.Ag', 'nurhayatisag@alazharjayaindonesia.sch.id', NULL, '$2y$12$oTQe3lnhrNsKqZA9IAbop.ou/kJonJkdIy3LZlovNT5I3VRzXgWbW', NULL, '2026-07-21 10:43:54', '2026-07-21 10:43:54', 'guru');
-INSERT INTO "users" ("id", "name", "email", "email_verified_at", "password", "remember_token", "created_at", "updated_at", "role") VALUES (9, 'Sri Wanti Maulani, S.Pd', 'sriwantimaulanispd@alazharjayaindonesia.sch.id', NULL, '$2y$12$kh1eWd/1nB68Z8nMMlWax.PbSS8.fSo//c4PutLOSn/T4VOGvhm.O', NULL, '2026-07-21 10:43:55', '2026-07-21 10:43:55', 'guru');
-INSERT INTO "users" ("id", "name", "email", "email_verified_at", "password", "remember_token", "created_at", "updated_at", "role") VALUES (10, 'Khairunisa', 'khairunisa@alazharjayaindonesia.sch.id', NULL, '$2y$12$9VY/EVcCAa4r7oqxKS06jOgY7sCWyz.ME9lyTip.w16DheuRb78sW', NULL, '2026-07-21 10:43:55', '2026-07-21 10:43:55', 'guru');
-INSERT INTO "users" ("id", "name", "email", "email_verified_at", "password", "remember_token", "created_at", "updated_at", "role") VALUES (11, 'Ai Sunariah, S.Pd', 'aisunariahspd@alazharjayaindonesia.sch.id', NULL, '$2y$12$KQ5dnoP5QH4xI/4pPnRFUueRLljhc6FJoZUhcYhHoQ7vmrA/ZydXK', NULL, '2026-07-21 10:43:55', '2026-07-21 10:43:55', 'guru');
-INSERT INTO "users" ("id", "name", "email", "email_verified_at", "password", "remember_token", "created_at", "updated_at", "role") VALUES (12, 'Abdul Latif', 'abdul.latif@alazharjayaindonesia.sch.id', NULL, '$2y$12$U4YZxNCvA2typpTY6bCOE.KfZbSHaRc0CIFs9PJDAFZKxeO3kgFpW', NULL, '2026-07-21 10:43:55', '2026-07-21 10:43:55', 'siswa_smp');
-INSERT INTO "users" ("id", "name", "email", "email_verified_at", "password", "remember_token", "created_at", "updated_at", "role") VALUES (13, 'Abid Abyan Tsany Solihansyah', 'abid.abyan.tsany.solihansyah@alazharjayaindonesia.sch.id', NULL, '$2y$12$U8K.E.5vq32tLpOxZTnhbOTuzjHE8EXYWSbqlH0YWgG.y7LevC93O', NULL, '2026-07-21 10:43:56', '2026-07-21 10:43:56', 'siswa_smp');
-INSERT INTO "users" ("id", "name", "email", "email_verified_at", "password", "remember_token", "created_at", "updated_at", "role") VALUES (14, 'Aldeen Hadwan Shirazi', 'aldeen.hadwan.shirazi@alazharjayaindonesia.sch.id', NULL, '$2y$12$Ssf7ajJY6u3ZioHeuD4EAeywbhbKzQLSJweYu6niKK8f5RV73jHkK', NULL, '2026-07-21 10:43:56', '2026-07-21 10:43:56', 'siswa_smp');
-INSERT INTO "users" ("id", "name", "email", "email_verified_at", "password", "remember_token", "created_at", "updated_at", "role") VALUES (15, 'Chaidar Rafisqy Hermawan', 'chaidar.rafisqy.hermawan@alazharjayaindonesia.sch.id', NULL, '$2y$12$8iMb8p4qsdIMqojuVdfzGOVd.8kFyDbUsLxu0zGrKwmVJpcv6KurW', NULL, '2026-07-21 10:43:56', '2026-07-21 10:43:56', 'siswa_smp');
-INSERT INTO "users" ("id", "name", "email", "email_verified_at", "password", "remember_token", "created_at", "updated_at", "role") VALUES (16, 'Daffa Zaidan Pratama', 'daffa.zaidan.pratama@alazharjayaindonesia.sch.id', NULL, '$2y$12$fcwv6.iGKfPkuUqDkU5BOO1nOMUbJpOnbwL2tsYoTk1RB4gHktpFm', NULL, '2026-07-21 10:43:56', '2026-07-21 10:43:56', 'siswa_smp');
-INSERT INTO "users" ("id", "name", "email", "email_verified_at", "password", "remember_token", "created_at", "updated_at", "role") VALUES (17, 'Fauzi Abdu Rohman', 'fauzi.abdu.rohman@alazharjayaindonesia.sch.id', NULL, '$2y$12$LArtIKweXmmv3uUdHWVmbOEXgRmrBPZNE477CT/eCQ8dTdgu9RYfC', NULL, '2026-07-21 10:43:57', '2026-07-21 10:43:57', 'siswa_smp');
-INSERT INTO "users" ("id", "name", "email", "email_verified_at", "password", "remember_token", "created_at", "updated_at", "role") VALUES (18, 'Galang Hernandes', 'galang.hernandes@alazharjayaindonesia.sch.id', NULL, '$2y$12$gm0g/pv767M4k4AoOSrekudi0Qe.u.5aS9h0fztL95YJzWpx70pu2', NULL, '2026-07-21 10:43:57', '2026-07-21 10:43:57', 'siswa_smp');
-INSERT INTO "users" ("id", "name", "email", "email_verified_at", "password", "remember_token", "created_at", "updated_at", "role") VALUES (19, 'Hamzah Irfan Fadillah', 'hamzah.irfan.fadillah@alazharjayaindonesia.sch.id', NULL, '$2y$12$6r6jRuF94MbWQ2c3uo1n3uQvelokGEN5bgMRWvW.e2hWnbHvAiQs2', NULL, '2026-07-21 10:43:57', '2026-07-21 10:43:57', 'siswa_smp');
-INSERT INTO "users" ("id", "name", "email", "email_verified_at", "password", "remember_token", "created_at", "updated_at", "role") VALUES (20, 'Kelvin Adel Pratama', 'kelvin.adel.pratama@alazharjayaindonesia.sch.id', NULL, '$2y$12$MoVKGEYb6qr5JO4n8nkTf.WtdryMH8W7kUPnvF6ymHQXHG7/PHU2y', NULL, '2026-07-21 10:43:57', '2026-07-21 10:43:57', 'siswa_smp');
-INSERT INTO "users" ("id", "name", "email", "email_verified_at", "password", "remember_token", "created_at", "updated_at", "role") VALUES (21, 'Maherdes Attaufiq Riziqlillah', 'maherdes.attaufiq.riziqlillah@alazharjayaindonesia.sch.id', NULL, '$2y$12$CrYxILTlI1xandz3EaS17OTm6WwEdXd273ZAjVDgesTw49enUZdm6', NULL, '2026-07-21 10:43:57', '2026-07-21 10:43:57', 'siswa_smp');
-INSERT INTO "users" ("id", "name", "email", "email_verified_at", "password", "remember_token", "created_at", "updated_at", "role") VALUES (22, 'Muhammad Albyan', 'muhammad.albyan@alazharjayaindonesia.sch.id', NULL, '$2y$12$PWDRkJDCFK11mVNSDJ543u.F5J14tC2CziUEJ8wVtKWxWRVKC7sze', NULL, '2026-07-21 10:43:58', '2026-07-21 10:43:58', 'siswa_smp');
-INSERT INTO "users" ("id", "name", "email", "email_verified_at", "password", "remember_token", "created_at", "updated_at", "role") VALUES (23, 'Muhammad Alhafidz', 'muhammad.alhafidz@alazharjayaindonesia.sch.id', NULL, '$2y$12$q3HSvNQt1dGcyNeB4rVKoOtrzSj3iHBJK.LfqwlnguWRdwDawR53.', NULL, '2026-07-21 10:43:58', '2026-07-21 10:43:58', 'siswa_smp');
-INSERT INTO "users" ("id", "name", "email", "email_verified_at", "password", "remember_token", "created_at", "updated_at", "role") VALUES (24, 'Muhammad Aslam Zayyan', 'muhammad.aslam.zayyan@alazharjayaindonesia.sch.id', NULL, '$2y$12$EV4ytJbmGMHLX0lyy2rix.uuPOqhoQwbhXuT2BfsJQ7UxkswUZPde', NULL, '2026-07-21 10:43:58', '2026-07-21 10:43:58', 'siswa_smp');
-INSERT INTO "users" ("id", "name", "email", "email_verified_at", "password", "remember_token", "created_at", "updated_at", "role") VALUES (25, 'Rizky Maulana As Shidiq', 'rizky.maulana.as.shidiq@alazharjayaindonesia.sch.id', NULL, '$2y$12$pJJ/GHgebT86Dzvhd01XAefs.rgZ7nAC0WaIC217jI0ZQ7imWSKBK', NULL, '2026-07-21 10:43:58', '2026-07-21 10:43:58', 'siswa_smp');
-INSERT INTO "users" ("id", "name", "email", "email_verified_at", "password", "remember_token", "created_at", "updated_at", "role") VALUES (26, 'Muhammad Azzam Nufail', 'muhammad.azzam.nufail@alazharjayaindonesia.sch.id', NULL, '$2y$12$wQbtj/baBa4rPD8BmGEjqejiKV.kBE57.r4u8xJ1OJcRZFuIIbdfm', NULL, '2026-07-21 10:43:59', '2026-07-21 10:43:59', 'siswa_smp');
-INSERT INTO "users" ("id", "name", "email", "email_verified_at", "password", "remember_token", "created_at", "updated_at", "role") VALUES (27, 'Muhammad Daffa Al Ghifari', 'muhammad.daffa.al.ghifari@alazharjayaindonesia.sch.id', NULL, '$2y$12$SZgml9.110AWicY/6G91Qe8zWf67masPu9IxyDze.uXdF2AZXmTQm', NULL, '2026-07-21 10:43:59', '2026-07-21 10:43:59', 'siswa_smp');
-INSERT INTO "users" ("id", "name", "email", "email_verified_at", "password", "remember_token", "created_at", "updated_at", "role") VALUES (28, 'Muhammad Eldafi Satya Irawan', 'muhammad.eldafi.satya.irawan@alazharjayaindonesia.sch.id', NULL, '$2y$12$K1y/OtFi9i3YCtJy6WK2peVjBs4w77iW9m2YOH4nD3drwk1zyiCmC', NULL, '2026-07-21 10:43:59', '2026-07-21 10:43:59', 'siswa_smp');
-INSERT INTO "users" ("id", "name", "email", "email_verified_at", "password", "remember_token", "created_at", "updated_at", "role") VALUES (29, 'Muhammad Falah Pratama Mulya', 'muhammad.falah.pratama.mulya@alazharjayaindonesia.sch.id', NULL, '$2y$12$ngu6xHI0bPb1VRuRGGnQm.d12H1FjDJc1DzSoa1.JywpzSNZlSfnG', NULL, '2026-07-21 10:43:59', '2026-07-21 10:43:59', 'siswa_smp');
-INSERT INTO "users" ("id", "name", "email", "email_verified_at", "password", "remember_token", "created_at", "updated_at", "role") VALUES (30, 'Muhammad Maher', 'muhammad.maher@alazharjayaindonesia.sch.id', NULL, '$2y$12$nIiNtVElZhBA8jVsWeD8gOsNRHCNVU.dpK2wcOeCX3.4NTWp2.otS', NULL, '2026-07-21 10:44:00', '2026-07-21 10:44:00', 'siswa_smp');
-INSERT INTO "users" ("id", "name", "email", "email_verified_at", "password", "remember_token", "created_at", "updated_at", "role") VALUES (31, 'Muhammad Quincy Satyamulya', 'muhammad.quincy.satyamulya@alazharjayaindonesia.sch.id', NULL, '$2y$12$zV.dC2EIkjDTYGPq9y44dOIUOZPY7OFcxgRZuIA4/qaCHoqWN/8dK', NULL, '2026-07-21 10:44:00', '2026-07-21 10:44:00', 'siswa_smp');
-INSERT INTO "users" ("id", "name", "email", "email_verified_at", "password", "remember_token", "created_at", "updated_at", "role") VALUES (32, 'Muhammad Rakha Solihansyah', 'muhammad.rakha.solihansyah@alazharjayaindonesia.sch.id', NULL, '$2y$12$wiYQiBHc5q2AVVURHkxAYujgmKFKWkrMM05A34sgN2GZGIuzTfh22', NULL, '2026-07-21 10:44:00', '2026-07-21 10:44:00', 'siswa_smp');
-INSERT INTO "users" ("id", "name", "email", "email_verified_at", "password", "remember_token", "created_at", "updated_at", "role") VALUES (33, 'Muhammad Wafi Alkiram', 'muhammad.wafi.alkiram@alazharjayaindonesia.sch.id', NULL, '$2y$12$eTVRCSP0rhPs98t3AaRAzOj99v9Kw.FRROyyJEFu0f03M1zRecyee', NULL, '2026-07-21 10:44:00', '2026-07-21 10:44:00', 'siswa_smp');
-INSERT INTO "users" ("id", "name", "email", "email_verified_at", "password", "remember_token", "created_at", "updated_at", "role") VALUES (34, 'Naufal Djaky Ardani', 'naufal.djaky.ardani@alazharjayaindonesia.sch.id', NULL, '$2y$12$9yC4hFSdGNklNolA2u3rdOvI.3UVk5IY9l78PwNGMQ9Ii0.QK14Em', NULL, '2026-07-21 10:44:01', '2026-07-21 10:44:01', 'siswa_smp');
-INSERT INTO "users" ("id", "name", "email", "email_verified_at", "password", "remember_token", "created_at", "updated_at", "role") VALUES (35, 'Pandu Bagus Damar Wiyono', 'pandu.bagus.damar.wiyono@alazharjayaindonesia.sch.id', NULL, '$2y$12$993OPvAtpcX6DHctmP4.iedn1m641.9a8n2/DpRtAi.TGH.tKiTRm', NULL, '2026-07-21 10:44:01', '2026-07-21 10:44:01', 'siswa_smp');
-INSERT INTO "users" ("id", "name", "email", "email_verified_at", "password", "remember_token", "created_at", "updated_at", "role") VALUES (36, 'Tsabit Wafi Musyaffa', 'tsabit.wafi.musyaffa@alazharjayaindonesia.sch.id', NULL, '$2y$12$DS4ZZD0aH7zs4ZtPuMAL4.ev/0YZF.Q2DKC6nk9tKv7fGnvukWDuy', NULL, '2026-07-21 10:44:01', '2026-07-21 10:44:01', 'siswa_smp');
-INSERT INTO "users" ("id", "name", "email", "email_verified_at", "password", "remember_token", "created_at", "updated_at", "role") VALUES (37, 'Zahran Farid Firdaus', 'zahran.farid.firdaus@alazharjayaindonesia.sch.id', NULL, '$2y$12$M2UjmTEVve9dqBZaWfbn7O8ph3XAgk9hVKinaJXmAQ6m5389ZGXZ6', NULL, '2026-07-21 10:44:01', '2026-07-21 10:44:01', 'siswa_smp');
-INSERT INTO "users" ("id", "name", "email", "email_verified_at", "password", "remember_token", "created_at", "updated_at", "role") VALUES (38, 'Zein Maulana Muaffin', 'zein.maulana.muaffin@alazharjayaindonesia.sch.id', NULL, '$2y$12$jatdfRvGlkLVPz2XibRbAOWXQWOAFdvyI9IhVTBR5fqskf.fEbHCu', NULL, '2026-07-21 10:44:02', '2026-07-21 10:44:02', 'siswa_smp');
-INSERT INTO "users" ("id", "name", "email", "email_verified_at", "password", "remember_token", "created_at", "updated_at", "role") VALUES (39, 'Alviandra Chesta Radityatama', 'alviandra.chesta.radityatama@alazharjayaindonesia.sch.id', NULL, '$2y$12$NjixcdIxCYX4Sm8nPZEUU.7iDPgLbyPp7x1WMYiRpU0mIVf0HWXfO', NULL, '2026-07-21 10:44:02', '2026-07-21 10:44:02', 'siswa_smp');
-INSERT INTO "users" ("id", "name", "email", "email_verified_at", "password", "remember_token", "created_at", "updated_at", "role") VALUES (40, 'Argia Raya Adz Dzikra', 'argia.raya.adz.dzikra@alazharjayaindonesia.sch.id', NULL, '$2y$12$l.x82REhbh.CnbTWDlz8KO0YHCpHAPNZ4uXOf5MugTJP69sK4L9Ha', NULL, '2026-07-21 10:44:02', '2026-07-21 10:44:02', 'siswa_smp');
-INSERT INTO "users" ("id", "name", "email", "email_verified_at", "password", "remember_token", "created_at", "updated_at", "role") VALUES (41, 'Muhammad Hafidz Alfahrezi', 'muhammad.hafidz.alfahrezi@alazharjayaindonesia.sch.id', NULL, '$2y$12$EXpFBhiIMiiI/kQZzjIUGOs7Cq9c9NAWZhD3azxVnuSwRpJtvYI9.', NULL, '2026-07-21 10:44:02', '2026-07-21 10:44:02', 'siswa_smp');
-INSERT INTO "users" ("id", "name", "email", "email_verified_at", "password", "remember_token", "created_at", "updated_at", "role") VALUES (42, 'Muhammad Al Farizy Setyanto', 'muhammad.al.farizy.setyanto@alazharjayaindonesia.sch.id', NULL, '$2y$12$S7PU3fMluAUaqvYYEe3.seeYGbawXcxD31hEkFSzGjgCI7cI7PRIW', NULL, '2026-07-21 10:44:02', '2026-07-21 10:44:02', 'siswa_smp');
-INSERT INTO "users" ("id", "name", "email", "email_verified_at", "password", "remember_token", "created_at", "updated_at", "role") VALUES (43, 'Muhammad Al Fatih', 'muhammad.al.fatih@alazharjayaindonesia.sch.id', NULL, '$2y$12$8PQyKdULcyMoMT2OWdBUQO83ITep13PrMNtdrUNYK/ZZJUfduWjB.', NULL, '2026-07-21 10:44:03', '2026-07-21 10:44:03', 'siswa_smp');
-INSERT INTO "users" ("id", "name", "email", "email_verified_at", "password", "remember_token", "created_at", "updated_at", "role") VALUES (44, 'Muhammad Fadlan Adelmar', 'muhammad.fadlan.adelmar@alazharjayaindonesia.sch.id', NULL, '$2y$12$hUJjz8rtdxlfnGSmRXDtJeW8ffjmeoh7CS4psFh7.OJhZFWm262/2', NULL, '2026-07-21 10:44:03', '2026-07-21 10:44:03', 'siswa_smp');
-INSERT INTO "users" ("id", "name", "email", "email_verified_at", "password", "remember_token", "created_at", "updated_at", "role") VALUES (45, 'Reval Rama Sulistiyo', 'reval.rama.sulistiyo@alazharjayaindonesia.sch.id', NULL, '$2y$12$46S13P9.2XIKE9DjkUEPxu7SQnKnXhGToGzSDeNrk4QxyAAy6xPmm', NULL, '2026-07-21 10:44:03', '2026-07-21 10:44:03', 'siswa_smp');
-INSERT INTO "users" ("id", "name", "email", "email_verified_at", "password", "remember_token", "created_at", "updated_at", "role") VALUES (46, 'Aila Zahwa Aqilah', 'aila.zahwa.aqilah@alazharjayaindonesia.sch.id', NULL, '$2y$12$ZV.JlPyk85n61x0DOq7bdutN1/PK7j3RpolL4bU4w3z8ZX/V229Aq', NULL, '2026-07-21 10:44:03', '2026-07-21 10:44:03', 'siswa_smp');
-INSERT INTO "users" ("id", "name", "email", "email_verified_at", "password", "remember_token", "created_at", "updated_at", "role") VALUES (47, 'Aisyah Rahma Haniya', 'aisyah.rahma.haniya@alazharjayaindonesia.sch.id', NULL, '$2y$12$Dpa.9pVJqrbt9DgAfHXzeeeUphlhnJfSv648M2QpeT43TNXRyustG', NULL, '2026-07-21 10:44:04', '2026-07-21 10:44:04', 'siswa_smp');
-INSERT INTO "users" ("id", "name", "email", "email_verified_at", "password", "remember_token", "created_at", "updated_at", "role") VALUES (48, 'Anindita Valencia Aurora', 'anindita.valencia.aurora@alazharjayaindonesia.sch.id', NULL, '$2y$12$C8DpAuM59Vj97xIJpZfkp.gK76ylkFqwJWPU1lOX2K.VRmuXjSRFe', NULL, '2026-07-21 10:44:04', '2026-07-21 10:44:04', 'siswa_smp');
-INSERT INTO "users" ("id", "name", "email", "email_verified_at", "password", "remember_token", "created_at", "updated_at", "role") VALUES (49, 'Atsilah Azka Ramadhani', 'atsilah.azka.ramadhani@alazharjayaindonesia.sch.id', NULL, '$2y$12$mljcpNMLm5QWsjRdMhhbR.jbJgwzqks5kyqONURX.20A5XmrQfNNO', NULL, '2026-07-21 10:44:04', '2026-07-21 10:44:04', 'siswa_smp');
-INSERT INTO "users" ("id", "name", "email", "email_verified_at", "password", "remember_token", "created_at", "updated_at", "role") VALUES (50, 'Dara Medina Putri', 'dara.medina.putri@alazharjayaindonesia.sch.id', NULL, '$2y$12$kMm/R2yBrSp8fgA1iACNW.MtFGouu0jgsCddZ.IG6enz2qNnNrwc.', NULL, '2026-07-21 10:44:04', '2026-07-21 10:44:04', 'siswa_smp');
-INSERT INTO "users" ("id", "name", "email", "email_verified_at", "password", "remember_token", "created_at", "updated_at", "role") VALUES (51, 'Elsa Sri Isyana', 'elsa.sri.isyana@alazharjayaindonesia.sch.id', NULL, '$2y$12$r08XEkiq9WUkdCNub7Int.bD/2n5rfyfcNGzZBgTlWlppRZw9.NyO', NULL, '2026-07-21 10:44:05', '2026-07-21 10:44:05', 'siswa_smp');
-INSERT INTO "users" ("id", "name", "email", "email_verified_at", "password", "remember_token", "created_at", "updated_at", "role") VALUES (52, 'Fadhilah Ramadhani', 'fadhilah.ramadhani@alazharjayaindonesia.sch.id', NULL, '$2y$12$ePXvHd3zDdcfgSUVVoFblu2G/GlP0wHIHS8H/U2ecERl.usj2dJYe', NULL, '2026-07-21 10:44:05', '2026-07-21 10:44:05', 'siswa_smp');
-INSERT INTO "users" ("id", "name", "email", "email_verified_at", "password", "remember_token", "created_at", "updated_at", "role") VALUES (53, 'Fakhirah Khansa Anditasyah', 'fakhirah.khansa.anditasyah@alazharjayaindonesia.sch.id', NULL, '$2y$12$SKLH52r2/tJjKT2.mpdNiu.yHBX4tNSyZnN67J9QxQ1oaBbNw7uny', NULL, '2026-07-21 10:44:05', '2026-07-21 10:44:05', 'siswa_smp');
-INSERT INTO "users" ("id", "name", "email", "email_verified_at", "password", "remember_token", "created_at", "updated_at", "role") VALUES (54, 'Fauziah Adawiyah', 'fauziah.adawiyah@alazharjayaindonesia.sch.id', NULL, '$2y$12$G5KCWw6BR3YuhjajivN4muBQ47WTxOL45N6NUMrWgmYx4P8vvQTg.', NULL, '2026-07-21 10:44:05', '2026-07-21 10:44:05', 'siswa_smp');
-INSERT INTO "users" ("id", "name", "email", "email_verified_at", "password", "remember_token", "created_at", "updated_at", "role") VALUES (55, 'Gadis Bening Arsandi', 'gadis.bening.arsandi@alazharjayaindonesia.sch.id', NULL, '$2y$12$lo57IMGn9MDe/AYfVzi3vOl5uJRXNgBQ3wlebLrxPZ41y55b2MRS.', NULL, '2026-07-21 10:44:06', '2026-07-21 10:44:06', 'siswa_smp');
-INSERT INTO "users" ("id", "name", "email", "email_verified_at", "password", "remember_token", "created_at", "updated_at", "role") VALUES (56, 'Gian Naifa Shofa', 'gian.naifa.shofa@alazharjayaindonesia.sch.id', NULL, '$2y$12$nefY2vuOy8xHumsBwS4Fi.ia213LaxiUjiGm26Oy3HPHdXO4PLGDC', NULL, '2026-07-21 10:44:06', '2026-07-21 10:44:06', 'siswa_smp');
-INSERT INTO "users" ("id", "name", "email", "email_verified_at", "password", "remember_token", "created_at", "updated_at", "role") VALUES (57, 'Jihan Makaila Fakhirah', 'jihan.makaila.fakhirah@alazharjayaindonesia.sch.id', NULL, '$2y$12$u9YvFeAwJlL1u5/EppcRU.8u5CHuEZlq1qnBfx09vbPInR4tTwRqy', NULL, '2026-07-21 10:44:06', '2026-07-21 10:44:06', 'siswa_smp');
-INSERT INTO "users" ("id", "name", "email", "email_verified_at", "password", "remember_token", "created_at", "updated_at", "role") VALUES (58, 'Jillan Azra Hakimah', 'jillan.azra.hakimah@alazharjayaindonesia.sch.id', NULL, '$2y$12$0P4CoB9d0UL60/35nT5Zw.ld7qTxZUYvreMSZsgVe1WI6ZFouhLoa', NULL, '2026-07-21 10:44:06', '2026-07-21 10:44:06', 'siswa_smp');
-INSERT INTO "users" ("id", "name", "email", "email_verified_at", "password", "remember_token", "created_at", "updated_at", "role") VALUES (59, 'Kalula Ayesha Alkanza', 'kalula.ayesha.alkanza@alazharjayaindonesia.sch.id', NULL, '$2y$12$7wt1mqoDf1ENwEVCX28bpefF1M9YSrRQNVdtTh4pO3TCHwidVl9k6', NULL, '2026-07-21 10:44:07', '2026-07-21 10:44:07', 'siswa_smp');
-INSERT INTO "users" ("id", "name", "email", "email_verified_at", "password", "remember_token", "created_at", "updated_at", "role") VALUES (60, 'Kayyasah Sholiha', 'kayyasah.sholiha@alazharjayaindonesia.sch.id', NULL, '$2y$12$OJsDDjlZR.hzTANvYM85Zuvxx65sbO5Wu2EL0iK2DPJYMCHq2Nnaa', NULL, '2026-07-21 10:44:07', '2026-07-21 10:44:07', 'siswa_smp');
-INSERT INTO "users" ("id", "name", "email", "email_verified_at", "password", "remember_token", "created_at", "updated_at", "role") VALUES (61, 'Khayla Almira Maritza H', 'khayla.almira.maritza.h@alazharjayaindonesia.sch.id', NULL, '$2y$12$28lbv5Lb/PgKBHuZcsffJebYOlKvDUpXRYY154m5ztkywpbj1wW2y', NULL, '2026-07-21 10:44:07', '2026-07-21 10:44:07', 'siswa_smp');
-INSERT INTO "users" ("id", "name", "email", "email_verified_at", "password", "remember_token", "created_at", "updated_at", "role") VALUES (62, 'Muhdatus Sa''idah', 'muhdatus.saidah@alazharjayaindonesia.sch.id', NULL, '$2y$12$GfwYkd7XkS2kFdUPv/EBbuNCRck2y.r1EC4Cd9Vl0Ogo4I88zHm.6', NULL, '2026-07-21 10:44:07', '2026-07-21 10:44:07', 'siswa_smp');
-INSERT INTO "users" ("id", "name", "email", "email_verified_at", "password", "remember_token", "created_at", "updated_at", "role") VALUES (63, 'Nadia Aqila Shanum', 'nadia.aqila.shanum@alazharjayaindonesia.sch.id', NULL, '$2y$12$2pse4v60TTxupNvBEwTiJeBvI9U2a7vFUy9j4GskdS9WHBkuqwCA6', NULL, '2026-07-21 10:44:07', '2026-07-21 10:44:07', 'siswa_smp');
-INSERT INTO "users" ("id", "name", "email", "email_verified_at", "password", "remember_token", "created_at", "updated_at", "role") VALUES (64, 'Naila Syahira Mumtazah', 'naila.syahira.mumtazah@alazharjayaindonesia.sch.id', NULL, '$2y$12$niqdFbNgzGHDyGGacb6Sw.QSqD0b/diHpD3E87P3/PQd7fXCyNMKa', NULL, '2026-07-21 10:44:08', '2026-07-21 10:44:08', 'siswa_smp');
-INSERT INTO "users" ("id", "name", "email", "email_verified_at", "password", "remember_token", "created_at", "updated_at", "role") VALUES (65, 'Nasywa Maulida', 'nasywa.maulida@alazharjayaindonesia.sch.id', NULL, '$2y$12$ZZ24lfBnAOdaGTddHdWsF.twGyrbaEmYsD5ZKh4seaxYqIhW1KzSu', NULL, '2026-07-21 10:44:08', '2026-07-21 10:44:08', 'siswa_smp');
-INSERT INTO "users" ("id", "name", "email", "email_verified_at", "password", "remember_token", "created_at", "updated_at", "role") VALUES (66, 'Nurul Hanis Nahilah', 'nurul.hanis.nahilah@alazharjayaindonesia.sch.id', NULL, '$2y$12$N.hualdY6zgZBBYbdEL3MeiUDpfA3o.wNoZOMhmP4iVDD8Hj/S856', NULL, '2026-07-21 10:44:08', '2026-07-21 10:44:08', 'siswa_smp');
-INSERT INTO "users" ("id", "name", "email", "email_verified_at", "password", "remember_token", "created_at", "updated_at", "role") VALUES (67, 'Nurul Kasyfatul Mahjubiyyah', 'nurul.kasyfatul.mahjubiyyah@alazharjayaindonesia.sch.id', NULL, '$2y$12$81As2uLGNfSunFLU0u7YLuVK5xCPjXJt5kti6hNj2zSaOGAsUURZ6', NULL, '2026-07-21 10:44:08', '2026-07-21 10:44:08', 'siswa_smp');
-INSERT INTO "users" ("id", "name", "email", "email_verified_at", "password", "remember_token", "created_at", "updated_at", "role") VALUES (68, 'Putri Yara', 'putri.yara@alazharjayaindonesia.sch.id', NULL, '$2y$12$6slCc7Ah4zK.RZRWoEEnTuaVYlqn7CnVMqsbJpPAQXaYIaSb6ut1u', NULL, '2026-07-21 10:44:09', '2026-07-21 10:44:09', 'siswa_smp');
-INSERT INTO "users" ("id", "name", "email", "email_verified_at", "password", "remember_token", "created_at", "updated_at", "role") VALUES (69, 'Ribkha Pramesti Wijaya', 'ribkha.pramesti.wijaya@alazharjayaindonesia.sch.id', NULL, '$2y$12$axoWi1jH2JWp19z/okRcre6hMeWOoqD3KRGOsAuSj5xN45ep7RiGe', NULL, '2026-07-21 10:44:09', '2026-07-21 10:44:09', 'siswa_smp');
-INSERT INTO "users" ("id", "name", "email", "email_verified_at", "password", "remember_token", "created_at", "updated_at", "role") VALUES (70, 'Syaila Unatsa Putri', 'syaila.unatsa.putri@alazharjayaindonesia.sch.id', NULL, '$2y$12$egGL0bHk/RLjZlPHPvD1EehwxJzfwjYX033CtqkfjIOb0KpsB5L4C', NULL, '2026-07-21 10:44:09', '2026-07-21 10:44:09', 'siswa_smp');
-INSERT INTO "users" ("id", "name", "email", "email_verified_at", "password", "remember_token", "created_at", "updated_at", "role") VALUES (71, 'Syakira Sausan Khairunnisa', 'syakira.sausan.khairunnisa@alazharjayaindonesia.sch.id', NULL, '$2y$12$GvGrrf56ndA.ki/rko94Ju7wSCptvW6zIm2tRcv06eiIkSfyME4ee', NULL, '2026-07-21 10:44:09', '2026-07-21 10:44:09', 'siswa_smp');
-INSERT INTO "users" ("id", "name", "email", "email_verified_at", "password", "remember_token", "created_at", "updated_at", "role") VALUES (72, 'Violine Atha Al-Husna', 'violine.atha.al-husna@alazharjayaindonesia.sch.id', NULL, '$2y$12$Sjx7NViP.clUrrngf/Uk7.U0T/AWsDSv9lV8luk8mnQzPxzqvAVjm', NULL, '2026-07-21 10:44:10', '2026-07-21 10:44:10', 'siswa_smp');
-INSERT INTO "users" ("id", "name", "email", "email_verified_at", "password", "remember_token", "created_at", "updated_at", "role") VALUES (73, 'Aqilah Naurah', 'aqilah.naurah@alazharjayaindonesia.sch.id', NULL, '$2y$12$dQEC55eAyS.tmD2MHwc5neaeRlKavUqPVDAuRGwx38hQ.HOdqWAMi', NULL, '2026-07-21 10:44:10', '2026-07-21 10:44:10', 'siswa_smp');
-INSERT INTO "users" ("id", "name", "email", "email_verified_at", "password", "remember_token", "created_at", "updated_at", "role") VALUES (74, 'Sahla Azka Hafizah', 'sahla.azka.hafizah@alazharjayaindonesia.sch.id', NULL, '$2y$12$woel5zzvPaN3fHDB8yx0uu05vsgDU/dSasNtGLF7UdQQ8fKiotIPm', NULL, '2026-07-21 10:44:10', '2026-07-21 10:44:10', 'siswa_smp');
-INSERT INTO "users" ("id", "name", "email", "email_verified_at", "password", "remember_token", "created_at", "updated_at", "role") VALUES (75, 'Hanna Mufidah', 'hanna.mufidah@alazharjayaindonesia.sch.id', NULL, '$2y$12$O/twif8Bs7Ap6FOjFPihv.bns.9cvrq5VlJORZdP.Anrpm6iBOxJi', NULL, '2026-07-21 10:44:10', '2026-07-21 10:44:10', 'siswa_smp');
-INSERT INTO "users" ("id", "name", "email", "email_verified_at", "password", "remember_token", "created_at", "updated_at", "role") VALUES (76, 'Khanza Izzatunnisa', 'khanza.izzatunnisa@alazharjayaindonesia.sch.id', NULL, '$2y$12$.RrWVoYzLuuOu51BuiEoJedIcNGn1mlCnP8kIKhAPrRvu92yVgCvO', NULL, '2026-07-21 10:44:11', '2026-07-21 10:44:11', 'siswa_smp');
-INSERT INTO "users" ("id", "name", "email", "email_verified_at", "password", "remember_token", "created_at", "updated_at", "role") VALUES (77, 'Ziya Zivana Zubi', 'ziya.zivana.zubi@alazharjayaindonesia.sch.id', NULL, '$2y$12$GmqwmnUr/zI7I2RvVHUoKOoKfVE.8iUULucq2djeaKmka/CeksC/6', NULL, '2026-07-21 10:44:11', '2026-07-21 10:44:11', 'siswa_smp');
-INSERT INTO "users" ("id", "name", "email", "email_verified_at", "password", "remember_token", "created_at", "updated_at", "role") VALUES (78, 'Ibu Sari Rahmawati', 'sari.rohmah@email.com', NULL, '$2y$12$AJN7/eap2E0RMjXE/gJpv.ALWhP/rvOnPGsa9p9kFSa746Bl8AO3O', NULL, '2026-07-21 10:44:13', '2026-07-21 10:44:13', 'orang_tua');
-INSERT INTO "users" ("id", "name", "email", "email_verified_at", "password", "remember_token", "created_at", "updated_at", "role") VALUES (79, 'Admin Sekolah', 'admin@alazharjayaindonesia.sch.id', NULL, '$2y$12$XvdnTBK7yxPoCPlKITLYu.onhLlVnVwbZZOEH2qLYD0E6aeWsf73G', NULL, '2026-07-21 10:44:13', '2026-07-21 10:44:13', 'admin');
-INSERT INTO "users" ("id", "name", "email", "email_verified_at", "password", "remember_token", "created_at", "updated_at", "role") VALUES (80, 'Kepala Sekolah', 'kepala@alazharjayaindonesia.sch.id', NULL, '$2y$12$G8HqchIv3hmNvnIOhqwW6uHjULQRhcmLWAslHeLAWwy529Ibf/Mxm', NULL, '2026-07-21 10:44:13', '2026-07-21 10:44:13', 'kepala_sekolah');
-
-DROP TABLE IF EXISTS "workbook_jawabans";
-CREATE TABLE "workbook_jawabans" ("id" integer primary key autoincrement not null, "workbook_soal_id" integer not null, "siswa_id" integer not null, "jawaban" text, "nilai" numeric, "created_at" datetime, "updated_at" datetime, foreign key("workbook_soal_id") references "workbook_soals"("id") on delete cascade, foreign key("siswa_id") references "siswa"("id"));
-
-DROP TABLE IF EXISTS "workbook_soals";
-CREATE TABLE "workbook_soals" ("id" integer primary key autoincrement not null, "workbook_id" integer not null, "nomor" integer not null, "soal" text not null, "tipe" varchar check ("tipe" in ('pg', 'essay')) not null default 'pg', "pilihan_a" text, "pilihan_b" text, "pilihan_c" text, "pilihan_d" text, "jawaban_benar" varchar, "bobot" integer not null default '1', "created_at" datetime, "updated_at" datetime, foreign key("workbook_id") references "workbooks"("id") on delete cascade);
-INSERT INTO "workbook_soals" ("id", "workbook_id", "nomor", "soal", "tipe", "pilihan_a", "pilihan_b", "pilihan_c", "pilihan_d", "jawaban_benar", "bobot", "created_at", "updated_at") VALUES (1, 1, 1, 'Berapakah hasil dari 25 × 4?', 'pg', '80', '100', '120', '90', 'b', 1, '2026-07-21 10:44:15', '2026-07-21 10:44:15');
-INSERT INTO "workbook_soals" ("id", "workbook_id", "nomor", "soal", "tipe", "pilihan_a", "pilihan_b", "pilihan_c", "pilihan_d", "jawaban_benar", "bobot", "created_at", "updated_at") VALUES (2, 1, 2, 'Sebutkan rumus luas persegi panjang!', 'essay', NULL, NULL, NULL, NULL, NULL, 2, '2026-07-21 10:44:15', '2026-07-21 10:44:15');
-INSERT INTO "workbook_soals" ("id", "workbook_id", "nomor", "soal", "tipe", "pilihan_a", "pilihan_b", "pilihan_c", "pilihan_d", "jawaban_benar", "bobot", "created_at", "updated_at") VALUES (3, 2, 1, 'Apa sinonim dari kata "rajin"?', 'pg', 'Malas', 'Tekun', 'Cepat', 'Lambat', 'b', 1, '2026-07-21 10:44:15', '2026-07-21 10:44:15');
-
-DROP TABLE IF EXISTS "workbooks";
-CREATE TABLE "workbooks" ("id" integer primary key autoincrement not null, "judul" varchar not null, "deskripsi" text, "mapel_id" integer not null, "kelas_id" integer, "guru_id" integer not null, "tipe" varchar check ("tipe" in ('tugas_pengganti', 'remedial', 'penugasan_di_rumah')) not null default 'penugasan_di_rumah', "created_at" datetime, "updated_at" datetime, foreign key("mapel_id") references "mapel"("id"), foreign key("kelas_id") references "kelas"("id"), foreign key("guru_id") references "guru"("id"));
-INSERT INTO "workbooks" ("id", "judul", "deskripsi", "mapel_id", "kelas_id", "guru_id", "tipe", "created_at", "updated_at") VALUES (1, 'Latihan Soal Matematika Bab 5', NULL, 12, 3, 4, 'penugasan_di_rumah', '2026-07-21 10:44:15', '2026-07-21 10:44:15');
-INSERT INTO "workbooks" ("id", "judul", "deskripsi", "mapel_id", "kelas_id", "guru_id", "tipe", "created_at", "updated_at") VALUES (2, 'PR Bahasa Indonesia', NULL, 40, 2, 10, 'tugas_pengganti', '2026-07-21 10:44:15', '2026-07-21 10:44:15');
-
-DELETE FROM "sqlite_sequence";
-INSERT INTO "sqlite_sequence" ("name", "seq") VALUES ('badges', 4);
-INSERT INTO "sqlite_sequence" ("name", "seq") VALUES ('catatan_wali', 10);
-INSERT INTO "sqlite_sequence" ("name", "seq") VALUES ('guru', 11);
-INSERT INTO "sqlite_sequence" ("name", "seq") VALUES ('jadwal', 350);
-INSERT INTO "sqlite_sequence" ("name", "seq") VALUES ('kehadiran', 70);
-INSERT INTO "sqlite_sequence" ("name", "seq") VALUES ('kelas', 5);
-INSERT INTO "sqlite_sequence" ("name", "seq") VALUES ('kelas_quran', 6);
-INSERT INTO "sqlite_sequence" ("name", "seq") VALUES ('laporan_mengajars', 0);
-INSERT INTO "sqlite_sequence" ("name", "seq") VALUES ('log_aktivitas', 1);
-INSERT INTO "sqlite_sequence" ("name", "seq") VALUES ('mapel', 41);
-INSERT INTO "sqlite_sequence" ("name", "seq") VALUES ('migrations', 59);
-INSERT INTO "sqlite_sequence" ("name", "seq") VALUES ('nilai', 330);
-INSERT INTO "sqlite_sequence" ("name", "seq") VALUES ('orang_tua', 1);
-INSERT INTO "sqlite_sequence" ("name", "seq") VALUES ('pembayarans', 18);
-INSERT INTO "sqlite_sequence" ("name", "seq") VALUES ('pengaturan', 5);
-INSERT INTO "sqlite_sequence" ("name", "seq") VALUES ('pengumuman', 2);
-INSERT INTO "sqlite_sequence" ("name", "seq") VALUES ('pesan', 1);
-INSERT INTO "sqlite_sequence" ("name", "seq") VALUES ('settings', 5);
-INSERT INTO "sqlite_sequence" ("name", "seq") VALUES ('siswa', 66);
-INSERT INTO "sqlite_sequence" ("name", "seq") VALUES ('siswa_badge', 5);
-INSERT INTO "sqlite_sequence" ("name", "seq") VALUES ('spps', 21);
-INSERT INTO "sqlite_sequence" ("name", "seq") VALUES ('tahfidz_setoran', 30);
-INSERT INTO "sqlite_sequence" ("name", "seq") VALUES ('tugas', 8);
-INSERT INTO "sqlite_sequence" ("name", "seq") VALUES ('users', 80);
-INSERT INTO "sqlite_sequence" ("name", "seq") VALUES ('workbook_soals', 3);
-INSERT INTO "sqlite_sequence" ("name", "seq") VALUES ('workbooks', 2);
-
-CREATE INDEX "cache_expiration_index" on "cache" ("expiration");
-
-CREATE INDEX "cache_locks_expiration_index" on "cache_locks" ("expiration");
-
-CREATE UNIQUE INDEX "cbt_jawabans_cbt_soal_id_siswa_id_unique" on "cbt_jawabans" ("cbt_soal_id", "siswa_id");
-
-CREATE INDEX "failed_jobs_connection_queue_failed_at_index" on "failed_jobs" ("connection", "queue", "failed_at");
-
-CREATE UNIQUE INDEX "failed_jobs_uuid_unique" on "failed_jobs" ("uuid");
-
-CREATE UNIQUE INDEX "guru_nip_unique" on "guru" ("nip");
-
-CREATE INDEX "jobs_queue_index" on "jobs" ("queue");
-
-CREATE UNIQUE INDEX "kehadiran_gurus_guru_id_tanggal_unique" on "kehadiran_gurus" ("guru_id", "tanggal");
-
-CREATE UNIQUE INDEX "kehadiran_siswa_id_tanggal_unique" on "kehadiran" ("siswa_id", "tanggal");
-
-CREATE UNIQUE INDEX "nilai_ktis_siswa_id_unique" on "nilai_ktis" ("siswa_id");
-
-CREATE UNIQUE INDEX "olympiad_jawabans_olympiad_soal_id_siswa_id_unique" on "olympiad_jawabans" ("olympiad_soal_id", "siswa_id");
-
-CREATE UNIQUE INDEX "pengaturan_key_unique" on "pengaturan" ("key");
-
-CREATE UNIQUE INDEX "pengumpulan_tugas_tugas_id_siswa_id_unique" on "pengumpulan_tugas" ("tugas_id", "siswa_id");
-
-CREATE INDEX "sessions_last_activity_index" on "sessions" ("last_activity");
-
-CREATE INDEX "sessions_user_id_index" on "sessions" ("user_id");
-
-CREATE UNIQUE INDEX "settings_key_unique" on "settings" ("key");
-
-CREATE UNIQUE INDEX "siswa_badge_siswa_id_badge_id_unique" on "siswa_badge" ("siswa_id", "badge_id");
-
-CREATE UNIQUE INDEX "siswa_nis_unique" on "siswa" ("nis");
-
-CREATE UNIQUE INDEX "siswa_tanggal_unique" on "kondisi_kelas" ("siswa_id", "tanggal");
-
-CREATE UNIQUE INDEX "spps_siswa_id_bulan_tahun_unique" on "spps" ("siswa_id", "bulan", "tahun");
-
-CREATE UNIQUE INDEX "tahfidz_ayat_nilai_unique" on "tahfidz_ayat_nilai" ("tahfidz_setoran_id", "guru_id", "nomor_ayat");
-
-CREATE INDEX "tahfidz_progress_kelas_id_progress_percent_index" on "tahfidz_progress" ("kelas_id", "progress_percent");
-
-CREATE INDEX "tahfidz_progress_kelas_quran_id_progress_percent_index" on "tahfidz_progress" ("kelas_quran_id", "progress_percent");
-
-CREATE UNIQUE INDEX "tahfidz_progress_siswa_id_unique" on "tahfidz_progress" ("siswa_id");
-
-CREATE UNIQUE INDEX "users_email_unique" on "users" ("email");
-
-CREATE UNIQUE INDEX "workbook_jawabans_workbook_soal_id_siswa_id_unique" on "workbook_jawabans" ("workbook_soal_id", "siswa_id");
-
-COMMIT;
+-- LMS Al Azhar SMP SQL dump
+-- Generated from Laravel SQLite database on 2026-07-22 14:05:45 +00:00
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+SET time_zone = "+00:00";
+SET FOREIGN_KEY_CHECKS=0;
+SET NAMES utf8mb4;
+
+DROP TABLE IF EXISTS `administrasi_guru_checklists`;
+CREATE TABLE `administrasi_guru_checklists` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `guru_id` bigint unsigned NOT NULL,
+  `dokumen` varchar(255) NOT NULL,
+  `status` varchar(255) NOT NULL DEFAULT 'belum_lengkap',
+  `tanggal_dilengkapi` date NULL,
+  `reviewed_by` int NULL,
+  `reviewed_at` datetime NULL,
+  `catatan_reviewer` text NULL,
+  `tahun_ajaran` varchar(255) NOT NULL DEFAULT '2026/2027',
+  `semester` varchar(255) NOT NULL DEFAULT 'Ganjil',
+  `created_at` datetime NULL,
+  `updated_at` datetime NULL,
+  PRIMARY KEY (`id`),
+  KEY `administrasi_guru_checklists_semester_index` (`semester`),
+  KEY `administrasi_guru_checklists_tahun_ajaran_index` (`tahun_ajaran`),
+  KEY `administrasi_guru_checklists_status_index` (`status`),
+  UNIQUE KEY `administrasi_guru_unique` (`guru_id`, `dokumen`, `tahun_ajaran`, `semester`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT INTO `administrasi_guru_checklists` (`id`, `guru_id`, `dokumen`, `status`, `tanggal_dilengkapi`, `reviewed_by`, `reviewed_at`, `catatan_reviewer`, `tahun_ajaran`, `semester`, `created_at`, `updated_at`) VALUES
+('1', '12', 'Cover', 'lengkap', '2026-07-20 00:00:00', '78', '2026-07-22 21:05:01', 'Checklist Demo.', '2026/2027', 'Ganjil', '2026-07-22 21:05:01', '2026-07-22 21:05:01'),
+('2', '12', 'Kalender Pendidikan', 'lengkap', '2026-07-20 00:00:00', '78', '2026-07-22 21:05:01', 'Checklist Demo.', '2026/2027', 'Ganjil', '2026-07-22 21:05:01', '2026-07-22 21:05:01'),
+('3', '12', 'Silabus', 'lengkap', '2026-07-20 00:00:00', '78', '2026-07-22 21:05:01', 'Checklist Demo.', '2026/2027', 'Ganjil', '2026-07-22 21:05:01', '2026-07-22 21:05:01'),
+('4', '12', 'Program Tahunan', 'lengkap', '2026-07-20 00:00:00', '78', '2026-07-22 21:05:01', 'Checklist Demo.', '2026/2027', 'Ganjil', '2026-07-22 21:05:01', '2026-07-22 21:05:01'),
+('5', '12', 'Program Semester 1', 'lengkap', '2026-07-20 00:00:00', '78', '2026-07-22 21:05:01', 'Checklist Demo.', '2026/2027', 'Ganjil', '2026-07-22 21:05:01', '2026-07-22 21:05:01'),
+('6', '12', 'RPP Semester 1', 'lengkap', '2026-07-20 00:00:00', '78', '2026-07-22 21:05:01', 'Checklist Demo.', '2026/2027', 'Ganjil', '2026-07-22 21:05:01', '2026-07-22 21:05:01'),
+('7', '12', 'Remedial dan Pengayaan', 'lengkap', '2026-07-20 00:00:00', '78', '2026-07-22 21:05:01', 'Checklist Demo.', '2026/2027', 'Ganjil', '2026-07-22 21:05:01', '2026-07-22 21:05:01');
+
+DROP TABLE IF EXISTS `badges`;
+CREATE TABLE `badges` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `nama` varchar(255) NOT NULL,
+  `deskripsi` varchar(255) NOT NULL,
+  `icon` varchar(255) NOT NULL DEFAULT '⭐',
+  `created_at` datetime NULL,
+  `updated_at` datetime NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT INTO `badges` (`id`, `nama`, `deskripsi`, `icon`, `created_at`, `updated_at`) VALUES
+('1', 'Demo Rajin Belajar', 'Badge Demo untuk akun siswa dummy.', '*', '2026-07-22 21:03:06', '2026-07-22 21:03:06'),
+('2', 'Rajin Belajar', 'Aktif 30 hari berturut-turut', '⭐', '2026-07-22 21:03:08', '2026-07-22 21:03:08'),
+('3', 'Juara Quiz', 'Nilai quiz di atas 90', '🎯', '2026-07-22 21:03:08', '2026-07-22 21:03:08'),
+('4', 'Pembaca Aktif', 'Baca 20 materi', '📖', '2026-07-22 21:03:08', '2026-07-22 21:03:08'),
+('5', 'Hafidz Cilik', 'Hafal 1 juz Al-Qur''an', '📿', '2026-07-22 21:03:08', '2026-07-22 21:03:08');
+
+DROP TABLE IF EXISTS `banding_nilai`;
+CREATE TABLE `banding_nilai` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `nilai_id` bigint unsigned NOT NULL,
+  `siswa_id` bigint unsigned NOT NULL,
+  `alasan_siswa` text NOT NULL,
+  `status` varchar(255) NOT NULL DEFAULT 'pending',
+  `catatan_guru` text NULL,
+  `created_at` datetime NULL,
+  `updated_at` datetime NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DROP TABLE IF EXISTS `cache`;
+CREATE TABLE `cache` (
+  `key` varchar(255) NOT NULL,
+  `value` text NOT NULL,
+  `expiration` int NOT NULL,
+  PRIMARY KEY (`key`),
+  KEY `cache_expiration_index` (`expiration`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DROP TABLE IF EXISTS `cache_locks`;
+CREATE TABLE `cache_locks` (
+  `key` varchar(255) NOT NULL,
+  `owner` varchar(255) NOT NULL,
+  `expiration` int NOT NULL,
+  PRIMARY KEY (`key`),
+  KEY `cache_locks_expiration_index` (`expiration`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DROP TABLE IF EXISTS `catatan_wali`;
+CREATE TABLE `catatan_wali` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `siswa_id` bigint unsigned NOT NULL,
+  `semester` varchar(255) NOT NULL DEFAULT 'Genap 2025/2026',
+  `catatan` text NOT NULL,
+  `created_by` int NOT NULL,
+  `created_at` datetime NULL,
+  `updated_at` datetime NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT INTO `catatan_wali` (`id`, `siswa_id`, `semester`, `catatan`, `created_by`, `created_at`, `updated_at`) VALUES
+('1', '67', 'Ganjil 2026/2027', 'Catatan wali Demo: Ananda aktif mengikuti pembelajaran.', '12', '2026-07-22 21:03:06', '2026-07-22 21:03:06'),
+('2', '1', 'Genap 2025/2026', 'Ananda aktif dalam kegiatan kelas, namun perlu lebih teliti.', '3', '2026-07-22 21:03:07', '2026-07-22 21:03:07'),
+('3', '2', 'Genap 2025/2026', 'Ananda adalah siswa yang rajin dan memiliki semangat belajar tinggi.', '10', '2026-07-22 21:03:07', '2026-07-22 21:03:07'),
+('4', '3', 'Genap 2025/2026', 'Ananda memiliki potensi besar di bidang agama. Pertahankan!', '11', '2026-07-22 21:03:07', '2026-07-22 21:03:07'),
+('5', '4', 'Genap 2025/2026', 'Ananda aktif dalam kegiatan kelas, namun perlu lebih teliti.', '1', '2026-07-22 21:03:07', '2026-07-22 21:03:07'),
+('6', '5', 'Genap 2025/2026', 'Ananda memiliki potensi besar di bidang agama. Pertahankan!', '12', '2026-07-22 21:03:07', '2026-07-22 21:03:07'),
+('7', '6', 'Genap 2025/2026', 'Ananda adalah siswa yang rajin dan memiliki semangat belajar tinggi.', '4', '2026-07-22 21:03:07', '2026-07-22 21:03:07'),
+('8', '7', 'Genap 2025/2026', 'Ananda aktif dalam kegiatan kelas, namun perlu lebih teliti.', '3', '2026-07-22 21:03:07', '2026-07-22 21:03:07'),
+('9', '8', 'Genap 2025/2026', 'Ananda adalah siswa yang rajin dan memiliki semangat belajar tinggi.', '4', '2026-07-22 21:03:07', '2026-07-22 21:03:07'),
+('10', '9', 'Genap 2025/2026', 'Ananda aktif dalam kegiatan kelas, namun perlu lebih teliti.', '3', '2026-07-22 21:03:07', '2026-07-22 21:03:07'),
+('11', '10', 'Genap 2025/2026', 'Ananda aktif dalam kegiatan kelas, namun perlu lebih teliti.', '5', '2026-07-22 21:03:07', '2026-07-22 21:03:07');
+
+DROP TABLE IF EXISTS `cbt_exams`;
+CREATE TABLE `cbt_exams` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `judul` varchar(255) NOT NULL,
+  `deskripsi` text NULL,
+  `mapel_id` bigint unsigned NOT NULL,
+  `kelas_id` bigint unsigned NULL,
+  `guru_id` bigint unsigned NOT NULL,
+  `durasi` int NOT NULL,
+  `jumlah_soal` int NOT NULL DEFAULT '0',
+  `status` varchar(255) NOT NULL DEFAULT 'draft',
+  `approved_by` int NULL,
+  `approved_at` datetime NULL,
+  `catatan_reject` text NULL,
+  `created_at` datetime NULL,
+  `updated_at` datetime NULL,
+  `tipe` varchar(255) NOT NULL DEFAULT 'ulangan',
+  `metode` varchar(255) NOT NULL DEFAULT 'online',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DROP TABLE IF EXISTS `cbt_jawabans`;
+CREATE TABLE `cbt_jawabans` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `cbt_exam_id` bigint unsigned NOT NULL,
+  `cbt_soal_id` bigint unsigned NOT NULL,
+  `siswa_id` bigint unsigned NOT NULL,
+  `jawaban` text NULL,
+  `nilai` decimal(10,2) NULL,
+  `dinilai` tinyint NOT NULL DEFAULT '0',
+  `created_at` datetime NULL,
+  `updated_at` datetime NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `cbt_jawabans_cbt_soal_id_siswa_id_unique` (`cbt_soal_id`, `siswa_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DROP TABLE IF EXISTS `cbt_soals`;
+CREATE TABLE `cbt_soals` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `cbt_exam_id` bigint unsigned NOT NULL,
+  `nomor` int NOT NULL,
+  `soal` text NOT NULL,
+  `tipe` varchar(255) NOT NULL DEFAULT 'pg',
+  `pilihan_a` text NULL,
+  `pilihan_b` text NULL,
+  `pilihan_c` text NULL,
+  `pilihan_d` text NULL,
+  `jawaban_benar` varchar(255) NULL,
+  `bobot` int NOT NULL DEFAULT '1',
+  `created_at` datetime NULL,
+  `updated_at` datetime NULL,
+  `kesulitan` varchar(255) NOT NULL DEFAULT 'sedang',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DROP TABLE IF EXISTS `failed_jobs`;
+CREATE TABLE `failed_jobs` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `uuid` varchar(255) NOT NULL,
+  `connection` varchar(255) NOT NULL,
+  `queue` varchar(255) NOT NULL,
+  `payload` text NOT NULL,
+  `exception` text NOT NULL,
+  `failed_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `failed_jobs_uuid_unique` (`uuid`),
+  KEY `failed_jobs_connection_queue_failed_at_index` (`connection`, `queue`, `failed_at`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DROP TABLE IF EXISTS `guru`;
+CREATE TABLE `guru` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `user_id` bigint unsigned NOT NULL,
+  `nip` varchar(255) NOT NULL,
+  `nama` varchar(255) NOT NULL,
+  `alamat` text NULL,
+  `no_telp` varchar(255) NULL,
+  `status` varchar(255) NOT NULL DEFAULT 'aktif',
+  `created_at` datetime NULL,
+  `updated_at` datetime NULL,
+  `mapel_id` bigint unsigned NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `guru_nip_unique` (`nip`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT INTO `guru` (`id`, `user_id`, `nip`, `nama`, `alamat`, `no_telp`, `status`, `created_at`, `updated_at`, `mapel_id`) VALUES
+('1', '1', '1001', 'Sahrial Pulungan, M.Pd', NULL, NULL, 'aktif', '2026-07-22 21:02:50', '2026-07-22 21:04:48', '15'),
+('2', '2', '1002', 'Riva Riana, S.Pd', NULL, NULL, 'aktif', '2026-07-22 21:02:50', '2026-07-22 21:04:48', '12'),
+('3', '3', '1003', 'Adinda Oktavhiani S.Pd', NULL, NULL, 'aktif', '2026-07-22 21:02:51', '2026-07-22 21:04:48', '4'),
+('4', '4', '1004', 'Intan Kusuma Dera, S.Ag', NULL, NULL, 'aktif', '2026-07-22 21:02:51', '2026-07-22 21:04:48', '8'),
+('5', '5', '1005', 'Vika Wati Dzulciha, S.Ag', NULL, NULL, 'aktif', '2026-07-22 21:02:51', '2026-07-22 21:04:48', '13'),
+('6', '6', '1006', 'Irnika Widiyan Dini, S.Li', NULL, NULL, 'aktif', '2026-07-22 21:02:51', '2026-07-22 21:04:48', '3'),
+('7', '7', '1007', 'Ajeng Putyri Aryantika, S.Pd', NULL, NULL, 'aktif', '2026-07-22 21:02:51', '2026-07-22 21:04:48', '1'),
+('8', '8', '1008', 'Nurhayati, S.Ag', NULL, NULL, 'aktif', '2026-07-22 21:02:52', '2026-07-22 21:04:48', '9'),
+('9', '9', '1009', 'Sri Wanti Maulani, S.Pd', NULL, NULL, 'aktif', '2026-07-22 21:02:52', '2026-07-22 21:02:52', NULL),
+('10', '10', '1010', 'Khoirunnisa, S.Ag', NULL, NULL, 'aktif', '2026-07-22 21:02:52', '2026-07-22 21:04:48', NULL),
+('11', '11', '1011', 'Ai Sunariah, S.Pd', NULL, NULL, 'aktif', '2026-07-22 21:02:52', '2026-07-22 21:02:52', NULL),
+('12', '78', 'GURU-DEMO-001', 'Guru Demo SMPIT', NULL, NULL, 'aktif', '2026-07-22 21:03:05', '2026-07-22 21:05:00', '1');
+
+DROP TABLE IF EXISTS `guru_mapel`;
+CREATE TABLE `guru_mapel` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `guru_id` bigint unsigned NOT NULL,
+  `mapel_id` bigint unsigned NOT NULL,
+  `created_at` datetime NULL,
+  `updated_at` datetime NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT INTO `guru_mapel` (`id`, `guru_id`, `mapel_id`, `created_at`, `updated_at`) VALUES
+('1', '1', '15', NULL, NULL),
+('2', '1', '14', NULL, NULL),
+('3', '2', '12', NULL, NULL),
+('4', '2', '5', NULL, NULL),
+('5', '2', '11', NULL, NULL),
+('6', '3', '4', NULL, NULL),
+('7', '3', '2', NULL, NULL),
+('8', '3', '17', NULL, NULL),
+('9', '4', '8', NULL, NULL),
+('10', '5', '13', NULL, NULL),
+('11', '6', '3', NULL, NULL),
+('12', '7', '1', NULL, NULL),
+('13', '8', '9', NULL, NULL),
+('14', '8', '7', NULL, NULL),
+('15', '8', '10', NULL, NULL),
+('16', '12', '1', NULL, NULL),
+('17', '12', '3', NULL, NULL),
+('18', '12', '8', NULL, NULL);
+
+DROP TABLE IF EXISTS `jadwal`;
+CREATE TABLE `jadwal` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `kelas_id` bigint unsigned NOT NULL,
+  `mapel_id` bigint unsigned NOT NULL,
+  `guru_id` bigint unsigned NOT NULL,
+  `hari` varchar(255) NOT NULL,
+  `jam_mulai` varchar(255) NOT NULL,
+  `jam_selesai` varchar(255) NULL,
+  `created_at` datetime NULL,
+  `updated_at` datetime NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT INTO `jadwal` (`id`, `kelas_id`, `mapel_id`, `guru_id`, `hari`, `jam_mulai`, `jam_selesai`, `created_at`, `updated_at`) VALUES
+('1', '1', '27', '9', 'Senin', '07:00', '07:30', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('2', '1', '22', '9', 'Senin', '07:30', '08:15', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('3', '1', '11', '2', 'Senin', '08:15', '08:55', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('4', '1', '11', '2', 'Senin', '08:55', '09:35', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('5', '1', '19', '9', 'Senin', '09:35', '09:50', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('6', '1', '8', '4', 'Senin', '09:50', '10:30', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('7', '1', '8', '4', 'Senin', '10:30', '11:10', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('8', '1', '3', '6', 'Senin', '11:10', '11:50', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('9', '1', '20', '9', 'Senin', '11:50', '12:30', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('10', '1', '19', '9', 'Senin', '12:30', '13:00', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('11', '1', '3', '6', 'Senin', '13:00', '13:40', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('12', '1', '6', '9', 'Senin', '13:40', '14:20', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('13', '1', '6', '9', 'Senin', '14:20', '15:00', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('14', '1', '17', '3', 'Senin', '15:00', '15:20', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('15', '1', '21', '9', 'Senin', '15:20', '15:30', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('16', '1', '27', '9', 'Selasa', '07:00', '07:30', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('17', '1', '8', '4', 'Selasa', '07:30', '08:10', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('18', '1', '8', '4', 'Selasa', '08:10', '08:50', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('19', '1', '19', '9', 'Selasa', '08:50', '09:05', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('20', '1', '9', '8', 'Selasa', '09:05', '09:45', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('21', '1', '9', '8', 'Selasa', '09:45', '10:25', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('22', '1', '1', '7', 'Selasa', '10:25', '11:05', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('23', '1', '1', '7', 'Selasa', '11:05', '11:45', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('24', '1', '20', '9', 'Selasa', '11:45', '12:30', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('25', '1', '19', '9', 'Selasa', '12:30', '13:00', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('26', '1', '3', '6', 'Selasa', '13:00', '13:40', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('27', '1', '2', '3', 'Selasa', '13:40', '14:20', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('28', '1', '2', '3', 'Selasa', '14:20', '15:00', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('29', '1', '17', '3', 'Selasa', '15:00', '15:20', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('30', '1', '21', '9', 'Selasa', '15:20', '15:30', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('31', '1', '27', '9', 'Rabu', '07:00', '07:30', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('32', '1', '18', '9', 'Rabu', '07:30', '09:00', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('33', '1', '19', '9', 'Rabu', '09:00', '09:15', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('34', '1', '8', '4', 'Rabu', '09:15', '09:55', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('35', '1', '8', '4', 'Rabu', '09:55', '10:35', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('36', '1', '4', '3', 'Rabu', '10:35', '11:15', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('37', '1', '4', '3', 'Rabu', '11:15', '11:55', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('38', '1', '20', '9', 'Rabu', '11:55', '12:30', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('39', '1', '19', '9', 'Rabu', '12:30', '13:00', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('40', '1', '5', '2', 'Rabu', '13:00', '13:40', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('41', '1', '13', '5', 'Rabu', '13:40', '14:20', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('42', '1', '13', '5', 'Rabu', '14:20', '15:00', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('43', '1', '17', '3', 'Rabu', '15:00', '15:20', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('44', '1', '21', '9', 'Rabu', '15:20', '15:30', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('45', '1', '27', '9', 'Kamis', '07:00', '07:30', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('46', '1', '5', '2', 'Kamis', '07:30', '08:10', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('47', '1', '5', '2', 'Kamis', '08:10', '08:50', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('48', '1', '19', '9', 'Kamis', '08:50', '09:05', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('49', '1', '8', '4', 'Kamis', '09:05', '09:45', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('50', '1', '8', '4', 'Kamis', '09:45', '10:25', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('51', '1', '10', '8', 'Kamis', '10:25', '11:05', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('52', '1', '10', '8', 'Kamis', '11:05', '11:45', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('53', '1', '20', '9', 'Kamis', '11:45', '12:30', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('54', '1', '19', '9', 'Kamis', '12:30', '13:00', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('55', '1', '3', '6', 'Kamis', '13:00', '13:40', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('56', '1', '2', '3', 'Kamis', '13:40', '14:20', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('57', '1', '2', '3', 'Kamis', '14:20', '15:00', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('58', '1', '17', '3', 'Kamis', '15:00', '15:20', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('59', '1', '21', '9', 'Kamis', '15:20', '15:30', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('60', '1', '27', '9', 'Jumat', '07:00', '07:30', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('61', '1', '16', '9', 'Jumat', '07:30', '08:30', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('62', '1', '1', '7', 'Jumat', '08:30', '09:10', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('63', '1', '1', '7', 'Jumat', '09:10', '09:50', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('64', '1', '19', '9', 'Jumat', '09:50', '10:05', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('65', '1', '8', '4', 'Jumat', '10:05', '10:45', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('66', '1', '8', '4', 'Jumat', '10:45', '11:15', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('67', '1', '20', '9', 'Jumat', '11:15', '11:30', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('68', '1', '19', '9', 'Jumat', '11:30', '13:00', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('69', '1', '12', '2', 'Jumat', '13:00', '13:40', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('70', '1', '12', '2', 'Jumat', '13:40', '14:20', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('71', '2', '27', '9', 'Senin', '07:00', '07:30', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('72', '2', '22', '9', 'Senin', '07:30', '08:15', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('73', '2', '1', '7', 'Senin', '08:15', '08:55', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('74', '2', '1', '7', 'Senin', '08:55', '09:35', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('75', '2', '19', '9', 'Senin', '09:35', '09:50', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('76', '2', '11', '2', 'Senin', '09:50', '10:30', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('77', '2', '11', '2', 'Senin', '10:30', '11:10', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('78', '2', '8', '4', 'Senin', '11:10', '11:50', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('79', '2', '20', '9', 'Senin', '11:50', '12:30', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('80', '2', '19', '9', 'Senin', '12:30', '13:00', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('81', '2', '8', '4', 'Senin', '13:00', '13:40', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('82', '2', '12', '2', 'Senin', '13:40', '14:20', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('83', '2', '12', '2', 'Senin', '14:20', '15:00', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('84', '2', '17', '3', 'Senin', '15:00', '15:20', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('85', '2', '21', '9', 'Senin', '15:20', '15:30', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('86', '2', '27', '9', 'Selasa', '07:00', '07:30', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('87', '2', '5', '2', 'Selasa', '07:30', '08:10', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('88', '2', '5', '2', 'Selasa', '08:10', '08:50', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('89', '2', '19', '9', 'Selasa', '08:50', '09:05', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('90', '2', '13', '5', 'Selasa', '09:05', '09:45', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('91', '2', '13', '5', 'Selasa', '09:45', '10:25', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('92', '2', '8', '4', 'Selasa', '10:25', '11:05', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('93', '2', '8', '4', 'Selasa', '11:05', '11:45', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('94', '2', '20', '9', 'Selasa', '11:45', '12:30', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('95', '2', '19', '9', 'Selasa', '12:30', '13:00', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('96', '2', '2', '3', 'Selasa', '13:00', '13:40', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('97', '2', '6', '9', 'Selasa', '13:40', '14:20', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('98', '2', '6', '9', 'Selasa', '14:20', '15:00', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('99', '2', '17', '3', 'Selasa', '15:00', '15:20', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('100', '2', '21', '9', 'Selasa', '15:20', '15:30', '2026-07-22 21:03:04', '2026-07-22 21:03:04');
+INSERT INTO `jadwal` (`id`, `kelas_id`, `mapel_id`, `guru_id`, `hari`, `jam_mulai`, `jam_selesai`, `created_at`, `updated_at`) VALUES
+('101', '2', '27', '9', 'Rabu', '07:00', '07:30', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('102', '2', '18', '9', 'Rabu', '07:30', '09:00', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('103', '2', '19', '9', 'Rabu', '09:00', '09:15', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('104', '2', '2', '3', 'Rabu', '09:15', '09:55', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('105', '2', '2', '3', 'Rabu', '09:55', '10:35', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('106', '2', '3', '6', 'Rabu', '10:35', '11:15', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('107', '2', '3', '6', 'Rabu', '11:15', '11:55', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('108', '2', '20', '9', 'Rabu', '11:55', '12:30', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('109', '2', '19', '9', 'Rabu', '12:30', '13:00', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('110', '2', '2', '3', 'Rabu', '13:00', '13:40', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('111', '2', '8', '4', 'Rabu', '13:40', '14:20', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('112', '2', '8', '4', 'Rabu', '14:20', '15:00', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('113', '2', '17', '3', 'Rabu', '15:00', '15:20', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('114', '2', '21', '9', 'Rabu', '15:20', '15:30', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('115', '2', '27', '9', 'Kamis', '07:00', '07:30', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('116', '2', '8', '4', 'Kamis', '07:30', '08:10', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('117', '2', '8', '4', 'Kamis', '08:10', '08:50', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('118', '2', '19', '9', 'Kamis', '08:50', '09:05', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('119', '2', '1', '7', 'Kamis', '09:05', '09:45', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('120', '2', '1', '7', 'Kamis', '09:45', '10:25', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('121', '2', '4', '3', 'Kamis', '10:25', '11:05', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('122', '2', '4', '3', 'Kamis', '11:05', '11:45', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('123', '2', '20', '9', 'Kamis', '11:45', '12:30', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('124', '2', '19', '9', 'Kamis', '12:30', '13:00', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('125', '2', '5', '2', 'Kamis', '13:00', '13:40', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('126', '2', '9', '8', 'Kamis', '13:40', '14:20', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('127', '2', '9', '8', 'Kamis', '14:20', '15:00', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('128', '2', '17', '3', 'Kamis', '15:00', '15:20', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('129', '2', '21', '9', 'Kamis', '15:20', '15:30', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('130', '2', '27', '9', 'Jumat', '07:00', '07:30', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('131', '2', '16', '9', 'Jumat', '07:30', '08:30', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('132', '2', '8', '4', 'Jumat', '08:30', '09:10', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('133', '2', '8', '4', 'Jumat', '09:10', '09:50', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('134', '2', '19', '9', 'Jumat', '09:50', '10:05', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('135', '2', '10', '8', 'Jumat', '10:05', '10:45', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('136', '2', '10', '8', 'Jumat', '10:45', '11:15', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('137', '2', '20', '9', 'Jumat', '11:15', '11:30', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('138', '2', '19', '9', 'Jumat', '11:30', '13:00', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('139', '2', '3', '6', 'Jumat', '13:00', '13:40', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('140', '2', '3', '6', 'Jumat', '13:40', '14:20', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('141', '3', '27', '9', 'Senin', '07:00', '07:30', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('142', '3', '22', '9', 'Senin', '07:30', '08:15', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('143', '3', '8', '4', 'Senin', '08:15', '08:55', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('144', '3', '8', '4', 'Senin', '08:55', '09:35', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('145', '3', '19', '9', 'Senin', '09:35', '09:50', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('146', '3', '3', '6', 'Senin', '09:50', '10:30', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('147', '3', '3', '6', 'Senin', '10:30', '11:10', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('148', '3', '10', '8', 'Senin', '11:10', '11:50', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('149', '3', '20', '9', 'Senin', '11:50', '12:30', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('150', '3', '19', '9', 'Senin', '12:30', '13:00', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('151', '3', '10', '8', 'Senin', '13:00', '13:40', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('152', '3', '11', '2', 'Senin', '13:40', '14:20', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('153', '3', '11', '2', 'Senin', '14:20', '15:00', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('154', '3', '17', '3', 'Senin', '15:00', '15:20', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('155', '3', '21', '9', 'Senin', '15:20', '15:30', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('156', '3', '27', '9', 'Selasa', '07:00', '07:30', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('157', '3', '13', '5', 'Selasa', '07:30', '08:10', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('158', '3', '13', '5', 'Selasa', '08:10', '08:50', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('159', '3', '19', '9', 'Selasa', '08:50', '09:05', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('160', '3', '6', '9', 'Selasa', '09:05', '09:45', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('161', '3', '6', '9', 'Selasa', '09:45', '10:25', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('162', '3', '2', '3', 'Selasa', '10:25', '11:05', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('163', '3', '2', '3', 'Selasa', '11:05', '11:45', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('164', '3', '20', '9', 'Selasa', '11:45', '12:30', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('165', '3', '19', '9', 'Selasa', '12:30', '13:00', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('166', '3', '9', '8', 'Selasa', '13:00', '13:40', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('167', '3', '8', '4', 'Selasa', '13:40', '14:20', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('168', '3', '8', '4', 'Selasa', '14:20', '15:00', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('169', '3', '17', '3', 'Selasa', '15:00', '15:20', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('170', '3', '21', '9', 'Selasa', '15:20', '15:30', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('171', '3', '27', '9', 'Rabu', '07:00', '07:30', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('172', '3', '18', '9', 'Rabu', '07:30', '09:00', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('173', '3', '19', '9', 'Rabu', '09:00', '09:15', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('174', '3', '5', '2', 'Rabu', '09:15', '09:55', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('175', '3', '5', '2', 'Rabu', '09:55', '10:35', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('176', '3', '8', '4', 'Rabu', '10:35', '11:15', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('177', '3', '8', '4', 'Rabu', '11:15', '11:55', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('178', '3', '20', '9', 'Rabu', '11:55', '12:30', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('179', '3', '19', '9', 'Rabu', '12:30', '13:00', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('180', '3', '1', '7', 'Rabu', '13:00', '13:40', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('181', '3', '1', '7', 'Rabu', '13:40', '14:20', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('182', '3', '9', '8', 'Rabu', '14:20', '15:00', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('183', '3', '17', '3', 'Rabu', '15:00', '15:20', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('184', '3', '21', '9', 'Rabu', '15:20', '15:30', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('185', '3', '27', '9', 'Kamis', '07:00', '07:30', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('186', '3', '2', '3', 'Kamis', '07:30', '08:10', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('187', '3', '2', '3', 'Kamis', '08:10', '08:50', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('188', '3', '19', '9', 'Kamis', '08:50', '09:05', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('189', '3', '3', '6', 'Kamis', '09:05', '09:45', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('190', '3', '3', '6', 'Kamis', '09:45', '10:25', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('191', '3', '5', '2', 'Kamis', '10:25', '11:05', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('192', '3', '8', '4', 'Kamis', '11:05', '11:45', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('193', '3', '20', '9', 'Kamis', '11:45', '12:30', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('194', '3', '19', '9', 'Kamis', '12:30', '13:00', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('195', '3', '8', '4', 'Kamis', '13:00', '13:40', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('196', '3', '12', '2', 'Kamis', '13:40', '14:20', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('197', '3', '12', '2', 'Kamis', '14:20', '15:00', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('198', '3', '17', '3', 'Kamis', '15:00', '15:20', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('199', '3', '21', '9', 'Kamis', '15:20', '15:30', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('200', '3', '27', '9', 'Jumat', '07:00', '07:30', '2026-07-22 21:03:04', '2026-07-22 21:03:04');
+INSERT INTO `jadwal` (`id`, `kelas_id`, `mapel_id`, `guru_id`, `hari`, `jam_mulai`, `jam_selesai`, `created_at`, `updated_at`) VALUES
+('201', '3', '16', '9', 'Jumat', '07:30', '08:30', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('202', '3', '4', '3', 'Jumat', '08:30', '09:10', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('203', '3', '4', '3', 'Jumat', '09:10', '09:50', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('204', '3', '19', '9', 'Jumat', '09:50', '10:05', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('205', '3', '1', '7', 'Jumat', '10:05', '10:45', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('206', '3', '1', '7', 'Jumat', '10:45', '11:15', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('207', '3', '20', '9', 'Jumat', '11:15', '11:30', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('208', '3', '19', '9', 'Jumat', '11:30', '13:00', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('209', '3', '8', '4', 'Jumat', '13:00', '13:40', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('210', '3', '8', '4', 'Jumat', '13:40', '14:20', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('211', '4', '27', '9', 'Senin', '07:00', '07:30', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('212', '4', '22', '9', 'Senin', '07:30', '08:15', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('213', '4', '5', '2', 'Senin', '08:15', '08:55', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('214', '4', '5', '2', 'Senin', '08:55', '09:35', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('215', '4', '19', '9', 'Senin', '09:35', '09:50', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('216', '4', '6', '9', 'Senin', '09:50', '10:30', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('217', '4', '6', '9', 'Senin', '10:30', '11:10', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('218', '4', '8', '4', 'Senin', '11:10', '11:50', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('219', '4', '20', '9', 'Senin', '11:50', '12:30', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('220', '4', '19', '9', 'Senin', '12:30', '13:00', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('221', '4', '8', '4', 'Senin', '13:00', '13:40', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('222', '4', '2', '3', 'Senin', '13:40', '14:20', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('223', '4', '2', '3', 'Senin', '14:20', '15:00', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('224', '4', '17', '3', 'Senin', '15:00', '15:20', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('225', '4', '21', '9', 'Senin', '15:20', '15:30', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('226', '4', '27', '9', 'Selasa', '07:00', '07:30', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('227', '4', '1', '7', 'Selasa', '07:30', '08:10', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('228', '4', '1', '7', 'Selasa', '08:10', '08:50', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('229', '4', '19', '9', 'Selasa', '08:50', '09:05', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('230', '4', '2', '3', 'Selasa', '09:05', '09:45', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('231', '4', '2', '3', 'Selasa', '09:45', '10:25', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('232', '4', '8', '4', 'Selasa', '10:25', '11:05', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('233', '4', '8', '4', 'Selasa', '11:05', '11:45', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('234', '4', '20', '9', 'Selasa', '11:45', '12:30', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('235', '4', '19', '9', 'Selasa', '12:30', '13:00', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('236', '4', '15', '1', 'Selasa', '13:00', '13:40', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('237', '4', '15', '1', 'Selasa', '13:40', '14:20', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('238', '4', '3', '6', 'Selasa', '14:20', '15:00', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('239', '4', '17', '3', 'Selasa', '15:00', '15:20', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('240', '4', '21', '9', 'Selasa', '15:20', '15:30', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('241', '4', '27', '9', 'Rabu', '07:00', '07:30', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('242', '4', '18', '9', 'Rabu', '07:30', '09:00', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('243', '4', '19', '9', 'Rabu', '09:00', '09:15', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('244', '4', '11', '2', 'Rabu', '09:15', '09:55', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('245', '4', '11', '2', 'Rabu', '09:55', '10:35', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('246', '4', '12', '2', 'Rabu', '10:35', '11:15', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('247', '4', '12', '2', 'Rabu', '11:15', '11:55', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('248', '4', '20', '9', 'Rabu', '11:55', '12:30', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('249', '4', '19', '9', 'Rabu', '12:30', '13:00', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('250', '4', '3', '6', 'Rabu', '13:00', '13:40', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('251', '4', '8', '4', 'Rabu', '13:40', '14:20', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('252', '4', '8', '4', 'Rabu', '14:20', '15:00', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('253', '4', '17', '3', 'Rabu', '15:00', '15:20', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('254', '4', '21', '9', 'Rabu', '15:20', '15:30', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('255', '4', '27', '9', 'Kamis', '07:00', '07:30', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('256', '4', '8', '4', 'Kamis', '07:30', '08:10', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('257', '4', '8', '4', 'Kamis', '08:10', '08:50', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('258', '4', '19', '9', 'Kamis', '08:50', '09:05', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('259', '4', '7', '8', 'Kamis', '09:05', '09:45', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('260', '4', '7', '8', 'Kamis', '09:45', '10:25', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('261', '4', '1', '7', 'Kamis', '10:25', '11:05', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('262', '4', '1', '7', 'Kamis', '11:05', '11:45', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('263', '4', '20', '9', 'Kamis', '11:45', '12:30', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('264', '4', '19', '9', 'Kamis', '12:30', '13:00', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('265', '4', '14', '1', 'Kamis', '13:00', '13:40', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('266', '4', '3', '6', 'Kamis', '13:40', '14:20', '2026-07-22 21:03:04', '2026-07-22 21:03:04'),
+('267', '4', '3', '6', 'Kamis', '14:20', '15:00', '2026-07-22 21:03:05', '2026-07-22 21:03:05'),
+('268', '4', '17', '3', 'Kamis', '15:00', '15:20', '2026-07-22 21:03:05', '2026-07-22 21:03:05'),
+('269', '4', '21', '9', 'Kamis', '15:20', '15:30', '2026-07-22 21:03:05', '2026-07-22 21:03:05'),
+('270', '4', '27', '9', 'Jumat', '07:00', '07:30', '2026-07-22 21:03:05', '2026-07-22 21:03:05'),
+('271', '4', '16', '9', 'Jumat', '07:30', '08:30', '2026-07-22 21:03:05', '2026-07-22 21:03:05'),
+('272', '4', '8', '4', 'Jumat', '08:30', '09:10', '2026-07-22 21:03:05', '2026-07-22 21:03:05'),
+('273', '4', '8', '4', 'Jumat', '09:10', '09:50', '2026-07-22 21:03:05', '2026-07-22 21:03:05'),
+('274', '4', '19', '9', 'Jumat', '09:50', '10:05', '2026-07-22 21:03:05', '2026-07-22 21:03:05'),
+('275', '4', '3', '6', 'Jumat', '10:05', '10:45', '2026-07-22 21:03:05', '2026-07-22 21:03:05'),
+('276', '4', '3', '6', 'Jumat', '10:45', '11:15', '2026-07-22 21:03:05', '2026-07-22 21:03:05'),
+('277', '4', '20', '9', 'Jumat', '11:15', '11:30', '2026-07-22 21:03:05', '2026-07-22 21:03:05'),
+('278', '4', '19', '9', 'Jumat', '11:30', '13:00', '2026-07-22 21:03:05', '2026-07-22 21:03:05'),
+('279', '4', '4', '3', 'Jumat', '13:00', '13:40', '2026-07-22 21:03:05', '2026-07-22 21:03:05'),
+('280', '4', '4', '3', 'Jumat', '13:40', '14:20', '2026-07-22 21:03:05', '2026-07-22 21:03:05'),
+('281', '5', '27', '9', 'Senin', '07:00', '07:30', '2026-07-22 21:03:05', '2026-07-22 21:03:05'),
+('282', '5', '22', '9', 'Senin', '07:30', '08:15', '2026-07-22 21:03:05', '2026-07-22 21:03:05'),
+('283', '5', '8', '4', 'Senin', '08:15', '08:55', '2026-07-22 21:03:05', '2026-07-22 21:03:05'),
+('284', '5', '8', '4', 'Senin', '08:55', '09:35', '2026-07-22 21:03:05', '2026-07-22 21:03:05'),
+('285', '5', '19', '9', 'Senin', '09:35', '09:50', '2026-07-22 21:03:05', '2026-07-22 21:03:05'),
+('286', '5', '5', '2', 'Senin', '09:50', '10:30', '2026-07-22 21:03:05', '2026-07-22 21:03:05'),
+('287', '5', '5', '2', 'Senin', '10:30', '11:10', '2026-07-22 21:03:05', '2026-07-22 21:03:05'),
+('288', '5', '2', '3', 'Senin', '11:10', '11:50', '2026-07-22 21:03:05', '2026-07-22 21:03:05'),
+('289', '5', '20', '9', 'Senin', '11:50', '12:30', '2026-07-22 21:03:05', '2026-07-22 21:03:05'),
+('290', '5', '19', '9', 'Senin', '12:30', '13:00', '2026-07-22 21:03:05', '2026-07-22 21:03:05'),
+('291', '5', '2', '3', 'Senin', '13:00', '13:40', '2026-07-22 21:03:05', '2026-07-22 21:03:05'),
+('292', '5', '7', '8', 'Senin', '13:40', '14:20', '2026-07-22 21:03:05', '2026-07-22 21:03:05'),
+('293', '5', '7', '8', 'Senin', '14:20', '15:00', '2026-07-22 21:03:05', '2026-07-22 21:03:05'),
+('294', '5', '17', '3', 'Senin', '15:00', '15:20', '2026-07-22 21:03:05', '2026-07-22 21:03:05'),
+('295', '5', '21', '9', 'Senin', '15:20', '15:30', '2026-07-22 21:03:05', '2026-07-22 21:03:05'),
+('296', '5', '27', '9', 'Selasa', '07:00', '07:30', '2026-07-22 21:03:05', '2026-07-22 21:03:05'),
+('297', '5', '4', '3', 'Selasa', '07:30', '08:10', '2026-07-22 21:03:05', '2026-07-22 21:03:05'),
+('298', '5', '4', '3', 'Selasa', '08:10', '08:50', '2026-07-22 21:03:05', '2026-07-22 21:03:05'),
+('299', '5', '19', '9', 'Selasa', '08:50', '09:05', '2026-07-22 21:03:05', '2026-07-22 21:03:05'),
+('300', '5', '1', '7', 'Selasa', '09:05', '09:45', '2026-07-22 21:03:05', '2026-07-22 21:03:05');
+INSERT INTO `jadwal` (`id`, `kelas_id`, `mapel_id`, `guru_id`, `hari`, `jam_mulai`, `jam_selesai`, `created_at`, `updated_at`) VALUES
+('301', '5', '1', '7', 'Selasa', '09:45', '10:25', '2026-07-22 21:03:05', '2026-07-22 21:03:05'),
+('302', '5', '3', '6', 'Selasa', '10:25', '11:05', '2026-07-22 21:03:05', '2026-07-22 21:03:05'),
+('303', '5', '6', '9', 'Selasa', '11:05', '11:45', '2026-07-22 21:03:05', '2026-07-22 21:03:05'),
+('304', '5', '20', '9', 'Selasa', '11:45', '12:30', '2026-07-22 21:03:05', '2026-07-22 21:03:05'),
+('305', '5', '19', '9', 'Selasa', '12:30', '13:00', '2026-07-22 21:03:05', '2026-07-22 21:03:05'),
+('306', '5', '6', '9', 'Selasa', '13:00', '13:40', '2026-07-22 21:03:05', '2026-07-22 21:03:05'),
+('307', '5', '8', '4', 'Selasa', '13:40', '14:20', '2026-07-22 21:03:05', '2026-07-22 21:03:05'),
+('308', '5', '8', '4', 'Selasa', '14:20', '15:00', '2026-07-22 21:03:05', '2026-07-22 21:03:05'),
+('309', '5', '17', '3', 'Selasa', '15:00', '15:20', '2026-07-22 21:03:05', '2026-07-22 21:03:05'),
+('310', '5', '21', '9', 'Selasa', '15:20', '15:30', '2026-07-22 21:03:05', '2026-07-22 21:03:05'),
+('311', '5', '27', '9', 'Rabu', '07:00', '07:30', '2026-07-22 21:03:05', '2026-07-22 21:03:05'),
+('312', '5', '18', '9', 'Rabu', '07:30', '09:00', '2026-07-22 21:03:05', '2026-07-22 21:03:05'),
+('313', '5', '19', '9', 'Rabu', '09:00', '09:15', '2026-07-22 21:03:05', '2026-07-22 21:03:05'),
+('314', '5', '3', '6', 'Rabu', '09:15', '09:55', '2026-07-22 21:03:05', '2026-07-22 21:03:05'),
+('315', '5', '3', '6', 'Rabu', '09:55', '10:35', '2026-07-22 21:03:05', '2026-07-22 21:03:05'),
+('316', '5', '8', '4', 'Rabu', '10:35', '11:15', '2026-07-22 21:03:05', '2026-07-22 21:03:05'),
+('317', '5', '8', '4', 'Rabu', '11:15', '11:55', '2026-07-22 21:03:05', '2026-07-22 21:03:05'),
+('318', '5', '20', '9', 'Rabu', '11:55', '12:30', '2026-07-22 21:03:05', '2026-07-22 21:03:05'),
+('319', '5', '19', '9', 'Rabu', '12:30', '13:00', '2026-07-22 21:03:05', '2026-07-22 21:03:05'),
+('320', '5', '14', '1', 'Rabu', '13:00', '13:40', '2026-07-22 21:03:05', '2026-07-22 21:03:05'),
+('321', '5', '11', '2', 'Rabu', '13:40', '14:20', '2026-07-22 21:03:05', '2026-07-22 21:03:05'),
+('322', '5', '11', '2', 'Rabu', '14:20', '15:00', '2026-07-22 21:03:05', '2026-07-22 21:03:05'),
+('323', '5', '17', '3', 'Rabu', '15:00', '15:20', '2026-07-22 21:03:05', '2026-07-22 21:03:05'),
+('324', '5', '21', '9', 'Rabu', '15:20', '15:30', '2026-07-22 21:03:05', '2026-07-22 21:03:05'),
+('325', '5', '27', '9', 'Kamis', '07:00', '07:30', '2026-07-22 21:03:05', '2026-07-22 21:03:05'),
+('326', '5', '1', '7', 'Kamis', '07:30', '08:10', '2026-07-22 21:03:05', '2026-07-22 21:03:05'),
+('327', '5', '1', '7', 'Kamis', '08:10', '08:50', '2026-07-22 21:03:05', '2026-07-22 21:03:05'),
+('328', '5', '19', '9', 'Kamis', '08:50', '09:05', '2026-07-22 21:03:05', '2026-07-22 21:03:05'),
+('329', '5', '2', '3', 'Kamis', '09:05', '09:45', '2026-07-22 21:03:05', '2026-07-22 21:03:05'),
+('330', '5', '2', '3', 'Kamis', '09:45', '10:25', '2026-07-22 21:03:05', '2026-07-22 21:03:05'),
+('331', '5', '3', '6', 'Kamis', '10:25', '11:05', '2026-07-22 21:03:05', '2026-07-22 21:03:05'),
+('332', '5', '8', '4', 'Kamis', '11:05', '11:45', '2026-07-22 21:03:05', '2026-07-22 21:03:05'),
+('333', '5', '20', '9', 'Kamis', '11:45', '12:30', '2026-07-22 21:03:05', '2026-07-22 21:03:05'),
+('334', '5', '19', '9', 'Kamis', '12:30', '13:00', '2026-07-22 21:03:05', '2026-07-22 21:03:05'),
+('335', '5', '8', '4', 'Kamis', '13:00', '13:40', '2026-07-22 21:03:05', '2026-07-22 21:03:05'),
+('336', '5', '15', '1', 'Kamis', '13:40', '14:20', '2026-07-22 21:03:05', '2026-07-22 21:03:05'),
+('337', '5', '15', '1', 'Kamis', '14:20', '15:00', '2026-07-22 21:03:05', '2026-07-22 21:03:05'),
+('338', '5', '17', '3', 'Kamis', '15:00', '15:20', '2026-07-22 21:03:05', '2026-07-22 21:03:05'),
+('339', '5', '21', '9', 'Kamis', '15:20', '15:30', '2026-07-22 21:03:05', '2026-07-22 21:03:05'),
+('340', '5', '27', '9', 'Jumat', '07:00', '07:30', '2026-07-22 21:03:05', '2026-07-22 21:03:05'),
+('341', '5', '16', '9', 'Jumat', '07:30', '08:30', '2026-07-22 21:03:05', '2026-07-22 21:03:05'),
+('342', '5', '3', '6', 'Jumat', '08:30', '09:10', '2026-07-22 21:03:05', '2026-07-22 21:03:05'),
+('343', '5', '3', '6', 'Jumat', '09:10', '09:50', '2026-07-22 21:03:05', '2026-07-22 21:03:05'),
+('344', '5', '19', '9', 'Jumat', '09:50', '10:05', '2026-07-22 21:03:05', '2026-07-22 21:03:05'),
+('345', '5', '12', '2', 'Jumat', '10:05', '10:45', '2026-07-22 21:03:05', '2026-07-22 21:03:05'),
+('346', '5', '12', '2', 'Jumat', '10:45', '11:15', '2026-07-22 21:03:05', '2026-07-22 21:03:05'),
+('347', '5', '20', '9', 'Jumat', '11:15', '11:30', '2026-07-22 21:03:05', '2026-07-22 21:03:05'),
+('348', '5', '19', '9', 'Jumat', '11:30', '13:00', '2026-07-22 21:03:05', '2026-07-22 21:03:05'),
+('349', '5', '8', '4', 'Jumat', '13:00', '13:40', '2026-07-22 21:03:05', '2026-07-22 21:03:05'),
+('350', '5', '8', '4', 'Jumat', '13:40', '14:20', '2026-07-22 21:03:05', '2026-07-22 21:03:05'),
+('351', '6', '1', '12', 'Senin', '07:30', '08:10', '2026-07-22 21:03:05', '2026-07-22 21:03:05'),
+('352', '6', '3', '12', 'Selasa', '09:00', '09:40', '2026-07-22 21:03:05', '2026-07-22 21:03:05'),
+('353', '6', '8', '12', 'Rabu', '10:00', '10:40', '2026-07-22 21:03:05', '2026-07-22 21:03:05');
+
+DROP TABLE IF EXISTS `job_batches`;
+CREATE TABLE `job_batches` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  `total_jobs` int NOT NULL,
+  `pending_jobs` int NOT NULL,
+  `failed_jobs` int NOT NULL,
+  `failed_job_ids` text NOT NULL,
+  `options` text NULL,
+  `cancelled_at` int NULL,
+  `created_at` int NOT NULL,
+  `finished_at` int NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DROP TABLE IF EXISTS `jobs`;
+CREATE TABLE `jobs` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `queue` varchar(255) NOT NULL,
+  `payload` text NOT NULL,
+  `attempts` int NOT NULL,
+  `reserved_at` int NULL,
+  `available_at` int NOT NULL,
+  `created_at` int NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `jobs_queue_index` (`queue`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DROP TABLE IF EXISTS `jurnal_sikaps`;
+CREATE TABLE `jurnal_sikaps` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `siswa_id` bigint unsigned NOT NULL,
+  `kelas_id` bigint unsigned NULL,
+  `guru_id` bigint unsigned NULL,
+  `tanggal` date NOT NULL,
+  `kejadian` text NOT NULL,
+  `tindakan` text NULL,
+  `paraf` varchar(255) NULL,
+  `tahun_ajaran` varchar(255) NOT NULL DEFAULT '2026/2027',
+  `semester` varchar(255) NOT NULL DEFAULT 'Ganjil',
+  `created_at` datetime NULL,
+  `updated_at` datetime NULL,
+  PRIMARY KEY (`id`),
+  KEY `jurnal_sikaps_semester_index` (`semester`),
+  KEY `jurnal_sikaps_tahun_ajaran_index` (`tahun_ajaran`),
+  KEY `jurnal_sikaps_tanggal_index` (`tanggal`),
+  KEY `jurnal_sikaps_guru_id_tanggal_index` (`guru_id`, `tanggal`),
+  KEY `jurnal_sikaps_kelas_id_tanggal_index` (`kelas_id`, `tanggal`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT INTO `jurnal_sikaps` (`id`, `siswa_id`, `kelas_id`, `guru_id`, `tanggal`, `kejadian`, `tindakan`, `paraf`, `tahun_ajaran`, `semester`, `created_at`, `updated_at`) VALUES
+('1', '67', '6', '12', '2026-07-10 00:00:00', 'Demo membantu teman memahami tugas.', 'Diberi apresiasi.', 'GD', '2026/2027', 'Ganjil', '2026-07-22 21:05:01', '2026-07-22 21:05:01');
+
+DROP TABLE IF EXISTS `kehadiran`;
+CREATE TABLE `kehadiran` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `siswa_id` bigint unsigned NOT NULL,
+  `tanggal` date NOT NULL,
+  `status` varchar(255) NOT NULL,
+  `keterangan` text NULL,
+  `created_at` datetime NULL,
+  `updated_at` datetime NULL,
+  `kelas_id` bigint unsigned NULL,
+  `mapel_id` bigint unsigned NULL,
+  `guru_id` bigint unsigned NULL,
+  `pertemuan` varchar(255) NULL,
+  `tahun_ajaran` varchar(255) NOT NULL DEFAULT '2026/2027',
+  `semester` varchar(255) NOT NULL DEFAULT 'Ganjil',
+  PRIMARY KEY (`id`),
+  KEY `kehadiran_semester_index` (`semester`),
+  KEY `kehadiran_tahun_ajaran_index` (`tahun_ajaran`),
+  KEY `kehadiran_guru_id_tanggal_index` (`guru_id`, `tanggal`),
+  KEY `kehadiran_kelas_id_tanggal_status_index` (`kelas_id`, `tanggal`, `status`),
+  UNIQUE KEY `kehadiran_siswa_pertemuan_unique` (`siswa_id`, `tanggal`, `mapel_id`, `pertemuan`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT INTO `kehadiran` (`id`, `siswa_id`, `tanggal`, `status`, `keterangan`, `created_at`, `updated_at`, `kelas_id`, `mapel_id`, `guru_id`, `pertemuan`, `tahun_ajaran`, `semester`) VALUES
+('1', '67', '2026-07-01 00:00:00', 'hadir', 'Hadir Demo', '2026-07-22 21:03:06', '2026-07-22 21:03:06', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('2', '67', '2026-07-02 00:00:00', 'hadir', 'Hadir Demo', '2026-07-22 21:03:06', '2026-07-22 21:03:06', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('3', '67', '2026-07-03 00:00:00', 'alpha', 'Alpha Demo', '2026-07-22 21:03:06', '2026-07-22 21:03:06', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('4', '67', '2026-07-06 00:00:00', 'hadir', 'Hadir Demo', '2026-07-22 21:03:06', '2026-07-22 21:03:06', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('5', '67', '2026-07-07 00:00:00', 'hadir', 'Hadir Demo', '2026-07-22 21:03:06', '2026-07-22 21:03:06', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('6', '67', '2026-07-08 00:00:00', 'sakit', 'Sakit Demo', '2026-07-22 21:03:06', '2026-07-22 21:03:06', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('7', '67', '2026-07-09 00:00:00', 'hadir', 'Hadir Demo', '2026-07-22 21:03:06', '2026-07-22 21:03:06', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('8', '67', '2026-07-10 00:00:00', 'hadir', 'Hadir Demo', '2026-07-22 21:03:06', '2026-07-22 21:03:06', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('9', '67', '2026-07-13 00:00:00', 'hadir', 'Hadir Demo', '2026-07-22 21:03:06', '2026-07-22 21:03:06', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('10', '67', '2026-07-14 00:00:00', 'izin', 'Izin Demo', '2026-07-22 21:03:06', '2026-07-22 21:03:06', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('11', '67', '2026-07-15 00:00:00', 'hadir', 'Hadir Demo', '2026-07-22 21:03:06', '2026-07-22 21:03:06', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('12', '67', '2026-07-16 00:00:00', 'hadir', 'Hadir Demo', '2026-07-22 21:03:06', '2026-07-22 21:03:06', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('13', '67', '2026-07-17 00:00:00', 'hadir', 'Hadir Demo', '2026-07-22 21:03:06', '2026-07-22 21:03:06', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('14', '67', '2026-07-20 00:00:00', 'alpha', 'Alpha Demo', '2026-07-22 21:03:06', '2026-07-22 21:03:06', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('15', '67', '2026-07-21 00:00:00', 'hadir', 'Hadir Demo', '2026-07-22 21:03:06', '2026-07-22 21:03:06', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('16', '67', '2026-07-22 00:00:00', 'hadir', 'Hadir Demo', '2026-07-22 21:03:06', '2026-07-22 21:03:06', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('17', '67', '2026-07-23 00:00:00', 'hadir', 'Hadir Demo', '2026-07-22 21:03:06', '2026-07-22 21:03:06', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('18', '67', '2026-07-24 00:00:00', 'hadir', 'Hadir Demo', '2026-07-22 21:03:06', '2026-07-22 21:03:06', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('19', '1', '2026-03-02 00:00:00', 'sakit', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('20', '2', '2026-03-02 00:00:00', 'hadir', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('21', '3', '2026-03-02 00:00:00', 'hadir', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('22', '4', '2026-03-02 00:00:00', 'hadir', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('23', '5', '2026-03-02 00:00:00', 'hadir', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('24', '6', '2026-03-02 00:00:00', 'hadir', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('25', '7', '2026-03-02 00:00:00', 'hadir', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('26', '8', '2026-03-02 00:00:00', 'hadir', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('27', '9', '2026-03-02 00:00:00', 'izin', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('28', '10', '2026-03-02 00:00:00', 'hadir', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('29', '1', '2026-03-03 00:00:00', 'hadir', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('30', '2', '2026-03-03 00:00:00', 'hadir', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('31', '3', '2026-03-03 00:00:00', 'hadir', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('32', '4', '2026-03-03 00:00:00', 'hadir', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('33', '5', '2026-03-03 00:00:00', 'hadir', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('34', '6', '2026-03-03 00:00:00', 'hadir', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('35', '7', '2026-03-03 00:00:00', 'izin', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('36', '8', '2026-03-03 00:00:00', 'hadir', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('37', '9', '2026-03-03 00:00:00', 'hadir', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('38', '10', '2026-03-03 00:00:00', 'sakit', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('39', '1', '2026-03-04 00:00:00', 'hadir', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('40', '2', '2026-03-04 00:00:00', 'hadir', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('41', '3', '2026-03-04 00:00:00', 'hadir', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('42', '4', '2026-03-04 00:00:00', 'hadir', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('43', '5', '2026-03-04 00:00:00', 'hadir', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('44', '6', '2026-03-04 00:00:00', 'hadir', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('45', '7', '2026-03-04 00:00:00', 'sakit', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('46', '8', '2026-03-04 00:00:00', 'hadir', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('47', '9', '2026-03-04 00:00:00', 'hadir', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('48', '10', '2026-03-04 00:00:00', 'hadir', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('49', '1', '2026-03-05 00:00:00', 'hadir', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('50', '2', '2026-03-05 00:00:00', 'alpha', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('51', '3', '2026-03-05 00:00:00', 'hadir', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('52', '4', '2026-03-05 00:00:00', 'hadir', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('53', '5', '2026-03-05 00:00:00', 'hadir', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('54', '6', '2026-03-05 00:00:00', 'hadir', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('55', '7', '2026-03-05 00:00:00', 'hadir', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('56', '8', '2026-03-05 00:00:00', 'hadir', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('57', '9', '2026-03-05 00:00:00', 'hadir', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('58', '10', '2026-03-05 00:00:00', 'hadir', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('59', '1', '2026-03-06 00:00:00', 'hadir', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('60', '2', '2026-03-06 00:00:00', 'hadir', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('61', '3', '2026-03-06 00:00:00', 'alpha', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('62', '4', '2026-03-06 00:00:00', 'hadir', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('63', '5', '2026-03-06 00:00:00', 'hadir', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('64', '6', '2026-03-06 00:00:00', 'hadir', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('65', '7', '2026-03-06 00:00:00', 'hadir', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('66', '8', '2026-03-06 00:00:00', 'izin', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('67', '9', '2026-03-06 00:00:00', 'hadir', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('68', '10', '2026-03-06 00:00:00', 'hadir', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('69', '1', '2026-03-09 00:00:00', 'hadir', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('70', '2', '2026-03-09 00:00:00', 'hadir', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('71', '3', '2026-03-09 00:00:00', 'hadir', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('72', '4', '2026-03-09 00:00:00', 'hadir', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('73', '5', '2026-03-09 00:00:00', 'hadir', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('74', '6', '2026-03-09 00:00:00', 'hadir', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('75', '7', '2026-03-09 00:00:00', 'hadir', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('76', '8', '2026-03-09 00:00:00', 'hadir', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('77', '9', '2026-03-09 00:00:00', 'hadir', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('78', '10', '2026-03-09 00:00:00', 'hadir', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('79', '1', '2026-03-10 00:00:00', 'hadir', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('80', '2', '2026-03-10 00:00:00', 'hadir', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('81', '3', '2026-03-10 00:00:00', 'hadir', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('82', '4', '2026-03-10 00:00:00', 'alpha', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('83', '5', '2026-03-10 00:00:00', 'hadir', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('84', '6', '2026-03-10 00:00:00', 'sakit', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('85', '7', '2026-03-10 00:00:00', 'hadir', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('86', '8', '2026-03-10 00:00:00', 'hadir', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('87', '9', '2026-03-10 00:00:00', 'hadir', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('88', '10', '2026-03-10 00:00:00', 'hadir', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('89', '67', '2026-07-01 00:00:00', 'hadir', 'Hadir Demo', '2026-07-22 21:05:00', '2026-07-22 21:05:00', '6', '1', '12', 'Demo', '2026/2027', 'Ganjil'),
+('90', '67', '2026-07-02 00:00:00', 'hadir', 'Hadir Demo', '2026-07-22 21:05:00', '2026-07-22 21:05:00', '6', '1', '12', 'Demo', '2026/2027', 'Ganjil'),
+('91', '67', '2026-07-03 00:00:00', 'alpha', 'Alpha Demo', '2026-07-22 21:05:00', '2026-07-22 21:05:00', '6', '1', '12', 'Demo', '2026/2027', 'Ganjil'),
+('92', '67', '2026-07-06 00:00:00', 'hadir', 'Hadir Demo', '2026-07-22 21:05:00', '2026-07-22 21:05:00', '6', '1', '12', 'Demo', '2026/2027', 'Ganjil'),
+('93', '67', '2026-07-07 00:00:00', 'hadir', 'Hadir Demo', '2026-07-22 21:05:00', '2026-07-22 21:05:00', '6', '1', '12', 'Demo', '2026/2027', 'Ganjil'),
+('94', '67', '2026-07-08 00:00:00', 'sakit', 'Sakit Demo', '2026-07-22 21:05:00', '2026-07-22 21:05:00', '6', '1', '12', 'Demo', '2026/2027', 'Ganjil'),
+('95', '67', '2026-07-09 00:00:00', 'hadir', 'Hadir Demo', '2026-07-22 21:05:00', '2026-07-22 21:05:00', '6', '1', '12', 'Demo', '2026/2027', 'Ganjil'),
+('96', '67', '2026-07-10 00:00:00', 'hadir', 'Hadir Demo', '2026-07-22 21:05:00', '2026-07-22 21:05:00', '6', '1', '12', 'Demo', '2026/2027', 'Ganjil'),
+('97', '67', '2026-07-13 00:00:00', 'hadir', 'Hadir Demo', '2026-07-22 21:05:00', '2026-07-22 21:05:00', '6', '1', '12', 'Demo', '2026/2027', 'Ganjil'),
+('98', '67', '2026-07-14 00:00:00', 'izin', 'Izin Demo', '2026-07-22 21:05:01', '2026-07-22 21:05:01', '6', '1', '12', 'Demo', '2026/2027', 'Ganjil'),
+('99', '67', '2026-07-15 00:00:00', 'hadir', 'Hadir Demo', '2026-07-22 21:05:01', '2026-07-22 21:05:01', '6', '1', '12', 'Demo', '2026/2027', 'Ganjil'),
+('100', '67', '2026-07-16 00:00:00', 'hadir', 'Hadir Demo', '2026-07-22 21:05:01', '2026-07-22 21:05:01', '6', '1', '12', 'Demo', '2026/2027', 'Ganjil');
+INSERT INTO `kehadiran` (`id`, `siswa_id`, `tanggal`, `status`, `keterangan`, `created_at`, `updated_at`, `kelas_id`, `mapel_id`, `guru_id`, `pertemuan`, `tahun_ajaran`, `semester`) VALUES
+('101', '67', '2026-07-17 00:00:00', 'hadir', 'Hadir Demo', '2026-07-22 21:05:01', '2026-07-22 21:05:01', '6', '1', '12', 'Demo', '2026/2027', 'Ganjil'),
+('102', '67', '2026-07-20 00:00:00', 'alpha', 'Alpha Demo', '2026-07-22 21:05:01', '2026-07-22 21:05:01', '6', '1', '12', 'Demo', '2026/2027', 'Ganjil'),
+('103', '67', '2026-07-21 00:00:00', 'hadir', 'Hadir Demo', '2026-07-22 21:05:01', '2026-07-22 21:05:01', '6', '1', '12', 'Demo', '2026/2027', 'Ganjil'),
+('104', '67', '2026-07-22 00:00:00', 'hadir', 'Hadir Demo', '2026-07-22 21:05:01', '2026-07-22 21:05:01', '6', '1', '12', 'Demo', '2026/2027', 'Ganjil'),
+('105', '67', '2026-07-23 00:00:00', 'hadir', 'Hadir Demo', '2026-07-22 21:05:01', '2026-07-22 21:05:01', '6', '1', '12', 'Demo', '2026/2027', 'Ganjil'),
+('106', '67', '2026-07-24 00:00:00', 'hadir', 'Hadir Demo', '2026-07-22 21:05:01', '2026-07-22 21:05:01', '6', '1', '12', 'Demo', '2026/2027', 'Ganjil'),
+('107', '1', '2026-03-02 00:00:00', 'hadir', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('108', '2', '2026-03-02 00:00:00', 'hadir', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('109', '3', '2026-03-02 00:00:00', 'hadir', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('110', '4', '2026-03-02 00:00:00', 'hadir', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('111', '5', '2026-03-02 00:00:00', 'hadir', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('112', '6', '2026-03-02 00:00:00', 'hadir', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('113', '7', '2026-03-02 00:00:00', 'hadir', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('114', '8', '2026-03-02 00:00:00', 'hadir', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('115', '9', '2026-03-02 00:00:00', 'hadir', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('116', '10', '2026-03-02 00:00:00', 'hadir', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('117', '1', '2026-03-03 00:00:00', 'hadir', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('118', '2', '2026-03-03 00:00:00', 'alpha', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('119', '3', '2026-03-03 00:00:00', 'hadir', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('120', '4', '2026-03-03 00:00:00', 'hadir', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('121', '5', '2026-03-03 00:00:00', 'hadir', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('122', '6', '2026-03-03 00:00:00', 'hadir', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('123', '7', '2026-03-03 00:00:00', 'hadir', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('124', '8', '2026-03-03 00:00:00', 'hadir', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('125', '9', '2026-03-03 00:00:00', 'hadir', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('126', '10', '2026-03-03 00:00:00', 'hadir', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('127', '1', '2026-03-04 00:00:00', 'hadir', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('128', '2', '2026-03-04 00:00:00', 'hadir', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('129', '3', '2026-03-04 00:00:00', 'hadir', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('130', '4', '2026-03-04 00:00:00', 'hadir', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('131', '5', '2026-03-04 00:00:00', 'hadir', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('132', '6', '2026-03-04 00:00:00', 'hadir', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('133', '7', '2026-03-04 00:00:00', 'hadir', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('134', '8', '2026-03-04 00:00:00', 'hadir', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('135', '9', '2026-03-04 00:00:00', 'hadir', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('136', '10', '2026-03-04 00:00:00', 'hadir', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('137', '1', '2026-03-05 00:00:00', 'sakit', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('138', '2', '2026-03-05 00:00:00', 'hadir', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('139', '3', '2026-03-05 00:00:00', 'hadir', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('140', '4', '2026-03-05 00:00:00', 'hadir', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('141', '5', '2026-03-05 00:00:00', 'hadir', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('142', '6', '2026-03-05 00:00:00', 'hadir', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('143', '7', '2026-03-05 00:00:00', 'izin', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('144', '8', '2026-03-05 00:00:00', 'hadir', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('145', '9', '2026-03-05 00:00:00', 'hadir', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('146', '10', '2026-03-05 00:00:00', 'hadir', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('147', '1', '2026-03-06 00:00:00', 'hadir', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('148', '2', '2026-03-06 00:00:00', 'hadir', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('149', '3', '2026-03-06 00:00:00', 'hadir', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('150', '4', '2026-03-06 00:00:00', 'hadir', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('151', '5', '2026-03-06 00:00:00', 'hadir', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('152', '6', '2026-03-06 00:00:00', 'hadir', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('153', '7', '2026-03-06 00:00:00', 'hadir', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('154', '8', '2026-03-06 00:00:00', 'hadir', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('155', '9', '2026-03-06 00:00:00', 'hadir', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('156', '10', '2026-03-06 00:00:00', 'hadir', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('157', '1', '2026-03-09 00:00:00', 'hadir', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('158', '2', '2026-03-09 00:00:00', 'hadir', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('159', '3', '2026-03-09 00:00:00', 'hadir', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('160', '4', '2026-03-09 00:00:00', 'hadir', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('161', '5', '2026-03-09 00:00:00', 'hadir', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('162', '6', '2026-03-09 00:00:00', 'hadir', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('163', '7', '2026-03-09 00:00:00', 'hadir', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('164', '8', '2026-03-09 00:00:00', 'hadir', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('165', '9', '2026-03-09 00:00:00', 'hadir', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('166', '10', '2026-03-09 00:00:00', 'alpha', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('167', '1', '2026-03-10 00:00:00', 'hadir', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('168', '2', '2026-03-10 00:00:00', 'hadir', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('169', '3', '2026-03-10 00:00:00', 'hadir', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('170', '4', '2026-03-10 00:00:00', 'hadir', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('171', '5', '2026-03-10 00:00:00', 'hadir', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('172', '6', '2026-03-10 00:00:00', 'hadir', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('173', '7', '2026-03-10 00:00:00', 'hadir', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('174', '8', '2026-03-10 00:00:00', 'alpha', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('175', '9', '2026-03-10 00:00:00', 'hadir', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil'),
+('176', '10', '2026-03-10 00:00:00', 'hadir', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01', NULL, NULL, NULL, NULL, '2026/2027', 'Ganjil');
+
+DROP TABLE IF EXISTS `kehadiran_gurus`;
+CREATE TABLE `kehadiran_gurus` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `guru_id` bigint unsigned NOT NULL,
+  `tanggal` date NOT NULL,
+  `waktu_masuk` varchar(255) NULL,
+  `waktu_pulang` varchar(255) NULL,
+  `status` varchar(255) NOT NULL DEFAULT 'belum_absen',
+  `keterangan` text NULL,
+  `created_at` datetime NULL,
+  `updated_at` datetime NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `kehadiran_gurus_guru_id_tanggal_unique` (`guru_id`, `tanggal`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DROP TABLE IF EXISTS `kelas`;
+CREATE TABLE `kelas` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `kode_kelas` varchar(255) NOT NULL,
+  `nama_kelas` varchar(255) NOT NULL,
+  `jenjang` varchar(255) NOT NULL,
+  `created_at` datetime NULL,
+  `updated_at` datetime NULL,
+  `guru_id` bigint unsigned NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT INTO `kelas` (`id`, `kode_kelas`, `nama_kelas`, `jenjang`, `created_at`, `updated_at`, `guru_id`) VALUES
+('1', '7', 'Abu Bakar Ar Razi', 'SMP', '2026-07-22 21:02:52', '2026-07-22 21:02:52', '5'),
+('2', '8A', 'Ibnu Al Haytam', 'SMP', '2026-07-22 21:02:52', '2026-07-22 21:02:52', NULL),
+('3', '8B', 'Maryam Al Ijliyah', 'SMP', '2026-07-22 21:02:52', '2026-07-22 21:02:52', NULL),
+('4', '9A', 'Al Khawarizmi', 'SMP', '2026-07-22 21:02:52', '2026-07-22 21:02:52', NULL),
+('5', '9B', 'Fatimah Al Fihri', 'SMP', '2026-07-22 21:02:52', '2026-07-22 21:02:52', NULL),
+('6', '7-DEMO', 'Kelas 7 Demo', 'SMP', '2026-07-22 21:03:05', '2026-07-22 21:03:05', '12');
+
+DROP TABLE IF EXISTS `kelas_quran`;
+CREATE TABLE `kelas_quran` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `nama_kelas` varchar(255) NOT NULL,
+  `jenjang` varchar(255) NOT NULL,
+  `kategori` varchar(255) NOT NULL,
+  `tingkat` varchar(255) NOT NULL,
+  `created_at` datetime NULL,
+  `updated_at` datetime NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT INTO `kelas_quran` (`id`, `nama_kelas`, `jenjang`, `kategori`, `tingkat`, `created_at`, `updated_at`) VALUES
+('1', 'Imam Nafi’ bin Abdurrahman', 'SMP', 'Ikhwan', 'Kelas 8-9', '2026-07-22 21:02:52', '2026-07-22 21:02:52'),
+('2', 'Imam Abdullah bin Katsir', 'SMP', 'Ikhwan', 'Kelas 8-9', '2026-07-22 21:02:52', '2026-07-22 21:02:52'),
+('3', 'Imam Ashim bin Abi Al-Najud', 'SMP', 'Ikhwan', 'Kelas 7', '2026-07-22 21:02:52', '2026-07-22 21:02:52'),
+('4', 'Sutayta Al Mahamali', 'SMP', 'Akhwat', 'Kelas 8-9', '2026-07-22 21:02:52', '2026-07-22 21:02:52'),
+('5', 'Zainab binti Ahmad', 'SMP', 'Akhwat', 'Kelas 8-9', '2026-07-22 21:02:52', '2026-07-22 21:02:52'),
+('6', 'Bina Shaheen Siddiqui', 'SMP', 'Akhwat', 'Kelas 7', '2026-07-22 21:02:52', '2026-07-22 21:02:52'),
+('7', 'Kelas Quran Demo SMPIT', 'SMP', 'Ikhwan', 'Demo', '2026-07-22 21:03:05', '2026-07-22 21:03:05');
+
+DROP TABLE IF EXISTS `kondisi_kelas`;
+CREATE TABLE `kondisi_kelas` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `siswa_id` bigint unsigned NOT NULL,
+  `kelas_id` bigint unsigned NOT NULL,
+  `hubungan_guru_siswa` int NOT NULL,
+  `siswa_nyaman` int NOT NULL,
+  `siswa_minta_bantuan` int NOT NULL,
+  `tanggal` date NOT NULL,
+  `created_at` datetime NULL,
+  `updated_at` datetime NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `siswa_tanggal_unique` (`siswa_id`, `tanggal`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DROP TABLE IF EXISTS `kti_bimbingans`;
+CREATE TABLE `kti_bimbingans` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `siswa_id` bigint unsigned NOT NULL,
+  `bab` varchar(255) NOT NULL,
+  `file_draft` varchar(255) NOT NULL,
+  `catatan_siswa` text NULL,
+  `status` varchar(255) NOT NULL DEFAULT 'pending',
+  `catatan_guru` text NULL,
+  `created_at` datetime NULL,
+  `updated_at` datetime NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DROP TABLE IF EXISTS `laporan_mengajars`;
+CREATE TABLE `laporan_mengajars` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `guru_id` bigint unsigned NOT NULL,
+  `tipe` varchar(255) NOT NULL,
+  `tanggal` date NOT NULL,
+  `isi` text NOT NULL,
+  `created_at` datetime NULL,
+  `updated_at` datetime NULL,
+  `mapel_id` bigint unsigned NULL,
+  `kelas_id` bigint unsigned NULL,
+  `hari` varchar(255) NULL,
+  `jam_ke` varchar(255) NULL,
+  `bahasan_materi` text NULL,
+  `keterangan` text NULL,
+  `tahun_ajaran` varchar(255) NOT NULL DEFAULT '2026/2027',
+  `semester` varchar(255) NOT NULL DEFAULT 'Ganjil',
+  PRIMARY KEY (`id`),
+  KEY `laporan_mengajars_semester_index` (`semester`),
+  KEY `laporan_mengajars_tahun_ajaran_index` (`tahun_ajaran`),
+  KEY `laporan_mengajars_kelas_id_tanggal_index` (`kelas_id`, `tanggal`),
+  KEY `laporan_mengajars_guru_id_tahun_ajaran_semester_tipe_index` (`guru_id`, `tahun_ajaran`, `semester`, `tipe`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DROP TABLE IF EXISTS `log_aktivitas`;
+CREATE TABLE `log_aktivitas` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `user_id` bigint unsigned NULL,
+  `tipe` varchar(255) NOT NULL,
+  `deskripsi` text NOT NULL,
+  `status` varchar(255) NULL,
+  `created_at` datetime NULL,
+  `updated_at` datetime NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT INTO `log_aktivitas` (`id`, `user_id`, `tipe`, `deskripsi`, `status`, `created_at`, `updated_at`) VALUES
+('1', '82', 'User', 'Login admin dashboard', NULL, '2026-07-22 21:03:08', '2026-07-22 21:03:08');
+
+DROP TABLE IF EXISTS `mapel`;
+CREATE TABLE `mapel` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `nama_mapel` varchar(255) NOT NULL,
+  `kode` varchar(255) NULL,
+  `created_at` datetime NULL,
+  `updated_at` datetime NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT INTO `mapel` (`id`, `nama_mapel`, `kode`, `created_at`, `updated_at`) VALUES
+('1', 'Matematika', 'MTK', '2026-07-22 21:02:50', '2026-07-22 21:02:50'),
+('2', 'Bahasa Indonesia', 'B.IND', '2026-07-22 21:02:50', '2026-07-22 21:02:50'),
+('3', 'Bahasa Inggris', 'ING', '2026-07-22 21:02:50', '2026-07-22 21:02:50'),
+('4', 'Bahasa Arab', 'ARB', '2026-07-22 21:02:50', '2026-07-22 21:02:50'),
+('5', 'Ilmu Pengetahuan Alam', 'IPA', '2026-07-22 21:02:50', '2026-07-22 21:02:50'),
+('6', 'Ilmu Pengetahuan Sosial', 'IPS', '2026-07-22 21:02:50', '2026-07-22 21:02:50'),
+('7', 'Pendidikan Agama Islam', 'PAI', '2026-07-22 21:02:50', '2026-07-22 21:02:50'),
+('8', 'Tahfidzul Qur''an', 'TAH', '2026-07-22 21:02:50', '2026-07-22 21:02:50'),
+('9', 'Aqidah', 'AQD', '2026-07-22 21:02:50', '2026-07-22 21:02:50'),
+('10', 'Fiqh', 'FQH', '2026-07-22 21:02:50', '2026-07-22 21:02:50'),
+('11', 'PJOK', 'PJOK', '2026-07-22 21:02:50', '2026-07-22 21:02:50'),
+('12', 'Teknologi Digital', 'TKD', '2026-07-22 21:02:50', '2026-07-22 21:02:50'),
+('13', 'Project Based Learning', 'PBL', '2026-07-22 21:02:50', '2026-07-22 21:02:50'),
+('14', 'Karya Tulis', 'KT', '2026-07-22 21:02:50', '2026-07-22 21:02:50'),
+('15', 'Karya Tulis Ilmiah', 'KTI', '2026-07-22 21:02:50', '2026-07-22 21:02:50'),
+('16', 'BPI', 'BPI', '2026-07-22 21:02:50', '2026-07-22 21:02:50'),
+('17', 'Baca Tulis Quran', 'BTQ', '2026-07-22 21:02:50', '2026-07-22 21:02:50'),
+('18', 'Pramuka', 'PRM', '2026-07-22 21:02:50', '2026-07-22 21:02:50'),
+('19', 'Istirahat', 'IST', '2026-07-22 21:02:50', '2026-07-22 21:02:50'),
+('20', 'Dzuhur Time', 'DZH', '2026-07-22 21:02:50', '2026-07-22 21:02:50'),
+('21', 'Ashar Time', 'ASHR_SMP', '2026-07-22 21:02:50', '2026-07-22 21:02:50'),
+('22', 'Upacara / Flash', 'UPCR_SMP', '2026-07-22 21:02:50', '2026-07-22 21:02:50'),
+('23', 'Upacara / PAS Mantap', 'UPCR_PAS', '2026-07-22 21:02:50', '2026-07-22 21:02:50'),
+('24', 'Apel, Dhuha & Muroja''ah', 'ADM', '2026-07-22 21:02:50', '2026-07-22 21:02:50'),
+('25', 'Shalat Ashar dan Dzikir', 'ASHR_DZK', '2026-07-22 21:02:50', '2026-07-22 21:02:50'),
+('26', 'Ekskul', 'EKS', '2026-07-22 21:02:50', '2026-07-22 21:02:50'),
+('27', 'Dhuha Time', 'DHUHA', '2026-07-22 21:02:50', '2026-07-22 21:02:50'),
+('28', 'Upacara / Pentas Seni', 'UPCR', '2026-07-22 21:02:50', '2026-07-22 21:02:50'),
+('29', 'Qailullah', 'QAIL', '2026-07-22 21:02:50', '2026-07-22 21:02:50'),
+('30', 'Sholat dan Makan', 'ISHOMA', '2026-07-22 21:02:50', '2026-07-22 21:02:50'),
+('31', 'Pulang / Penjemputan Orang Tua', 'PLG', '2026-07-22 21:02:50', '2026-07-22 21:02:50'),
+('32', 'Snack Time', 'SNCK', '2026-07-22 21:02:50', '2026-07-22 21:02:50'),
+('33', 'IPAS', 'IPAS', '2026-07-22 21:02:50', '2026-07-22 21:02:50'),
+('34', 'Qadhaya Rawa''i', 'QRW', '2026-07-22 21:02:50', '2026-07-22 21:02:50'),
+('35', 'Transisi / Pindah ke Kelas', 'TRNS', '2026-07-22 21:02:50', '2026-07-22 21:02:50'),
+('36', 'Aqidah/Akhlak', 'AKHLAK', '2026-07-22 21:02:50', '2026-07-22 21:02:50'),
+('37', 'Kegiatan Pramuka', 'KPRM', '2026-07-22 21:02:50', '2026-07-22 21:02:50'),
+('38', 'Bina Pribadi Islam', 'BPI', '2026-07-22 21:02:50', '2026-07-22 21:02:50'),
+('39', 'TIK', 'TIK', '2026-07-22 21:02:50', '2026-07-22 21:02:50'),
+('40', 'Pendidikan Kewarganegaraan', 'PKN', '2026-07-22 21:02:50', '2026-07-22 21:02:50'),
+('41', 'Shalat Ashar', 'ASHR', '2026-07-22 21:02:50', '2026-07-22 21:02:50');
+
+DROP TABLE IF EXISTS `materi`;
+CREATE TABLE `materi` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `judul` varchar(255) NOT NULL,
+  `deskripsi` text NULL,
+  `file_path` varchar(255) NOT NULL,
+  `tipe` varchar(255) NOT NULL DEFAULT 'materi',
+  `mapel_id` bigint unsigned NOT NULL,
+  `kelas_id` bigint unsigned NULL,
+  `guru_id` bigint unsigned NOT NULL,
+  `created_at` datetime NULL,
+  `updated_at` datetime NULL,
+  `status` varchar(255) NOT NULL DEFAULT 'draft',
+  `skor_kauniyah` int NULL,
+  `skor_bilingual` int NULL,
+  `skor_ai` int NULL,
+  `kategori` varchar(255) NOT NULL DEFAULT 'kompetensi_inti',
+  `kode` varchar(255) NULL,
+  `isi` text NULL,
+  `tahun_ajaran` varchar(255) NOT NULL DEFAULT '2026/2027',
+  `semester` varchar(255) NOT NULL DEFAULT 'Ganjil',
+  `versi` int NOT NULL DEFAULT '1',
+  `submitted_at` datetime NULL,
+  `reviewed_at` datetime NULL,
+  `reviewed_by` int NULL,
+  `catatan_reviewer` text NULL,
+  PRIMARY KEY (`id`),
+  KEY `materi_reviewed_at_index` (`reviewed_at`),
+  KEY `materi_submitted_at_index` (`submitted_at`),
+  KEY `materi_semester_index` (`semester`),
+  KEY `materi_tahun_ajaran_index` (`tahun_ajaran`),
+  KEY `materi_kategori_index` (`kategori`),
+  KEY `materi_kelas_id_mapel_id_status_index` (`kelas_id`, `mapel_id`, `status`),
+  KEY `materi_guru_id_kategori_status_index` (`guru_id`, `kategori`, `status`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT INTO `materi` (`id`, `judul`, `deskripsi`, `file_path`, `tipe`, `mapel_id`, `kelas_id`, `guru_id`, `created_at`, `updated_at`, `status`, `skor_kauniyah`, `skor_bilingual`, `skor_ai`, `kategori`, `kode`, `isi`, `tahun_ajaran`, `semester`, `versi`, `submitted_at`, `reviewed_at`, `reviewed_by`, `catatan_reviewer`) VALUES
+('1', 'Kompetensi Inti Demo Matematika', 'Dokumen Demo untuk Kompetensi Inti Demo Matematika tahun ajaran 2026/2027.', 'demo/bahan-ajar-demo.pdf', 'bahan_ajar', '1', '6', '12', '2026-07-22 21:03:06', '2026-07-22 21:03:06', 'draft', NULL, NULL, NULL, 'kompetensi_inti', NULL, NULL, '2026/2027', 'Ganjil', '1', NULL, NULL, NULL, NULL),
+('2', 'Kompetensi Dasar Demo Matematika', 'Dokumen Demo untuk Kompetensi Dasar Demo Matematika tahun ajaran 2026/2027.', 'demo/bahan-ajar-demo.pdf', 'bahan_ajar', '1', '6', '12', '2026-07-22 21:03:06', '2026-07-22 21:03:06', 'pending', NULL, NULL, NULL, 'kompetensi_inti', NULL, NULL, '2026/2027', 'Ganjil', '1', NULL, NULL, NULL, NULL),
+('3', 'Alur Tahapan Pembelajaran Demo Matematika', 'Dokumen Demo untuk Alur Tahapan Pembelajaran Demo Matematika tahun ajaran 2026/2027.', 'demo/bahan-ajar-demo.pdf', 'bahan_ajar', '1', '6', '12', '2026-07-22 21:03:06', '2026-07-22 21:03:06', 'approved', NULL, NULL, NULL, 'kompetensi_inti', NULL, NULL, '2026/2027', 'Ganjil', '1', NULL, NULL, NULL, NULL),
+('4', 'Kompetensi Inti Demo Matematika', 'Dokumen Demo untuk Kompetensi Inti Demo Matematika tahun ajaran 2026/2027.', 'demo/bahan-ajar-demo.pdf', 'bahan_ajar', '1', '6', '12', '2026-07-22 21:05:00', '2026-07-22 21:05:00', 'draft', NULL, NULL, NULL, 'kompetensi_inti', 'KI-DEMO-01', 'Isi ringkas Demo yang dapat direview oleh Kepala Sekolah.', '2026/2027', 'Ganjil', '1', NULL, NULL, NULL, NULL),
+('5', 'Kompetensi Dasar Demo Matematika', 'Dokumen Demo untuk Kompetensi Dasar Demo Matematika tahun ajaran 2026/2027.', 'demo/bahan-ajar-demo.pdf', 'bahan_ajar', '1', '6', '12', '2026-07-22 21:05:00', '2026-07-22 21:05:00', 'pending', NULL, NULL, NULL, 'kompetensi_dasar', 'KD-DEMO-01', 'Isi ringkas Demo yang dapat direview oleh Kepala Sekolah.', '2026/2027', 'Ganjil', '1', '2026-07-22 21:05:00', NULL, NULL, NULL),
+('6', 'Alur Tahapan Pembelajaran Demo Matematika', 'Dokumen Demo untuk Alur Tahapan Pembelajaran Demo Matematika tahun ajaran 2026/2027.', 'demo/bahan-ajar-demo.pdf', 'bahan_ajar', '1', '6', '12', '2026-07-22 21:05:00', '2026-07-22 21:05:00', 'approved', NULL, NULL, NULL, 'alur_tahapan_pembelajaran', 'ATP-DEMO-01', 'Isi ringkas Demo yang dapat direview oleh Kepala Sekolah.', '2026/2027', 'Ganjil', '1', '2026-07-22 21:05:00', '2026-07-22 21:05:00', '78', 'Demo approved untuk publikasi.');
+
+DROP TABLE IF EXISTS `materi_approval_histories`;
+CREATE TABLE `materi_approval_histories` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `materi_id` bigint unsigned NOT NULL,
+  `actor_id` bigint unsigned NULL,
+  `action` varchar(255) NOT NULL,
+  `status_from` varchar(255) NULL,
+  `status_to` varchar(255) NOT NULL,
+  `catatan` text NULL,
+  `created_at` datetime NULL,
+  `updated_at` datetime NULL,
+  PRIMARY KEY (`id`),
+  KEY `materi_approval_histories_actor_id_action_index` (`actor_id`, `action`),
+  KEY `materi_approval_histories_materi_id_created_at_index` (`materi_id`, `created_at`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT INTO `materi_approval_histories` (`id`, `materi_id`, `actor_id`, `action`, `status_from`, `status_to`, `catatan`, `created_at`, `updated_at`) VALUES
+('1', '4', '78', 'created', NULL, 'draft', 'Seeder Demo', '2026-07-22 21:05:00', '2026-07-22 21:05:00'),
+('2', '5', '78', 'submitted', NULL, 'pending', 'Seeder Demo', '2026-07-22 21:05:00', '2026-07-22 21:05:00'),
+('3', '6', '78', 'submitted', NULL, 'pending', 'Seeder Demo', '2026-07-22 21:05:00', '2026-07-22 21:05:00'),
+('4', '6', '78', 'approved', 'pending', 'approved', 'Seeder Demo approved', '2026-07-22 21:05:00', '2026-07-22 21:05:00');
+
+DROP TABLE IF EXISTS `migrations`;
+CREATE TABLE `migrations` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `migration` varchar(255) NOT NULL,
+  `batch` int NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
+('1', '0001_01_01_000000_create_users_table', '1'),
+('2', '0001_01_01_000001_create_cache_table', '1'),
+('3', '0001_01_01_000002_create_jobs_table', '1'),
+('4', '2026_05_29_081457_add_role_to_users_table', '1'),
+('5', '2026_05_29_083954_create_kelas_table', '1'),
+('6', '2026_05_29_084058_create_mapel_table', '1'),
+('7', '2026_05_29_084110_create_kelas_quran_table', '1'),
+('8', '2026_05_29_084114_create_siswa_table', '1'),
+('9', '2026_05_29_084129_create_guru_table', '1'),
+('10', '2026_05_29_084158_create_orang_tua_table', '1'),
+('11', '2026_05_29_084209_create_jadwal_table', '1'),
+('12', '2026_05_29_084209_create_orang_tua_siswa_table', '1'),
+('13', '2026_05_29_084210_create_tahfidz_setoran_table', '1'),
+('14', '2026_05_29_084210_create_tugas_table', '1'),
+('15', '2026_05_29_084231_create_nilai_table', '1'),
+('16', '2026_05_29_084231_create_pengumuman_table', '1'),
+('17', '2026_05_29_084231_create_pesan_table', '1'),
+('18', '2026_05_29_085947_create_catatan_wali_table', '1'),
+('19', '2026_05_29_085947_create_kehadiran_table', '1'),
+('20', '2026_05_29_090234_create_badges_table', '1'),
+('21', '2026_05_29_090235_create_siswa_badge_table', '1'),
+('22', '2026_05_29_090641_create_cbt_exams_table', '1'),
+('23', '2026_05_29_090641_create_cbt_soals_table', '1'),
+('24', '2026_05_29_090642_create_cbt_jawabans_table', '1'),
+('25', '2026_05_29_090642_create_olympiad_exams_table', '1'),
+('26', '2026_05_29_090643_create_olympiad_soals_table', '1'),
+('27', '2026_05_29_090644_create_olympiad_jawabans_table', '1'),
+('28', '2026_05_29_091037_create_workbooks_table', '1'),
+('29', '2026_05_29_091038_create_spps_table', '1'),
+('30', '2026_05_29_091038_create_workbook_soals_table', '1'),
+('31', '2026_05_29_091039_create_pembayarans_table', '1'),
+('32', '2026_05_29_091040_create_workbook_jawabans_table', '1'),
+('33', '2026_05_29_091041_create_log_aktivitas_table', '1'),
+('34', '2026_05_29_091041_create_pengaturan_table', '1'),
+('35', '2026_05_29_094118_create_materi_table', '1'),
+('36', '2026_05_29_095608_create_settings_table', '1'),
+('37', '2026_05_29_101731_create_pengumpulan_tugas_table', '1'),
+('38', '2026_05_29_103615_add_tipe_to_cbt_exams_table', '1'),
+('39', '2026_07_01_115000_add_kepala_sekolah_to_roles', '1'),
+('40', '2026_07_02_160300_add_jenis_nilai_to_nilai_table', '1'),
+('41', '2026_07_04_150000_add_nilai_bahasa_to_nilai_table', '1'),
+('42', '2026_07_04_153000_create_tahfidz_ayat_nilai_table', '1'),
+('43', '2026_07_04_154500_add_tanggal_berikutnya_to_tahfidz_setoran_table', '1'),
+('44', '2026_07_04_202500_create_kondisi_kelas_table', '1'),
+('45', '2026_07_04_210500_create_remedials_table', '1'),
+('46', '2026_07_04_222000_create_nilai_ktis_table', '1'),
+('47', '2026_07_04_232000_create_laporan_mengajars_table', '1'),
+('48', '2026_07_04_235500_add_status_to_materi_table', '1'),
+('49', '2026_07_05_001500_add_kesulitan_and_metode_to_cbt_tables', '1'),
+('50', '2026_07_05_130000_create_banding_nilai_table', '1'),
+('51', '2026_07_05_140000_extend_nilai_ktis_table', '1'),
+('52', '2026_07_05_141000_create_kti_bimbingans_table', '1'),
+('53', '2026_07_14_174718_change_isi_to_json_in_laporan_mengajars_table', '1'),
+('54', '2026_07_15_134315_add_audit_scores_to_materi_table', '1'),
+('55', '2026_07_15_184307_add_guru_id_to_kelas_table', '1'),
+('56', '2026_07_17_182402_create_guru_mapel_table', '1'),
+('57', '2026_07_17_191636_modify_role_enum_in_users_table', '1'),
+('58', '2026_07_18_014948_create_kehadiran_gurus_table', '1'),
+('59', '2026_07_20_203000_create_tahsin_setorans_table', '1'),
+('60', '2026_07_20_223000_create_tahfidz_progress_table', '1'),
+('62', '2026_07_22_180000_revisi_1_smpit_schema', '2');
+
+DROP TABLE IF EXISTS `nilai`;
+CREATE TABLE `nilai` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `siswa_id` bigint unsigned NOT NULL,
+  `tugas_id` bigint unsigned NULL,
+  `mapel_id` bigint unsigned NOT NULL,
+  `nilai` decimal(10,2) NOT NULL,
+  `catatan` text NULL,
+  `created_at` datetime NULL,
+  `updated_at` datetime NULL,
+  `jenis_nilai` varchar(255) NOT NULL DEFAULT 'biasa',
+  `nilai_bahasa` decimal(10,2) NULL,
+  `tahun_ajaran` varchar(255) NOT NULL DEFAULT '2025/2026',
+  `semester` varchar(255) NOT NULL DEFAULT 'Genap',
+  `jenis_rapor` varchar(255) NOT NULL DEFAULT 'akademik',
+  `lingkup_materi` varchar(255) NULL,
+  `tujuan_pembelajaran` text NULL,
+  `tp_scores` text NULL,
+  `tugas_scores` text NULL,
+  `sumatif_scores` text NULL,
+  `nilai_sumatif` decimal(10,2) NULL,
+  `capaian_kompetensi` text NULL,
+  `kompetensi_dikuasai` text NULL,
+  `kompetensi_perlu_ditingkatkan` text NULL,
+  PRIMARY KEY (`id`),
+  KEY `nilai_jenis_rapor_index` (`jenis_rapor`),
+  KEY `nilai_semester_index` (`semester`),
+  KEY `nilai_tahun_ajaran_index` (`tahun_ajaran`),
+  KEY `nilai_period_idx` (`siswa_id`, `tahun_ajaran`, `semester`, `jenis_rapor`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT INTO `nilai` (`id`, `siswa_id`, `tugas_id`, `mapel_id`, `nilai`, `catatan`, `created_at`, `updated_at`, `jenis_nilai`, `nilai_bahasa`, `tahun_ajaran`, `semester`, `jenis_rapor`, `lingkup_materi`, `tujuan_pembelajaran`, `tp_scores`, `tugas_scores`, `sumatif_scores`, `nilai_sumatif`, `capaian_kompetensi`, `kompetensi_dikuasai`, `kompetensi_perlu_ditingkatkan`) VALUES
+('1', '67', NULL, '1', '86', 'Nilai akademik Demo.', '2026-07-22 21:03:06', '2026-07-22 21:03:06', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('2', '67', NULL, '3', '87', 'Nilai akademik Demo.', '2026-07-22 21:03:06', '2026-07-22 21:03:06', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('3', '67', NULL, '8', '88', 'Nilai akademik Demo.', '2026-07-22 21:03:06', '2026-07-22 21:03:06', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('4', '1', NULL, '1', '86', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('5', '1', NULL, '2', '97', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('6', '1', NULL, '3', '75', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('7', '1', NULL, '4', '91', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('8', '1', NULL, '5', '84', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('9', '2', NULL, '1', '90', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('10', '2', NULL, '2', '77', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('11', '2', NULL, '3', '89', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('12', '2', NULL, '4', '79', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('13', '2', NULL, '5', '90', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('14', '3', NULL, '1', '79', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('15', '3', NULL, '2', '75', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('16', '3', NULL, '3', '90', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('17', '3', NULL, '4', '98', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('18', '3', NULL, '5', '75', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('19', '4', NULL, '1', '89', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('20', '4', NULL, '2', '100', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('21', '4', NULL, '3', '82', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('22', '4', NULL, '4', '85', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('23', '4', NULL, '5', '77', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('24', '5', NULL, '1', '89', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('25', '5', NULL, '2', '89', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('26', '5', NULL, '3', '78', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('27', '5', NULL, '4', '98', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('28', '5', NULL, '5', '100', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('29', '6', NULL, '1', '94', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('30', '6', NULL, '2', '75', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('31', '6', NULL, '3', '81', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('32', '6', NULL, '4', '90', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('33', '6', NULL, '5', '99', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('34', '7', NULL, '1', '84', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('35', '7', NULL, '2', '99', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('36', '7', NULL, '3', '97', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('37', '7', NULL, '4', '77', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('38', '7', NULL, '5', '95', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('39', '8', NULL, '1', '94', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('40', '8', NULL, '2', '93', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('41', '8', NULL, '3', '96', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('42', '8', NULL, '4', '80', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('43', '8', NULL, '5', '83', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('44', '9', NULL, '1', '98', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('45', '9', NULL, '2', '79', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('46', '9', NULL, '3', '90', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('47', '9', NULL, '4', '89', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('48', '9', NULL, '5', '94', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('49', '10', NULL, '1', '90', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('50', '10', NULL, '2', '75', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('51', '10', NULL, '3', '87', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('52', '10', NULL, '4', '79', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('53', '10', NULL, '5', '80', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('54', '11', NULL, '1', '99', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('55', '11', NULL, '2', '97', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('56', '11', NULL, '3', '82', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('57', '11', NULL, '4', '78', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('58', '11', NULL, '5', '85', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('59', '12', NULL, '1', '91', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('60', '12', NULL, '2', '90', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('61', '12', NULL, '3', '83', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('62', '12', NULL, '4', '88', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('63', '12', NULL, '5', '85', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('64', '13', NULL, '1', '75', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('65', '13', NULL, '2', '76', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('66', '13', NULL, '3', '87', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('67', '13', NULL, '4', '85', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('68', '13', NULL, '5', '88', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('69', '14', NULL, '1', '90', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('70', '14', NULL, '2', '81', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('71', '14', NULL, '3', '83', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('72', '14', NULL, '4', '79', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('73', '14', NULL, '5', '82', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('74', '15', NULL, '1', '90', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('75', '15', NULL, '2', '97', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('76', '15', NULL, '3', '85', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('77', '15', NULL, '4', '76', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('78', '15', NULL, '5', '88', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('79', '16', NULL, '1', '88', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('80', '16', NULL, '2', '89', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('81', '16', NULL, '3', '81', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('82', '16', NULL, '4', '89', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('83', '16', NULL, '5', '85', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('84', '17', NULL, '1', '77', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('85', '17', NULL, '2', '92', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('86', '17', NULL, '3', '79', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('87', '17', NULL, '4', '100', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('88', '17', NULL, '5', '95', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('89', '18', NULL, '1', '87', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('90', '18', NULL, '2', '95', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('91', '18', NULL, '3', '96', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('92', '18', NULL, '4', '94', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('93', '18', NULL, '5', '84', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('94', '19', NULL, '1', '83', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('95', '19', NULL, '2', '95', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('96', '19', NULL, '3', '92', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('97', '19', NULL, '4', '97', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('98', '19', NULL, '5', '86', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('99', '20', NULL, '1', '82', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('100', '20', NULL, '2', '85', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO `nilai` (`id`, `siswa_id`, `tugas_id`, `mapel_id`, `nilai`, `catatan`, `created_at`, `updated_at`, `jenis_nilai`, `nilai_bahasa`, `tahun_ajaran`, `semester`, `jenis_rapor`, `lingkup_materi`, `tujuan_pembelajaran`, `tp_scores`, `tugas_scores`, `sumatif_scores`, `nilai_sumatif`, `capaian_kompetensi`, `kompetensi_dikuasai`, `kompetensi_perlu_ditingkatkan`) VALUES
+('101', '20', NULL, '3', '98', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('102', '20', NULL, '4', '75', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('103', '20', NULL, '5', '86', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('104', '21', NULL, '1', '97', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('105', '21', NULL, '2', '99', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('106', '21', NULL, '3', '85', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('107', '21', NULL, '4', '91', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('108', '21', NULL, '5', '86', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('109', '22', NULL, '1', '91', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('110', '22', NULL, '2', '89', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('111', '22', NULL, '3', '82', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('112', '22', NULL, '4', '91', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('113', '22', NULL, '5', '89', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('114', '23', NULL, '1', '83', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('115', '23', NULL, '2', '84', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('116', '23', NULL, '3', '91', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('117', '23', NULL, '4', '100', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('118', '23', NULL, '5', '100', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('119', '24', NULL, '1', '77', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('120', '24', NULL, '2', '93', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('121', '24', NULL, '3', '95', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('122', '24', NULL, '4', '76', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('123', '24', NULL, '5', '91', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('124', '25', NULL, '1', '94', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('125', '25', NULL, '2', '86', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('126', '25', NULL, '3', '88', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('127', '25', NULL, '4', '85', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('128', '25', NULL, '5', '95', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('129', '26', NULL, '1', '97', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('130', '26', NULL, '2', '86', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('131', '26', NULL, '3', '78', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('132', '26', NULL, '4', '75', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('133', '26', NULL, '5', '86', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('134', '27', NULL, '1', '78', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('135', '27', NULL, '2', '84', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('136', '27', NULL, '3', '84', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('137', '27', NULL, '4', '94', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('138', '27', NULL, '5', '76', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('139', '28', NULL, '1', '96', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('140', '28', NULL, '2', '94', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('141', '28', NULL, '3', '77', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('142', '28', NULL, '4', '90', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('143', '28', NULL, '5', '88', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('144', '29', NULL, '1', '91', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('145', '29', NULL, '2', '79', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('146', '29', NULL, '3', '86', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('147', '29', NULL, '4', '93', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('148', '29', NULL, '5', '75', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('149', '30', NULL, '1', '80', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('150', '30', NULL, '2', '99', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('151', '30', NULL, '3', '86', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('152', '30', NULL, '4', '93', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('153', '30', NULL, '5', '88', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('154', '31', NULL, '1', '100', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('155', '31', NULL, '2', '75', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('156', '31', NULL, '3', '92', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('157', '31', NULL, '4', '99', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('158', '31', NULL, '5', '90', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('159', '32', NULL, '1', '86', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('160', '32', NULL, '2', '75', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('161', '32', NULL, '3', '89', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('162', '32', NULL, '4', '80', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('163', '32', NULL, '5', '100', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('164', '33', NULL, '1', '82', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('165', '33', NULL, '2', '98', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('166', '33', NULL, '3', '75', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('167', '33', NULL, '4', '81', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('168', '33', NULL, '5', '99', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('169', '34', NULL, '1', '80', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('170', '34', NULL, '2', '92', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('171', '34', NULL, '3', '85', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('172', '34', NULL, '4', '82', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('173', '34', NULL, '5', '85', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('174', '35', NULL, '1', '78', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('175', '35', NULL, '2', '93', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('176', '35', NULL, '3', '96', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('177', '35', NULL, '4', '76', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('178', '35', NULL, '5', '92', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('179', '36', NULL, '1', '75', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('180', '36', NULL, '2', '83', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('181', '36', NULL, '3', '80', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('182', '36', NULL, '4', '84', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('183', '36', NULL, '5', '83', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('184', '37', NULL, '1', '78', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('185', '37', NULL, '2', '91', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('186', '37', NULL, '3', '90', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('187', '37', NULL, '4', '99', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('188', '37', NULL, '5', '86', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('189', '38', NULL, '1', '89', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('190', '38', NULL, '2', '91', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('191', '38', NULL, '3', '82', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('192', '38', NULL, '4', '85', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('193', '38', NULL, '5', '97', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('194', '39', NULL, '1', '97', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('195', '39', NULL, '2', '92', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('196', '39', NULL, '3', '81', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('197', '39', NULL, '4', '82', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('198', '39', NULL, '5', '85', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('199', '40', NULL, '1', '83', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('200', '40', NULL, '2', '98', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO `nilai` (`id`, `siswa_id`, `tugas_id`, `mapel_id`, `nilai`, `catatan`, `created_at`, `updated_at`, `jenis_nilai`, `nilai_bahasa`, `tahun_ajaran`, `semester`, `jenis_rapor`, `lingkup_materi`, `tujuan_pembelajaran`, `tp_scores`, `tugas_scores`, `sumatif_scores`, `nilai_sumatif`, `capaian_kompetensi`, `kompetensi_dikuasai`, `kompetensi_perlu_ditingkatkan`) VALUES
+('201', '40', NULL, '3', '87', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('202', '40', NULL, '4', '80', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('203', '40', NULL, '5', '90', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('204', '41', NULL, '1', '91', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('205', '41', NULL, '2', '97', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('206', '41', NULL, '3', '91', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('207', '41', NULL, '4', '81', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('208', '41', NULL, '5', '96', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('209', '42', NULL, '1', '77', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('210', '42', NULL, '2', '87', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('211', '42', NULL, '3', '88', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('212', '42', NULL, '4', '94', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('213', '42', NULL, '5', '78', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('214', '43', NULL, '1', '81', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('215', '43', NULL, '2', '94', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('216', '43', NULL, '3', '75', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('217', '43', NULL, '4', '87', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('218', '43', NULL, '5', '86', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('219', '44', NULL, '1', '87', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('220', '44', NULL, '2', '81', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('221', '44', NULL, '3', '76', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('222', '44', NULL, '4', '91', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('223', '44', NULL, '5', '97', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('224', '45', NULL, '1', '78', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('225', '45', NULL, '2', '91', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('226', '45', NULL, '3', '94', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('227', '45', NULL, '4', '86', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('228', '45', NULL, '5', '78', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('229', '46', NULL, '1', '81', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('230', '46', NULL, '2', '77', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('231', '46', NULL, '3', '85', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('232', '46', NULL, '4', '98', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('233', '46', NULL, '5', '97', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('234', '47', NULL, '1', '94', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('235', '47', NULL, '2', '91', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('236', '47', NULL, '3', '77', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('237', '47', NULL, '4', '100', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('238', '47', NULL, '5', '89', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('239', '48', NULL, '1', '82', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('240', '48', NULL, '2', '85', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('241', '48', NULL, '3', '99', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('242', '48', NULL, '4', '87', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('243', '48', NULL, '5', '80', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('244', '49', NULL, '1', '82', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('245', '49', NULL, '2', '90', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('246', '49', NULL, '3', '89', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('247', '49', NULL, '4', '88', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('248', '49', NULL, '5', '84', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('249', '50', NULL, '1', '95', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('250', '50', NULL, '2', '93', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('251', '50', NULL, '3', '93', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('252', '50', NULL, '4', '80', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('253', '50', NULL, '5', '97', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('254', '51', NULL, '1', '98', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('255', '51', NULL, '2', '96', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('256', '51', NULL, '3', '83', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('257', '51', NULL, '4', '88', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('258', '51', NULL, '5', '96', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('259', '52', NULL, '1', '75', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('260', '52', NULL, '2', '98', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('261', '52', NULL, '3', '97', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('262', '52', NULL, '4', '91', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('263', '52', NULL, '5', '76', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('264', '53', NULL, '1', '80', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('265', '53', NULL, '2', '98', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('266', '53', NULL, '3', '91', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('267', '53', NULL, '4', '100', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('268', '53', NULL, '5', '81', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('269', '54', NULL, '1', '81', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('270', '54', NULL, '2', '75', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('271', '54', NULL, '3', '88', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('272', '54', NULL, '4', '87', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('273', '54', NULL, '5', '99', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('274', '55', NULL, '1', '98', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('275', '55', NULL, '2', '97', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('276', '55', NULL, '3', '82', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('277', '55', NULL, '4', '85', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('278', '55', NULL, '5', '76', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('279', '56', NULL, '1', '89', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('280', '56', NULL, '2', '90', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('281', '56', NULL, '3', '92', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('282', '56', NULL, '4', '85', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('283', '56', NULL, '5', '79', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('284', '57', NULL, '1', '85', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('285', '57', NULL, '2', '99', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('286', '57', NULL, '3', '79', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('287', '57', NULL, '4', '91', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('288', '57', NULL, '5', '92', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('289', '58', NULL, '1', '98', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('290', '58', NULL, '2', '97', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('291', '58', NULL, '3', '77', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('292', '58', NULL, '4', '75', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('293', '58', NULL, '5', '98', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('294', '59', NULL, '1', '90', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('295', '59', NULL, '2', '85', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('296', '59', NULL, '3', '97', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('297', '59', NULL, '4', '83', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('298', '59', NULL, '5', '92', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('299', '60', NULL, '1', '75', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('300', '60', NULL, '2', '91', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO `nilai` (`id`, `siswa_id`, `tugas_id`, `mapel_id`, `nilai`, `catatan`, `created_at`, `updated_at`, `jenis_nilai`, `nilai_bahasa`, `tahun_ajaran`, `semester`, `jenis_rapor`, `lingkup_materi`, `tujuan_pembelajaran`, `tp_scores`, `tugas_scores`, `sumatif_scores`, `nilai_sumatif`, `capaian_kompetensi`, `kompetensi_dikuasai`, `kompetensi_perlu_ditingkatkan`) VALUES
+('301', '60', NULL, '3', '94', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('302', '60', NULL, '4', '88', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('303', '60', NULL, '5', '78', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('304', '61', NULL, '1', '86', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('305', '61', NULL, '2', '87', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('306', '61', NULL, '3', '91', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('307', '61', NULL, '4', '85', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('308', '61', NULL, '5', '84', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('309', '62', NULL, '1', '98', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('310', '62', NULL, '2', '79', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('311', '62', NULL, '3', '77', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('312', '62', NULL, '4', '84', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('313', '62', NULL, '5', '94', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('314', '63', NULL, '1', '79', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('315', '63', NULL, '2', '83', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('316', '63', NULL, '3', '82', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('317', '63', NULL, '4', '85', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('318', '63', NULL, '5', '77', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('319', '64', NULL, '1', '81', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('320', '64', NULL, '2', '77', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('321', '64', NULL, '3', '81', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('322', '64', NULL, '4', '76', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('323', '64', NULL, '5', '95', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('324', '65', NULL, '1', '84', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('325', '65', NULL, '2', '77', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('326', '65', NULL, '3', '82', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('327', '65', NULL, '4', '100', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('328', '65', NULL, '5', '100', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('329', '66', NULL, '1', '96', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('330', '66', NULL, '2', '90', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('331', '66', NULL, '3', '82', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('332', '66', NULL, '4', '83', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('333', '66', NULL, '5', '100', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('334', '67', NULL, '2', '78', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('335', '67', NULL, '4', '99', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('336', '67', NULL, '5', '78', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('337', '67', NULL, '1', '86', 'Nilai akademik Demo.', '2026-07-22 21:05:01', '2026-07-22 21:05:01', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', 'Lingkup Materi Demo 1', 'Tujuan Pembelajaran Demo Matematika', '{"TP 1":86,"TP 2":88,"TP 3":90,"TP 4":87}', '{"Tugas 1":86,"Tugas 2":88,"Tugas 3":90}', '{"Sumatif 1":84,"Sumatif 2":87}', '84', 'Ananda Demo menunjukkan pemahaman baik pada Matematika.', 'Mampu menyelesaikan tugas utama.', 'Perlu meningkatkan ketelitian pada soal cerita.'),
+('338', '67', NULL, '3', '87', 'Nilai akademik Demo.', '2026-07-22 21:05:01', '2026-07-22 21:05:01', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', 'Lingkup Materi Demo 2', 'Tujuan Pembelajaran Demo Bahasa Inggris', '{"TP 1":86,"TP 2":88,"TP 3":90,"TP 4":87}', '{"Tugas 1":86,"Tugas 2":88,"Tugas 3":90}', '{"Sumatif 1":84,"Sumatif 2":87}', '85', 'Ananda Demo menunjukkan pemahaman baik pada Bahasa Inggris.', 'Mampu menyelesaikan tugas utama.', 'Perlu meningkatkan ketelitian pada soal cerita.'),
+('339', '67', NULL, '8', '88', 'Nilai akademik Demo.', '2026-07-22 21:05:01', '2026-07-22 21:05:01', 'biasa', NULL, '2025/2026', 'Genap', 'akademik', 'Lingkup Materi Demo 3', 'Tujuan Pembelajaran Demo Tahfidzul Qur''an', '{"TP 1":86,"TP 2":88,"TP 3":90,"TP 4":87}', '{"Tugas 1":86,"Tugas 2":88,"Tugas 3":90}', '{"Sumatif 1":84,"Sumatif 2":87}', '86', 'Ananda Demo menunjukkan pemahaman baik pada Tahfidzul Qur''an.', 'Mampu menyelesaikan tugas utama.', 'Perlu meningkatkan ketelitian pada soal cerita.');
+
+DROP TABLE IF EXISTS `nilai_ktis`;
+CREATE TABLE `nilai_ktis` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `siswa_id` bigint unsigned NOT NULL,
+  `judul_kti` varchar(255) NOT NULL,
+  `nilai_proses` decimal(10,2) NOT NULL,
+  `nilai_tulisan` decimal(10,2) NOT NULL,
+  `nilai_sidang` decimal(10,2) NOT NULL,
+  `nilai_akhir` decimal(10,2) NOT NULL,
+  `catatan` text NULL,
+  `created_at` datetime NULL,
+  `updated_at` datetime NULL,
+  `current_bab` varchar(255) NOT NULL DEFAULT 'Bab 1',
+  `jadwal_sidang` datetime NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `nilai_ktis_siswa_id_unique` (`siswa_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DROP TABLE IF EXISTS `olympiad_exams`;
+CREATE TABLE `olympiad_exams` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `judul` varchar(255) NOT NULL,
+  `deskripsi` text NULL,
+  `mapel_id` bigint unsigned NOT NULL,
+  `kelas_id` bigint unsigned NULL,
+  `guru_id` bigint unsigned NOT NULL,
+  `tingkat` varchar(255) NULL,
+  `durasi` int NOT NULL,
+  `jumlah_soal` int NOT NULL DEFAULT '0',
+  `status` varchar(255) NOT NULL DEFAULT 'draft',
+  `approved_by` int NULL,
+  `approved_at` datetime NULL,
+  `catatan_reject` text NULL,
+  `created_at` datetime NULL,
+  `updated_at` datetime NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DROP TABLE IF EXISTS `olympiad_jawabans`;
+CREATE TABLE `olympiad_jawabans` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `olympiad_exam_id` bigint unsigned NOT NULL,
+  `olympiad_soal_id` bigint unsigned NOT NULL,
+  `siswa_id` bigint unsigned NOT NULL,
+  `jawaban` text NULL,
+  `nilai` decimal(10,2) NULL,
+  `dinilai` tinyint NOT NULL DEFAULT '0',
+  `created_at` datetime NULL,
+  `updated_at` datetime NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `olympiad_jawabans_olympiad_soal_id_siswa_id_unique` (`olympiad_soal_id`, `siswa_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DROP TABLE IF EXISTS `olympiad_soals`;
+CREATE TABLE `olympiad_soals` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `olympiad_exam_id` bigint unsigned NOT NULL,
+  `nomor` int NOT NULL,
+  `soal` text NOT NULL,
+  `tipe` varchar(255) NOT NULL DEFAULT 'pg',
+  `pilihan_a` text NULL,
+  `pilihan_b` text NULL,
+  `pilihan_c` text NULL,
+  `pilihan_d` text NULL,
+  `jawaban_benar` varchar(255) NULL,
+  `bobot` int NOT NULL DEFAULT '1',
+  `created_at` datetime NULL,
+  `updated_at` datetime NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DROP TABLE IF EXISTS `orang_tua`;
+CREATE TABLE `orang_tua` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `user_id` bigint unsigned NOT NULL,
+  `nama` varchar(255) NOT NULL,
+  `no_telp` varchar(255) NULL,
+  `alamat` text NULL,
+  `created_at` datetime NULL,
+  `updated_at` datetime NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT INTO `orang_tua` (`id`, `user_id`, `nama`, `no_telp`, `alamat`, `created_at`, `updated_at`) VALUES
+('1', '80', 'Orang Tua Ahmad Fikri Demo', '080000000000', 'Alamat Orang Tua Demo', '2026-07-22 21:03:05', '2026-07-22 21:03:05'),
+('2', '81', 'Ibu Sari Rahmawati', NULL, NULL, '2026-07-22 21:03:06', '2026-07-22 21:03:06');
+
+DROP TABLE IF EXISTS `orang_tua_siswa`;
+CREATE TABLE `orang_tua_siswa` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `orang_tua_id` bigint unsigned NOT NULL,
+  `siswa_id` bigint unsigned NOT NULL,
+  `created_at` datetime NULL,
+  `updated_at` datetime NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT INTO `orang_tua_siswa` (`id`, `orang_tua_id`, `siswa_id`, `created_at`, `updated_at`) VALUES
+('1', '1', '67', NULL, NULL);
+
+DROP TABLE IF EXISTS `password_reset_tokens`;
+CREATE TABLE `password_reset_tokens` (
+  `email` varchar(255) NOT NULL,
+  `token` varchar(255) NOT NULL,
+  `created_at` datetime NULL,
+  PRIMARY KEY (`email`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DROP TABLE IF EXISTS `pembayarans`;
+CREATE TABLE `pembayarans` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `spp_id` bigint unsigned NOT NULL,
+  `orang_tua_id` bigint unsigned NOT NULL,
+  `tanggal_bayar` date NOT NULL,
+  `jumlah` decimal(10,2) NOT NULL,
+  `metode` varchar(255) NOT NULL DEFAULT 'transfer',
+  `bukti` varchar(255) NULL,
+  `status` varchar(255) NOT NULL DEFAULT 'pending',
+  `created_at` datetime NULL,
+  `updated_at` datetime NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT INTO `pembayarans` (`id`, `spp_id`, `orang_tua_id`, `tanggal_bayar`, `jumlah`, `metode`, `bukti`, `status`, `created_at`, `updated_at`) VALUES
+('1', '1', '1', '2026-01-05', '250000', 'transfer', NULL, 'confirmed', '2026-07-22 21:03:08', '2026-07-22 21:03:08'),
+('2', '2', '1', '2026-02-05', '250000', 'transfer', NULL, 'confirmed', '2026-07-22 21:03:08', '2026-07-22 21:03:08'),
+('3', '3', '1', '2026-03-05', '250000', 'transfer', NULL, 'confirmed', '2026-07-22 21:03:08', '2026-07-22 21:03:08'),
+('4', '4', '1', '2026-04-05', '250000', 'transfer', NULL, 'confirmed', '2026-07-22 21:03:08', '2026-07-22 21:03:08'),
+('5', '5', '1', '2026-05-05', '250000', 'transfer', NULL, 'confirmed', '2026-07-22 21:03:08', '2026-07-22 21:03:08'),
+('6', '6', '1', '2026-06-05', '250000', 'transfer', NULL, 'confirmed', '2026-07-22 21:03:08', '2026-07-22 21:03:08'),
+('7', '8', '1', '2026-01-05', '250000', 'transfer', NULL, 'confirmed', '2026-07-22 21:03:08', '2026-07-22 21:03:08'),
+('8', '9', '1', '2026-02-05', '250000', 'transfer', NULL, 'confirmed', '2026-07-22 21:03:08', '2026-07-22 21:03:08'),
+('9', '10', '1', '2026-03-05', '250000', 'transfer', NULL, 'confirmed', '2026-07-22 21:03:08', '2026-07-22 21:03:08'),
+('10', '11', '1', '2026-04-05', '250000', 'transfer', NULL, 'confirmed', '2026-07-22 21:03:08', '2026-07-22 21:03:08'),
+('11', '12', '1', '2026-05-05', '250000', 'transfer', NULL, 'confirmed', '2026-07-22 21:03:08', '2026-07-22 21:03:08'),
+('12', '13', '1', '2026-06-05', '250000', 'transfer', NULL, 'confirmed', '2026-07-22 21:03:08', '2026-07-22 21:03:08'),
+('13', '15', '1', '2026-01-05', '250000', 'transfer', NULL, 'confirmed', '2026-07-22 21:03:08', '2026-07-22 21:03:08'),
+('14', '16', '1', '2026-02-05', '250000', 'transfer', NULL, 'confirmed', '2026-07-22 21:03:08', '2026-07-22 21:03:08'),
+('15', '17', '1', '2026-03-05', '250000', 'transfer', NULL, 'confirmed', '2026-07-22 21:03:08', '2026-07-22 21:03:08'),
+('16', '18', '1', '2026-04-05', '250000', 'transfer', NULL, 'confirmed', '2026-07-22 21:03:08', '2026-07-22 21:03:08'),
+('17', '19', '1', '2026-05-05', '250000', 'transfer', NULL, 'confirmed', '2026-07-22 21:03:08', '2026-07-22 21:03:08'),
+('18', '20', '1', '2026-06-05', '250000', 'transfer', NULL, 'confirmed', '2026-07-22 21:03:08', '2026-07-22 21:03:08');
+
+DROP TABLE IF EXISTS `pengaturan`;
+CREATE TABLE `pengaturan` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `key` varchar(255) NOT NULL,
+  `value` text NOT NULL,
+  `created_at` datetime NULL,
+  `updated_at` datetime NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `pengaturan_key_unique` (`key`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT INTO `pengaturan` (`id`, `key`, `value`, `created_at`, `updated_at`) VALUES
+('1', 'nama_sekolah', 'SMPIT Al Azhar Jaya Indonesia', '2026-07-22 21:03:08', '2026-07-22 21:03:08'),
+('2', 'tahun_ajaran', '2025/2026', '2026-07-22 21:03:08', '2026-07-22 21:03:08'),
+('3', 'semester', 'Genap', '2026-07-22 21:03:08', '2026-07-22 21:03:08'),
+('4', 'alamat_sekolah', 'Jl. Raya Cendana No. 123, Kota Tangerang Selatan, Banten', '2026-07-22 21:03:08', '2026-07-22 21:03:08'),
+('5', 'kkm_default', '70', '2026-07-22 21:03:08', '2026-07-22 21:03:08');
+
+DROP TABLE IF EXISTS `pengumpulan_tugas`;
+CREATE TABLE `pengumpulan_tugas` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `tugas_id` bigint unsigned NOT NULL,
+  `siswa_id` bigint unsigned NOT NULL,
+  `file_path` varchar(255) NULL,
+  `catatan_siswa` text NULL,
+  `nilai` decimal(10,2) NULL,
+  `catatan_guru` text NULL,
+  `dikumpulkan_at` datetime NULL,
+  `created_at` datetime NULL,
+  `updated_at` datetime NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `pengumpulan_tugas_tugas_id_siswa_id_unique` (`tugas_id`, `siswa_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DROP TABLE IF EXISTS `pengumuman`;
+CREATE TABLE `pengumuman` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `judul` varchar(255) NOT NULL,
+  `konten` text NOT NULL,
+  `created_by` int NOT NULL,
+  `target_role` varchar(255) NULL,
+  `created_at` datetime NULL,
+  `updated_at` datetime NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT INTO `pengumuman` (`id`, `judul`, `konten`, `created_by`, `target_role`, `created_at`, `updated_at`) VALUES
+('1', 'Pengumuman Demo SMPIT', 'Informasi sekolah Demo untuk akun dummy.', '78', 'semua', '2026-07-22 21:03:06', '2026-07-22 21:03:06'),
+('2', 'Libur Hari Raya Nyepi', 'Sekolah libur pada tanggal 30 Maret 2026.', '82', NULL, '2026-03-25 00:00:00', '2026-03-25 00:00:00'),
+('3', 'Pesantren Kilat Ramadhan', 'Kegiatan pesantren kilat akan diadakan pada minggu kedua April.', '82', NULL, '2026-03-20 00:00:00', '2026-03-20 00:00:00');
+
+DROP TABLE IF EXISTS `pesan`;
+CREATE TABLE `pesan` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `pengirim_id` bigint unsigned NOT NULL,
+  `penerima_id` bigint unsigned NOT NULL,
+  `subjek` varchar(255) NULL,
+  `isi` text NOT NULL,
+  `dibaca` tinyint NOT NULL DEFAULT '0',
+  `created_at` datetime NULL,
+  `updated_at` datetime NULL,
+  `siswa_id` bigint unsigned NULL,
+  `kategori` varchar(255) NOT NULL DEFAULT 'Lainnya',
+  `tanggal` datetime NULL,
+  `parent_message_id` bigint unsigned NULL,
+  `thread_id` varchar(255) NULL,
+  `lampiran_path` varchar(255) NULL,
+  PRIMARY KEY (`id`),
+  KEY `pesan_thread_id_index` (`thread_id`),
+  KEY `pesan_tanggal_index` (`tanggal`),
+  KEY `pesan_kategori_index` (`kategori`),
+  KEY `pesan_siswa_id_created_at_index` (`siswa_id`, `created_at`),
+  KEY `pesan_penerima_id_dibaca_created_at_index` (`penerima_id`, `dibaca`, `created_at`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT INTO `pesan` (`id`, `pengirim_id`, `penerima_id`, `subjek`, `isi`, `dibaca`, `created_at`, `updated_at`, `siswa_id`, `kategori`, `tanggal`, `parent_message_id`, `thread_id`, `lampiran_path`) VALUES
+('1', '78', '80', 'Kehadiran Demo', 'Ahmad Fikri Demo tercatat dua kali terlambat. Mohon pendampingan dari rumah.', '1', '2026-07-22 21:03:06', '2026-07-22 21:03:06', NULL, 'Lainnya', '2026-07-22 21:03:06', NULL, 'pesan-1', NULL),
+('2', '80', '78', 'Re: Kehadiran Demo', 'Terima kasih informasinya, kami akan mengatur keberangkatan lebih awal.', '0', '2026-07-22 21:03:06', '2026-07-22 21:03:06', NULL, 'Lainnya', '2026-07-22 21:03:06', NULL, 'pesan-2', NULL),
+('3', '78', '80', 'Perkembangan Tahfidz Demo', 'Setoran Al-Falaq Ahmad Fikri Demo semakin lancar. Target berikutnya Al-Ikhlas.', '1', '2026-07-22 21:03:06', '2026-07-22 21:03:06', NULL, 'Lainnya', '2026-07-22 21:03:06', NULL, 'pesan-3', NULL),
+('4', '78', '79', 'Tugas Matematika Demo', 'Jangan lupa menyelesaikan tugas Matematika Demo sebelum Jumat.', '0', '2026-07-22 21:03:06', '2026-07-22 21:03:06', NULL, 'Lainnya', '2026-07-22 21:03:06', NULL, 'pesan-4', NULL),
+('5', '80', '78', 'Hasil Belajar Demo', 'Mohon informasi perkembangan belajar Ahmad Fikri Demo pekan ini.', '1', '2026-07-22 21:03:06', '2026-07-22 21:03:06', NULL, 'Lainnya', '2026-07-22 21:03:06', NULL, 'pesan-5', NULL),
+('6', '78', '80', 'Re: Hasil Belajar Demo', 'Ahmad Fikri Demo aktif dan nilai formatifnya stabil. Latihan soal cerita tetap perlu ditambah.', '0', '2026-07-22 21:03:06', '2026-07-22 21:03:06', NULL, 'Lainnya', '2026-07-22 21:03:06', NULL, 'pesan-6', NULL),
+('7', '1', '12', 'PR Matematika', 'Jangan lupa kumpulkan PR besok!', '0', '2026-07-22 21:03:08', '2026-07-22 21:03:08', NULL, 'Lainnya', '2026-07-22 21:03:08', NULL, 'pesan-7', NULL),
+('8', '78', '80', 'Kehadiran Demo', 'Ahmad Fikri Demo tercatat dua kali terlambat. Mohon pendampingan dari rumah.', '1', '2026-07-22 21:05:01', '2026-07-22 21:05:01', '67', 'Kehadiran', '2026-07-16 21:05:01', NULL, 'demo-buku-penghubung-67', NULL),
+('9', '80', '78', 'Re: Kehadiran Demo', 'Terima kasih informasinya, kami akan mengatur keberangkatan lebih awal.', '0', '2026-07-22 21:05:01', '2026-07-22 21:05:01', '67', 'Kehadiran', '2026-07-17 21:05:01', '8', 'demo-buku-penghubung-67', NULL),
+('10', '78', '80', 'Perkembangan Tahfidz Demo', 'Setoran Al-Falaq Ahmad Fikri Demo semakin lancar. Target berikutnya Al-Ikhlas.', '1', '2026-07-22 21:05:01', '2026-07-22 21:05:01', '67', 'Tahsin/Tahfidz', '2026-07-18 21:05:01', '8', 'demo-buku-penghubung-67', NULL),
+('11', '78', '79', 'Tugas Matematika Demo', 'Jangan lupa menyelesaikan tugas Matematika Demo sebelum Jumat.', '0', '2026-07-22 21:05:01', '2026-07-22 21:05:01', '67', 'Tugas', '2026-07-19 21:05:01', '8', 'demo-buku-penghubung-67', NULL),
+('12', '80', '78', 'Hasil Belajar Demo', 'Mohon informasi perkembangan belajar Ahmad Fikri Demo pekan ini.', '1', '2026-07-22 21:05:01', '2026-07-22 21:05:01', '67', 'Akademik', '2026-07-20 21:05:01', '8', 'demo-buku-penghubung-67', NULL),
+('13', '78', '80', 'Re: Hasil Belajar Demo', 'Ahmad Fikri Demo aktif dan nilai formatifnya stabil. Latihan soal cerita tetap perlu ditambah.', '0', '2026-07-22 21:05:01', '2026-07-22 21:05:01', '67', 'Akademik', '2026-07-21 21:05:01', '8', 'demo-buku-penghubung-67', NULL);
+
+DROP TABLE IF EXISTS `program_pengayaans`;
+CREATE TABLE `program_pengayaans` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `guru_id` bigint unsigned NOT NULL,
+  `mapel_id` bigint unsigned NULL,
+  `kelas_id` bigint unsigned NULL,
+  `kompetensi_dasar` varchar(255) NULL,
+  `materi` text NULL,
+  `bentuk_pengayaan` text NULL,
+  `keterangan` text NULL,
+  `tahun_ajaran` varchar(255) NOT NULL DEFAULT '2026/2027',
+  `semester` varchar(255) NOT NULL DEFAULT 'Ganjil',
+  `created_at` datetime NULL,
+  `updated_at` datetime NULL,
+  PRIMARY KEY (`id`),
+  KEY `program_pengayaans_semester_index` (`semester`),
+  KEY `program_pengayaans_tahun_ajaran_index` (`tahun_ajaran`),
+  KEY `program_pengayaans_guru_id_tahun_ajaran_semester_index` (`guru_id`, `tahun_ajaran`, `semester`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT INTO `program_pengayaans` (`id`, `guru_id`, `mapel_id`, `kelas_id`, `kompetensi_dasar`, `materi`, `bentuk_pengayaan`, `keterangan`, `tahun_ajaran`, `semester`, `created_at`, `updated_at`) VALUES
+('1', '12', '1', '6', 'KD Demo', 'Soal cerita bilangan Demo', 'Latihan proyek mini Demo', 'Untuk siswa cepat selesai.', '2026/2027', 'Ganjil', '2026-07-22 21:05:01', '2026-07-22 21:05:01');
+
+DROP TABLE IF EXISTS `program_remedials`;
+CREATE TABLE `program_remedials` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `remedial_id` bigint unsigned NULL,
+  `guru_id` bigint unsigned NOT NULL,
+  `siswa_id` bigint unsigned NOT NULL,
+  `mapel_id` bigint unsigned NULL,
+  `kelas_id` bigint unsigned NULL,
+  `kompetensi_dasar` varchar(255) NULL,
+  `materi` text NULL,
+  `nilai_sebelum` decimal(10,2) NULL,
+  `nilai_sesudah` decimal(10,2) NULL,
+  `keterangan` text NULL,
+  `paraf` varchar(255) NULL,
+  `status` varchar(255) NOT NULL DEFAULT 'pending',
+  `tahun_ajaran` varchar(255) NOT NULL DEFAULT '2026/2027',
+  `semester` varchar(255) NOT NULL DEFAULT 'Ganjil',
+  `created_at` datetime NULL,
+  `updated_at` datetime NULL,
+  PRIMARY KEY (`id`),
+  KEY `program_remedials_semester_index` (`semester`),
+  KEY `program_remedials_tahun_ajaran_index` (`tahun_ajaran`),
+  KEY `program_remedials_status_index` (`status`),
+  KEY `program_remedials_siswa_id_status_index` (`siswa_id`, `status`),
+  KEY `program_remedials_guru_id_tahun_ajaran_semester_index` (`guru_id`, `tahun_ajaran`, `semester`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT INTO `program_remedials` (`id`, `remedial_id`, `guru_id`, `siswa_id`, `mapel_id`, `kelas_id`, `kompetensi_dasar`, `materi`, `nilai_sebelum`, `nilai_sesudah`, `keterangan`, `paraf`, `status`, `tahun_ajaran`, `semester`, `created_at`, `updated_at`) VALUES
+('1', '1', '12', '67', '1', '6', 'KD Remedial Demo', 'Perbaikan operasi hitung Demo', '68', '78', 'Demo selesai latihan ulang.', 'GD', 'selesai', '2026/2027', 'Ganjil', '2026-07-22 21:05:01', '2026-07-22 21:05:01');
+
+DROP TABLE IF EXISTS `rapor_items`;
+CREATE TABLE `rapor_items` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `rapor_id` bigint unsigned NOT NULL,
+  `mapel_id` bigint unsigned NULL,
+  `kategori` varchar(255) NULL,
+  `komponen` varchar(255) NOT NULL,
+  `nilai` decimal(10,2) NULL,
+  `predikat` varchar(255) NULL,
+  `deskripsi` text NULL,
+  `metadata` text NULL,
+  `created_at` datetime NULL,
+  `updated_at` datetime NULL,
+  PRIMARY KEY (`id`),
+  KEY `rapor_items_kategori_index` (`kategori`),
+  KEY `rapor_items_rapor_id_kategori_index` (`rapor_id`, `kategori`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT INTO `rapor_items` (`id`, `rapor_id`, `mapel_id`, `kategori`, `komponen`, `nilai`, `predikat`, `deskripsi`, `metadata`, `created_at`, `updated_at`) VALUES
+('1', '1', '1', 'akademik', 'Matematika', '86', 'B', 'Capaian kompetensi Demo untuk Matematika.', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01'),
+('2', '1', '3', 'akademik', 'Bahasa Inggris', '87', 'B', 'Capaian kompetensi Demo untuk Bahasa Inggris.', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01'),
+('3', '1', '8', 'akademik', 'Tahfidzul Qur''an', '88', 'B', 'Capaian kompetensi Demo untuk Tahfidzul Qur''an.', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01'),
+('4', '1', NULL, 'ekstrakurikuler', 'Pramuka Demo', NULL, 'Berkembang', 'Aktif mengikuti kegiatan Demo.', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01'),
+('5', '2', NULL, 'english', 'Listening', '82', 'Good', 'Komponen English Demo.', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01'),
+('6', '2', NULL, 'english', 'Speaking', '83', 'Good', 'Komponen English Demo.', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01'),
+('7', '2', NULL, 'english', 'Reading', '84', 'Good', 'Komponen English Demo.', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01'),
+('8', '2', NULL, 'english', 'Writing', '85', 'Good', 'Komponen English Demo.', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01'),
+('9', '2', NULL, 'english', 'Vocabulary', '86', 'Good', 'Komponen English Demo.', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01'),
+('10', '2', NULL, 'english', 'Grammar', '87', 'Good', 'Komponen English Demo.', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01'),
+('11', '2', NULL, 'english', 'Pronunciation', '88', 'Good', 'Komponen English Demo.', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01'),
+('12', '2', NULL, 'english', 'Participation', '89', 'Good', 'Komponen English Demo.', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01'),
+('13', '2', NULL, 'english', 'Final Score', '90', 'Good', 'Komponen English Demo.', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01'),
+('14', '2', NULL, 'english', 'Teacher Comment', NULL, NULL, 'Ahmad Fikri Demo participates well in English class.', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01'),
+('15', '3', NULL, 'quran_reading', 'Ketelitian', NULL, 'B', 'Penilaian Quran Demo.', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01'),
+('16', '3', NULL, 'quran_reading', 'Kelancaran', NULL, 'B', 'Penilaian Quran Demo.', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01'),
+('17', '3', NULL, 'quran_reading', 'Makhorijul Huruf dan Sifatul Huruf', NULL, 'B', 'Penilaian Quran Demo.', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01'),
+('18', '3', NULL, 'quran_reading', 'Mad/Bacaan Panjang', NULL, 'B', 'Penilaian Quran Demo.', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01'),
+('19', '3', NULL, 'quran_reading', 'Ghunnah/Bacaan Dengung', NULL, 'B', 'Penilaian Quran Demo.', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01'),
+('20', '3', NULL, 'quran_reading', 'Qolqolah/Bacaan Memantul', NULL, 'B', 'Penilaian Quran Demo.', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01'),
+('21', '3', NULL, 'quran_reading', 'Idzhar/Bacaan Jelas', NULL, 'B', 'Penilaian Quran Demo.', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01'),
+('22', '3', NULL, 'quran_reading', 'Waqof Wal Ibtida', NULL, 'B', 'Penilaian Quran Demo.', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01'),
+('23', '3', NULL, 'quran_reading', 'Materi Ghorib', NULL, 'B', 'Penilaian Quran Demo.', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01'),
+('24', '3', NULL, 'quran_reading', 'Materi Tajwid', NULL, 'B', 'Penilaian Quran Demo.', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01'),
+('25', '3', NULL, 'quran_reading', 'Kehadiran', NULL, 'A', 'Penilaian Quran Demo.', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01'),
+('26', '3', NULL, 'quran_reading', 'Adab dan Perilaku', NULL, 'A', 'Penilaian Quran Demo.', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01'),
+('27', '3', NULL, 'quran_surah', 'Al-Fatihah', NULL, 'A', 'Hafalan Juz 30 Demo.', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01'),
+('28', '3', NULL, 'quran_surah', 'An-Naas', NULL, 'A', 'Hafalan Juz 30 Demo.', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01'),
+('29', '3', NULL, 'quran_surah', 'Al-Falaq', NULL, 'A', 'Hafalan Juz 30 Demo.', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01'),
+('30', '3', NULL, 'quran_surah', 'Al-Ikhlash', NULL, 'B', 'Hafalan Juz 30 Demo.', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01'),
+('31', '3', NULL, 'quran_surah', 'Al-Lahab', NULL, 'B', 'Hafalan Juz 30 Demo.', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01'),
+('32', '3', NULL, 'quran_surah', 'An-Nashr', NULL, 'B', 'Hafalan Juz 30 Demo.', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01'),
+('33', '3', NULL, 'quran_surah', 'Al-Kafirun', NULL, 'B', 'Hafalan Juz 30 Demo.', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01'),
+('34', '3', NULL, 'quran_surah', 'Al-Kautsar', NULL, 'B', 'Hafalan Juz 30 Demo.', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01'),
+('35', '3', NULL, 'quran_surah', 'Al-Maun', NULL, NULL, 'Hafalan Juz 30 Demo.', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01'),
+('36', '3', NULL, 'quran_surah', 'Quraisy', NULL, NULL, 'Hafalan Juz 30 Demo.', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01'),
+('37', '3', NULL, 'quran_surah', 'Al-Fiil', NULL, NULL, 'Hafalan Juz 30 Demo.', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01'),
+('38', '3', NULL, 'quran_surah', 'Al-Humazah', NULL, NULL, 'Hafalan Juz 30 Demo.', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01'),
+('39', '3', NULL, 'quran_surah', 'Al-Ashr', NULL, NULL, 'Hafalan Juz 30 Demo.', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01'),
+('40', '3', NULL, 'quran_surah', 'At-Takatsur', NULL, NULL, 'Hafalan Juz 30 Demo.', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01'),
+('41', '3', NULL, 'quran_surah', 'Al-Qariah', NULL, NULL, 'Hafalan Juz 30 Demo.', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01'),
+('42', '3', NULL, 'quran_surah', 'Al-Adiyat', NULL, NULL, 'Hafalan Juz 30 Demo.', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01'),
+('43', '3', NULL, 'quran_surah', 'Az-Zalzalah', NULL, NULL, 'Hafalan Juz 30 Demo.', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01'),
+('44', '3', NULL, 'quran_surah', 'Al-Bayyinah', NULL, NULL, 'Hafalan Juz 30 Demo.', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01'),
+('45', '3', NULL, 'quran_surah', 'Al-Qadr', NULL, NULL, 'Hafalan Juz 30 Demo.', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01'),
+('46', '3', NULL, 'quran_surah', 'Al-Alaq', NULL, NULL, 'Hafalan Juz 30 Demo.', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01'),
+('47', '3', NULL, 'quran_surah', 'At-Tiin', NULL, NULL, 'Hafalan Juz 30 Demo.', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01'),
+('48', '3', NULL, 'quran_surah', 'Al-Insyirah', NULL, NULL, 'Hafalan Juz 30 Demo.', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01'),
+('49', '3', NULL, 'quran_surah', 'Adh-Dhuha', NULL, NULL, 'Hafalan Juz 30 Demo.', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01'),
+('50', '3', NULL, 'quran_surah', 'Al-Lail', NULL, NULL, 'Hafalan Juz 30 Demo.', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01'),
+('51', '3', NULL, 'quran_surah', 'Asy-Syams', NULL, NULL, 'Hafalan Juz 30 Demo.', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01'),
+('52', '3', NULL, 'quran_surah', 'Al-Balad', NULL, NULL, 'Hafalan Juz 30 Demo.', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01'),
+('53', '3', NULL, 'quran_surah', 'Al-Fajr', NULL, NULL, 'Hafalan Juz 30 Demo.', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01'),
+('54', '3', NULL, 'quran_surah', 'Al-Ghasyiyah', NULL, NULL, 'Hafalan Juz 30 Demo.', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01'),
+('55', '3', NULL, 'quran_surah', 'Al-Ala', NULL, NULL, 'Hafalan Juz 30 Demo.', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01'),
+('56', '3', NULL, 'quran_surah', 'At-Thariq', NULL, NULL, 'Hafalan Juz 30 Demo.', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01'),
+('57', '3', NULL, 'quran_surah', 'Al-Buruj', NULL, NULL, 'Hafalan Juz 30 Demo.', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01'),
+('58', '3', NULL, 'quran_surah', 'Al-Insyiqaq', NULL, NULL, 'Hafalan Juz 30 Demo.', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01'),
+('59', '3', NULL, 'quran_surah', 'Al-Muthaffifin', NULL, NULL, 'Hafalan Juz 30 Demo.', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01'),
+('60', '3', NULL, 'quran_surah', 'Al-Infithar', NULL, NULL, 'Hafalan Juz 30 Demo.', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01'),
+('61', '3', NULL, 'quran_surah', 'At-Takwir', NULL, NULL, 'Hafalan Juz 30 Demo.', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01'),
+('62', '3', NULL, 'quran_surah', 'Abasa', NULL, NULL, 'Hafalan Juz 30 Demo.', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01'),
+('63', '3', NULL, 'quran_surah', 'An-Naziat', NULL, NULL, 'Hafalan Juz 30 Demo.', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01'),
+('64', '3', NULL, 'quran_surah', 'An-Naba', NULL, NULL, 'Hafalan Juz 30 Demo.', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01');
+
+DROP TABLE IF EXISTS `rapors`;
+CREATE TABLE `rapors` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `siswa_id` bigint unsigned NOT NULL,
+  `tahun_ajaran` varchar(255) NOT NULL,
+  `semester` varchar(255) NOT NULL,
+  `jenis_rapor` varchar(255) NOT NULL,
+  `status` varchar(255) NOT NULL DEFAULT 'draft',
+  `published_at` datetime NULL,
+  `created_by` int NULL,
+  `updated_by` int NULL,
+  `catatan` text NULL,
+  `snapshot` text NULL,
+  `signature_metadata` text NULL,
+  `created_at` datetime NULL,
+  `updated_at` datetime NULL,
+  PRIMARY KEY (`id`),
+  KEY `rapors_status_index` (`status`),
+  KEY `rapors_jenis_rapor_index` (`jenis_rapor`),
+  KEY `rapors_semester_index` (`semester`),
+  KEY `rapors_tahun_ajaran_index` (`tahun_ajaran`),
+  UNIQUE KEY `rapor_period_unique` (`siswa_id`, `tahun_ajaran`, `semester`, `jenis_rapor`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT INTO `rapors` (`id`, `siswa_id`, `tahun_ajaran`, `semester`, `jenis_rapor`, `status`, `published_at`, `created_by`, `updated_by`, `catatan`, `snapshot`, `signature_metadata`, `created_at`, `updated_at`) VALUES
+('1', '67', '2025/2026', 'Genap', 'akademik', 'published', '2026-07-22 21:05:01', '78', '78', 'Ananda Demo menunjukkan perkembangan akademik yang baik.', '{"source":"Revisi1Seeder","siswa":"Ahmad Fikri Demo"}', '{"tempat_tanggal":"Bekasi, 24 Juli 2026","wali_kelas":"Guru Demo SMPIT","kepala_sekolah":"Kepala Sekolah","koordinator_quran":"Koordinator Quran","guru_tahfidz":"Guru Demo SMPIT"}', '2026-07-22 21:05:01', '2026-07-22 21:05:01'),
+('2', '67', '2026/2027', 'Ganjil', 'english', 'published', '2026-07-22 21:05:01', '78', '78', 'Teacher comment Demo: active and confident.', '{"source":"Revisi1Seeder","siswa":"Ahmad Fikri Demo"}', '{"tempat_tanggal":"Bekasi, 24 Juli 2026","wali_kelas":"Guru Demo SMPIT","kepala_sekolah":"Kepala Sekolah","koordinator_quran":"Koordinator Quran","guru_tahfidz":"Guru Demo SMPIT"}', '2026-07-22 21:05:01', '2026-07-22 21:05:01'),
+('3', '67', '2026/2027', 'Ganjil', 'quran', 'published', '2026-07-22 21:05:01', '78', '78', 'Alhamdulillah, capaian Quran Ananda Demo semakin baik. Tetap semangat murojaah.', '{"source":"Revisi1Seeder","siswa":"Ahmad Fikri Demo"}', '{"tempat_tanggal":"Bekasi, 24 Juli 2026","wali_kelas":"Guru Demo SMPIT","kepala_sekolah":"Kepala Sekolah","koordinator_quran":"Koordinator Quran","guru_tahfidz":"Guru Demo SMPIT"}', '2026-07-22 21:05:01', '2026-07-22 21:05:01');
+
+DROP TABLE IF EXISTS `remedials`;
+CREATE TABLE `remedials` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `siswa_id` bigint unsigned NOT NULL,
+  `mapel_id` bigint unsigned NOT NULL,
+  `nilai_id` bigint unsigned NOT NULL,
+  `nilai_asal` decimal(10,2) NOT NULL,
+  `deadline` date NOT NULL,
+  `status` varchar(255) NOT NULL DEFAULT 'pending',
+  `created_at` datetime NULL,
+  `updated_at` datetime NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT INTO `remedials` (`id`, `siswa_id`, `mapel_id`, `nilai_id`, `nilai_asal`, `deadline`, `status`, `created_at`, `updated_at`) VALUES
+('1', '67', '1', '1', '68', '2026-07-29', 'pending', '2026-07-22 21:03:06', '2026-07-22 21:03:06');
+
+DROP TABLE IF EXISTS `sessions`;
+CREATE TABLE `sessions` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `user_id` bigint unsigned NULL,
+  `ip_address` varchar(255) NULL,
+  `user_agent` text NULL,
+  `payload` text NOT NULL,
+  `last_activity` int NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `sessions_last_activity_index` (`last_activity`),
+  KEY `sessions_user_id_index` (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DROP TABLE IF EXISTS `settings`;
+CREATE TABLE `settings` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `key` varchar(255) NOT NULL,
+  `value` text NULL,
+  `created_at` datetime NULL,
+  `updated_at` datetime NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `settings_key_unique` (`key`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT INTO `settings` (`id`, `key`, `value`, `created_at`, `updated_at`) VALUES
+('1', 'kkm_sd', '70', NULL, NULL),
+('2', 'kkm_smp', '75', NULL, NULL),
+('3', 'school_name', 'Al Azhar Jaya Indonesia', NULL, NULL),
+('4', 'semester_aktif', 'Genap 2025/2026', NULL, NULL),
+('5', 'alamat_sekolah', 'Jl. Al Azhar No. 1, Bekasi', NULL, NULL);
+
+DROP TABLE IF EXISTS `siswa`;
+CREATE TABLE `siswa` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `user_id` bigint unsigned NOT NULL,
+  `nis` varchar(255) NOT NULL,
+  `nama` varchar(255) NOT NULL,
+  `kelas_id` bigint unsigned NULL,
+  `kelas_quran_id` bigint unsigned NULL,
+  `jenis_kelamin` varchar(255) NOT NULL,
+  `tempat_lahir` varchar(255) NULL,
+  `tanggal_lahir` date NULL,
+  `alamat` text NULL,
+  `nama_ayah` varchar(255) NULL,
+  `nama_ibu` varchar(255) NULL,
+  `status` varchar(255) NOT NULL DEFAULT 'aktif',
+  `created_at` datetime NULL,
+  `updated_at` datetime NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `siswa_nis_unique` (`nis`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT INTO `siswa` (`id`, `user_id`, `nis`, `nama`, `kelas_id`, `kelas_quran_id`, `jenis_kelamin`, `tempat_lahir`, `tanggal_lahir`, `alamat`, `nama_ayah`, `nama_ibu`, `status`, `created_at`, `updated_at`) VALUES
+('1', '12', '26001', 'Abdul Latif', '2', '1', 'L', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-22 21:02:52', '2026-07-22 21:04:49'),
+('2', '13', '26002', 'Abid Abyan Tsany Solihansyah', '2', '1', 'L', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-22 21:02:53', '2026-07-22 21:04:49'),
+('3', '14', '26003', 'Aldeen Hadwan Shirazi', '2', '1', 'L', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-22 21:02:53', '2026-07-22 21:04:49'),
+('4', '15', '26004', 'Chaidar Rafisqy Hermawan', '2', '1', 'L', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-22 21:02:53', '2026-07-22 21:04:49'),
+('5', '16', '26005', 'Daffa Zaidan Pratama', '4', '1', 'L', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-22 21:02:53', '2026-07-22 21:04:50'),
+('6', '17', '26006', 'Fauzi Abdu Rohman', '4', '1', 'L', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-22 21:02:53', '2026-07-22 21:04:50'),
+('7', '18', '26007', 'Galang Hernandes', '4', '1', 'L', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-22 21:02:53', '2026-07-22 21:04:50'),
+('8', '19', '26008', 'Hamzah Irfan Fadillah', '4', '1', 'L', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-22 21:02:54', '2026-07-22 21:04:50'),
+('9', '20', '26009', 'Kelvin Adel Pratama', '4', '1', 'L', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-22 21:02:54', '2026-07-22 21:04:50'),
+('10', '21', '26010', 'Maherdes Attaufiq Riziqlillah', '4', '1', 'L', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-22 21:02:54', '2026-07-22 21:04:50'),
+('11', '22', '26011', 'Muhammad Albyan', '4', '1', 'L', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-22 21:02:54', '2026-07-22 21:04:51'),
+('12', '23', '26012', 'Muhammad Alhafidz', '4', '1', 'L', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-22 21:02:54', '2026-07-22 21:04:51'),
+('13', '24', '26013', 'Muhammad Aslam Zayyan', '4', '1', 'L', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-22 21:02:54', '2026-07-22 21:04:51'),
+('14', '25', '26014', 'Rizky Maulana As Shidiq', '2', '1', 'L', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-22 21:02:55', '2026-07-22 21:04:51'),
+('15', '26', '26015', 'Muhammad Azzam Nufail', '2', '2', 'L', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-22 21:02:55', '2026-07-22 21:04:51'),
+('16', '27', '26016', 'Muhammad Daffa Al Ghifari', '4', '2', 'L', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-22 21:02:55', '2026-07-22 21:04:51'),
+('17', '28', '26017', 'Muhammad Eldafi Satya Irawan', '4', '2', 'L', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-22 21:02:55', '2026-07-22 21:04:52'),
+('18', '29', '26018', 'Muhammad Falah Pratama Mulya', '2', '2', 'L', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-22 21:02:55', '2026-07-22 21:04:52'),
+('19', '30', '26019', 'Muhammad Maher', '2', '2', 'L', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-22 21:02:56', '2026-07-22 21:04:52'),
+('20', '31', '26020', 'Muhammad Quincy Satyamulya', '2', '2', 'L', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-22 21:02:56', '2026-07-22 21:04:52'),
+('21', '32', '26021', 'Muhammad Rakha Solihansyah', '4', '2', 'L', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-22 21:02:56', '2026-07-22 21:04:52'),
+('22', '33', '26022', 'Muhammad Wafi Alkiram', '2', '2', 'L', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-22 21:02:56', '2026-07-22 21:04:53'),
+('23', '34', '26023', 'Naufal Djaky Ardani', '4', '2', 'L', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-22 21:02:56', '2026-07-22 21:04:53'),
+('24', '35', '26024', 'Pandu Bagus Damar Wiyono', '4', '2', 'L', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-22 21:02:56', '2026-07-22 21:04:53'),
+('25', '36', '26025', 'Tsabit Wafi Musyaffa', '2', '2', 'L', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-22 21:02:57', '2026-07-22 21:04:53'),
+('26', '37', '26026', 'Zahran Farid Firdaus', '2', '2', 'L', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-22 21:02:57', '2026-07-22 21:04:53'),
+('27', '38', '26027', 'Zein Maulana Muaffin', '4', '2', 'L', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-22 21:02:57', '2026-07-22 21:04:53'),
+('28', '39', '26028', 'Alviandra Chesta Radityatama', '1', '3', 'L', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-22 21:02:57', '2026-07-22 21:04:54'),
+('29', '40', '26029', 'Argia Raya Adz Dzikra', '1', '3', 'L', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-22 21:02:57', '2026-07-22 21:04:54'),
+('30', '41', '26030', 'Muhammad Hafidz Alfahrezi', '1', '3', 'L', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-22 21:02:57', '2026-07-22 21:04:54'),
+('31', '42', '26031', 'Muhammad Al Farizy Setyanto', '1', '3', 'L', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-22 21:02:58', '2026-07-22 21:04:54'),
+('32', '43', '26032', 'Muhammad Al Fatih', '1', '3', 'L', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-22 21:02:58', '2026-07-22 21:04:54'),
+('33', '44', '26033', 'Muhammad Fadlan Adelmar', '1', '3', 'L', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-22 21:02:58', '2026-07-22 21:04:54'),
+('34', '45', '26034', 'Reval Rama Sulistiyo', '1', '3', 'L', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-22 21:02:58', '2026-07-22 21:04:55'),
+('35', '46', '26035', 'Aila Zahwa Aqilah', '3', '4', 'P', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-22 21:02:58', '2026-07-22 21:04:55'),
+('36', '47', '26036', 'Aisyah Rahma Haniya', '3', '4', 'P', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-22 21:02:59', '2026-07-22 21:04:55'),
+('37', '48', '26037', 'Anindita Valencia Aurora', '5', '4', 'P', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-22 21:02:59', '2026-07-22 21:04:55'),
+('38', '49', '26038', 'Atsilah Azka Ramadhani', '5', '4', 'P', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-22 21:02:59', '2026-07-22 21:04:55'),
+('39', '50', '26039', 'Dara Medina Putri', '5', '4', 'P', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-22 21:02:59', '2026-07-22 21:04:56'),
+('40', '51', '26040', 'Elsa Sri Isyana', '5', '4', 'P', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-22 21:02:59', '2026-07-22 21:04:56'),
+('41', '52', '26041', 'Fadhilah Ramadhani', '5', '4', 'P', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-22 21:02:59', '2026-07-22 21:04:56'),
+('42', '53', '26042', 'Fakhirah Khansa Anditasyah', '5', '4', 'P', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-22 21:03:00', '2026-07-22 21:04:56'),
+('43', '54', '26043', 'Fauziah Adawiyah', '5', '4', 'P', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-22 21:03:00', '2026-07-22 21:04:56'),
+('44', '55', '26044', 'Gadis Bening Arsandi', '5', '4', 'P', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-22 21:03:00', '2026-07-22 21:04:56'),
+('45', '56', '26045', 'Gian Naifa Shofa', '5', '4', 'P', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-22 21:03:00', '2026-07-22 21:04:57'),
+('46', '57', '26046', 'Jihan Makaila Fakhirah', '5', '4', 'P', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-22 21:03:00', '2026-07-22 21:04:57'),
+('47', '58', '26047', 'Jillan Azra Hakimah', '3', '4', 'P', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-22 21:03:00', '2026-07-22 21:04:57'),
+('48', '59', '26048', 'Kalula Ayesha Alkanza', '3', '5', 'P', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-22 21:03:01', '2026-07-22 21:04:57'),
+('49', '60', '26049', 'Kayyasah Sholiha', '5', '5', 'P', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-22 21:03:01', '2026-07-22 21:04:57'),
+('50', '61', '26050', 'Khayla Almira Maritza H', '5', '5', 'P', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-22 21:03:01', '2026-07-22 21:04:57'),
+('51', '62', '26051', 'Muhdatus Sa''idah', '3', '5', 'P', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-22 21:03:01', '2026-07-22 21:04:58'),
+('52', '63', '26052', 'Nadia Aqila Shanum', '5', '5', 'P', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-22 21:03:01', '2026-07-22 21:04:58'),
+('53', '64', '26053', 'Naila Syahira Mumtazah', '5', '5', 'P', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-22 21:03:02', '2026-07-22 21:04:58'),
+('54', '65', '26054', 'Nasywa Maulida', '5', '5', 'P', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-22 21:03:02', '2026-07-22 21:04:58'),
+('55', '66', '26055', 'Nurul Hanis Nahilah', '5', '5', 'P', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-22 21:03:02', '2026-07-22 21:04:58'),
+('56', '67', '26056', 'Nurul Kasyfatul Mahjubiyyah', '5', '5', 'P', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-22 21:03:02', '2026-07-22 21:04:59'),
+('57', '68', '26057', 'Putri Yara', '5', '5', 'P', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-22 21:03:02', '2026-07-22 21:04:59'),
+('58', '69', '26058', 'Ribkha Pramesti Wijaya', '3', '5', 'P', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-22 21:03:02', '2026-07-22 21:04:59'),
+('59', '70', '26059', 'Syaila Unatsa Putri', '3', '5', 'P', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-22 21:03:03', '2026-07-22 21:04:59'),
+('60', '71', '26060', 'Syakira Sausan Khairunnisa', '5', '5', 'P', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-22 21:03:03', '2026-07-22 21:04:59'),
+('61', '72', '26061', 'Violine Atha Al-Husna', '3', '5', 'P', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-22 21:03:03', '2026-07-22 21:04:59'),
+('62', '73', '26062', 'Aqilah Naurah', '1', '6', 'P', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-22 21:03:03', '2026-07-22 21:05:00'),
+('63', '74', '26063', 'Sahla Azka Hafizah', '1', '6', 'P', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-22 21:03:03', '2026-07-22 21:05:00'),
+('64', '75', '26064', 'Hanna Mufidah', '1', '6', 'P', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-22 21:03:03', '2026-07-22 21:05:00'),
+('65', '76', '26065', 'Khanza Izzatunnisa', '1', '6', 'P', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-22 21:03:04', '2026-07-22 21:05:00'),
+('66', '77', '26066', 'Ziya Zivana Zubi', '1', '6', 'P', NULL, NULL, NULL, NULL, NULL, 'aktif', '2026-07-22 21:03:04', '2026-07-22 21:05:00'),
+('67', '79', 'SISWA-DEMO-001', 'Ahmad Fikri Demo', '6', '7', 'L', 'Bekasi', '2012-07-10', 'Alamat Demo LMS Al Azhar', 'Ayah Demo', 'Ibu Demo', 'aktif', '2026-07-22 21:03:05', '2026-07-22 21:03:05');
+
+DROP TABLE IF EXISTS `siswa_badge`;
+CREATE TABLE `siswa_badge` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `siswa_id` bigint unsigned NOT NULL,
+  `badge_id` bigint unsigned NOT NULL,
+  `achieved_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `siswa_badge_siswa_id_badge_id_unique` (`siswa_id`, `badge_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT INTO `siswa_badge` (`id`, `siswa_id`, `badge_id`, `achieved_at`) VALUES
+('1', '67', '1', '2026-07-22 21:03:06'),
+('2', '1', '3', '2026-07-22 14:03:08'),
+('3', '2', '3', '2026-07-22 14:03:08'),
+('4', '3', '3', '2026-07-22 14:03:08'),
+('5', '4', '2', '2026-07-22 14:03:08'),
+('6', '5', '5', '2026-07-22 14:03:08'),
+('7', '2', '5', '2026-07-22 14:05:02'),
+('8', '4', '5', '2026-07-22 14:05:02'),
+('9', '5', '3', '2026-07-22 14:05:02');
+
+DROP TABLE IF EXISTS `spps`;
+CREATE TABLE `spps` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `siswa_id` bigint unsigned NOT NULL,
+  `bulan` int NOT NULL,
+  `tahun` int NOT NULL,
+  `jumlah` decimal(10,2) NOT NULL,
+  `tenggat` date NULL,
+  `status` varchar(255) NOT NULL DEFAULT 'belum',
+  `created_at` datetime NULL,
+  `updated_at` datetime NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `spps_siswa_id_bulan_tahun_unique` (`siswa_id`, `bulan`, `tahun`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT INTO `spps` (`id`, `siswa_id`, `bulan`, `tahun`, `jumlah`, `tenggat`, `status`, `created_at`, `updated_at`) VALUES
+('1', '1', '1', '2026', '250000', '2026-01-10', 'lunas', '2026-07-22 21:03:08', '2026-07-22 21:03:08'),
+('2', '1', '2', '2026', '250000', '2026-02-10', 'lunas', '2026-07-22 21:03:08', '2026-07-22 21:03:08'),
+('3', '1', '3', '2026', '250000', '2026-03-10', 'lunas', '2026-07-22 21:03:08', '2026-07-22 21:03:08'),
+('4', '1', '4', '2026', '250000', '2026-04-10', 'lunas', '2026-07-22 21:03:08', '2026-07-22 21:03:08'),
+('5', '1', '5', '2026', '250000', '2026-05-10', 'lunas', '2026-07-22 21:03:08', '2026-07-22 21:03:08'),
+('6', '1', '6', '2026', '250000', '2026-06-10', 'lunas', '2026-07-22 21:03:08', '2026-07-22 21:03:08'),
+('7', '1', '7', '2026', '250000', '2026-07-10', 'belum', '2026-07-22 21:03:08', '2026-07-22 21:03:08'),
+('8', '2', '1', '2026', '250000', '2026-01-10', 'lunas', '2026-07-22 21:03:08', '2026-07-22 21:03:08'),
+('9', '2', '2', '2026', '250000', '2026-02-10', 'lunas', '2026-07-22 21:03:08', '2026-07-22 21:03:08'),
+('10', '2', '3', '2026', '250000', '2026-03-10', 'lunas', '2026-07-22 21:03:08', '2026-07-22 21:03:08'),
+('11', '2', '4', '2026', '250000', '2026-04-10', 'lunas', '2026-07-22 21:03:08', '2026-07-22 21:03:08'),
+('12', '2', '5', '2026', '250000', '2026-05-10', 'lunas', '2026-07-22 21:03:08', '2026-07-22 21:03:08'),
+('13', '2', '6', '2026', '250000', '2026-06-10', 'lunas', '2026-07-22 21:03:08', '2026-07-22 21:03:08'),
+('14', '2', '7', '2026', '250000', '2026-07-10', 'belum', '2026-07-22 21:03:08', '2026-07-22 21:03:08'),
+('15', '3', '1', '2026', '250000', '2026-01-10', 'lunas', '2026-07-22 21:03:08', '2026-07-22 21:03:08'),
+('16', '3', '2', '2026', '250000', '2026-02-10', 'lunas', '2026-07-22 21:03:08', '2026-07-22 21:03:08'),
+('17', '3', '3', '2026', '250000', '2026-03-10', 'lunas', '2026-07-22 21:03:08', '2026-07-22 21:03:08'),
+('18', '3', '4', '2026', '250000', '2026-04-10', 'lunas', '2026-07-22 21:03:08', '2026-07-22 21:03:08'),
+('19', '3', '5', '2026', '250000', '2026-05-10', 'lunas', '2026-07-22 21:03:08', '2026-07-22 21:03:08'),
+('20', '3', '6', '2026', '250000', '2026-06-10', 'lunas', '2026-07-22 21:03:08', '2026-07-22 21:03:08'),
+('21', '3', '7', '2026', '250000', '2026-07-10', 'belum', '2026-07-22 21:03:08', '2026-07-22 21:03:08');
+
+DROP TABLE IF EXISTS `tahfidz_ayat_nilai`;
+CREATE TABLE `tahfidz_ayat_nilai` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `tahfidz_setoran_id` bigint unsigned NOT NULL,
+  `guru_id` bigint unsigned NOT NULL,
+  `nomor_ayat` int NOT NULL,
+  `makhroj` int NOT NULL,
+  `tajwid` int NOT NULL,
+  `kelancaran` int NOT NULL,
+  `created_at` datetime NULL,
+  `updated_at` datetime NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `tahfidz_ayat_nilai_unique` (`tahfidz_setoran_id`, `guru_id`, `nomor_ayat`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DROP TABLE IF EXISTS `tahfidz_progress`;
+CREATE TABLE `tahfidz_progress` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `siswa_id` bigint unsigned NOT NULL,
+  `kelas_id` bigint unsigned NULL,
+  `kelas_quran_id` bigint unsigned NULL,
+  `surah` varchar(255) NULL,
+  `ayat_mulai` int NULL,
+  `ayat_selesai` int NULL,
+  `juz_dihafal` int NOT NULL DEFAULT '0',
+  `total_ayat` int NULL,
+  `progress_percent` decimal(10,2) NOT NULL DEFAULT '0',
+  `target_deskripsi` varchar(255) NULL,
+  `status` varchar(255) NOT NULL DEFAULT 'berproses',
+  `catatan` text NULL,
+  `updated_by` int NULL,
+  `created_at` datetime NULL,
+  `updated_at` datetime NULL,
+  `tingkat_ummi` varchar(255) NULL,
+  `posisi_tilawah` varchar(255) NULL,
+  `hafalan_terakhir` varchar(255) NULL,
+  `kelancaran` int NULL,
+  `tajwid` int NULL,
+  `makhroj` int NULL,
+  `adab` int NULL,
+  `predikat` varchar(255) NULL,
+  `target_berikutnya` varchar(255) NULL,
+  `tanggal_pertemuan_berikutnya` date NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `tahfidz_progress_siswa_id_unique` (`siswa_id`),
+  KEY `tahfidz_progress_kelas_quran_id_progress_percent_index` (`kelas_quran_id`, `progress_percent`),
+  KEY `tahfidz_progress_kelas_id_progress_percent_index` (`kelas_id`, `progress_percent`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT INTO `tahfidz_progress` (`id`, `siswa_id`, `kelas_id`, `kelas_quran_id`, `surah`, `ayat_mulai`, `ayat_selesai`, `juz_dihafal`, `total_ayat`, `progress_percent`, `target_deskripsi`, `status`, `catatan`, `updated_by`, `created_at`, `updated_at`, `tingkat_ummi`, `posisi_tilawah`, `hafalan_terakhir`, `kelancaran`, `tajwid`, `makhroj`, `adab`, `predikat`, `target_berikutnya`, `tanggal_pertemuan_berikutnya`) VALUES
+('1', '67', '6', '7', 'Al-Falaq', '1', '5', '1', '42', '77.78', 'Murojaah An-Naas sampai Al-Falaq', 'berproses', 'Demo: bacaan semakin lancar, perlu murojaah pada makhroj tertentu.', '78', '2026-07-22 21:03:06', '2026-07-22 21:05:01', 'UMMI Jilid 2', 'Jilid 2 Halaman 16', 'Al-Falaq', '88', '86', '84', '90', 'Jayyid', 'Al-Ikhlas', '2026-07-27 00:00:00');
+
+DROP TABLE IF EXISTS `tahfidz_setoran`;
+CREATE TABLE `tahfidz_setoran` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `siswa_id` bigint unsigned NOT NULL,
+  `guru_id` bigint unsigned NOT NULL,
+  `tanggal` date NOT NULL,
+  `surah` varchar(255) NOT NULL,
+  `ayat_mulai` int NOT NULL,
+  `ayat_selesai` int NOT NULL,
+  `jumlah_ayat` int NOT NULL,
+  `status` varchar(255) NOT NULL DEFAULT 'baru',
+  `nilai` int NULL,
+  `catatan_guru` text NULL,
+  `created_at` datetime NULL,
+  `updated_at` datetime NULL,
+  `tanggal_berikutnya` date NULL,
+  `tahun_ajaran` varchar(255) NOT NULL DEFAULT '2026/2027',
+  `semester` varchar(255) NOT NULL DEFAULT 'Ganjil',
+  PRIMARY KEY (`id`),
+  KEY `tahfidz_setoran_semester_index` (`semester`),
+  KEY `tahfidz_setoran_tahun_ajaran_index` (`tahun_ajaran`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT INTO `tahfidz_setoran` (`id`, `siswa_id`, `guru_id`, `tanggal`, `surah`, `ayat_mulai`, `ayat_selesai`, `jumlah_ayat`, `status`, `nilai`, `catatan_guru`, `created_at`, `updated_at`, `tanggal_berikutnya`, `tahun_ajaran`, `semester`) VALUES
+('1', '67', '12', '2026-07-08 00:00:00', 'An-Naas', '1', '6', '6', 'baru', '88', 'Setoran Tahfidz Demo.', '2026-07-22 21:03:06', '2026-07-22 21:03:06', '2026-07-27 00:00:00', '2026/2027', 'Ganjil'),
+('2', '67', '12', '2026-07-15 00:00:00', 'Al-Falaq', '1', '5', '5', 'baru', '90', 'Setoran Tahfidz Demo.', '2026-07-22 21:03:06', '2026-07-22 21:03:06', '2026-07-27 00:00:00', '2026/2027', 'Ganjil'),
+('3', '1', '12', '2026-03-10 00:00:00', 'An-Nazi''at', '1', '5', '15', 'murojaah', '95', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', NULL, '2026/2027', 'Ganjil'),
+('4', '1', '12', '2026-03-04 00:00:00', 'An-Nazi''at', '1', '14', '15', 'murojaah', '88', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', NULL, '2026/2027', 'Ganjil'),
+('5', '1', '9', '2026-03-21 00:00:00', 'Abasa', '1', '9', '13', 'murojaah', '80', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', NULL, '2026/2027', 'Ganjil'),
+('6', '2', '6', '2026-03-16 00:00:00', 'An-Nazi''at', '1', '12', '14', 'baru', '100', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', NULL, '2026/2027', 'Ganjil'),
+('7', '2', '1', '2026-03-14 00:00:00', 'An-Nazi''at', '1', '6', '6', 'baru', '95', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', NULL, '2026/2027', 'Ganjil'),
+('8', '2', '11', '2026-03-18 00:00:00', 'An-Nazi''at', '1', '14', '10', 'baru', '91', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', NULL, '2026/2027', 'Ganjil'),
+('9', '3', '8', '2026-03-10 00:00:00', 'An-Nazi''at', '1', '7', '8', 'murojaah', '99', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', NULL, '2026/2027', 'Ganjil'),
+('10', '3', '12', '2026-03-27 00:00:00', 'Abasa', '1', '12', '10', 'baru', '96', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', NULL, '2026/2027', 'Ganjil'),
+('11', '3', '2', '2026-03-03 00:00:00', 'Abasa', '1', '9', '14', 'murojaah', '96', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', NULL, '2026/2027', 'Ganjil'),
+('12', '4', '4', '2026-03-03 00:00:00', 'Abasa', '1', '6', '12', 'baru', '81', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', NULL, '2026/2027', 'Ganjil'),
+('13', '4', '6', '2026-03-24 00:00:00', 'An-Naba''', '1', '6', '5', 'baru', '84', NULL, '2026-07-22 21:03:08', '2026-07-22 21:03:08', NULL, '2026/2027', 'Ganjil'),
+('14', '4', '12', '2026-03-06 00:00:00', 'Abasa', '1', '10', '8', 'murojaah', '87', NULL, '2026-07-22 21:03:08', '2026-07-22 21:03:08', NULL, '2026/2027', 'Ganjil'),
+('15', '5', '3', '2026-03-03 00:00:00', 'An-Naba''', '1', '10', '7', 'baru', '86', NULL, '2026-07-22 21:03:08', '2026-07-22 21:03:08', NULL, '2026/2027', 'Ganjil'),
+('16', '5', '6', '2026-03-09 00:00:00', 'An-Nazi''at', '1', '6', '7', 'baru', '82', NULL, '2026-07-22 21:03:08', '2026-07-22 21:03:08', NULL, '2026/2027', 'Ganjil'),
+('17', '5', '7', '2026-03-17 00:00:00', 'An-Nazi''at', '1', '7', '11', 'murojaah', '98', NULL, '2026-07-22 21:03:08', '2026-07-22 21:03:08', NULL, '2026/2027', 'Ganjil'),
+('18', '6', '9', '2026-03-14 00:00:00', 'An-Naba''', '1', '6', '10', 'baru', '89', NULL, '2026-07-22 21:03:08', '2026-07-22 21:03:08', NULL, '2026/2027', 'Ganjil'),
+('19', '6', '10', '2026-03-12 00:00:00', 'An-Naba''', '1', '5', '11', 'baru', '94', NULL, '2026-07-22 21:03:08', '2026-07-22 21:03:08', NULL, '2026/2027', 'Ganjil'),
+('20', '6', '3', '2026-03-06 00:00:00', 'An-Nazi''at', '1', '5', '6', 'murojaah', '84', NULL, '2026-07-22 21:03:08', '2026-07-22 21:03:08', NULL, '2026/2027', 'Ganjil'),
+('21', '7', '10', '2026-03-24 00:00:00', 'An-Naba''', '1', '11', '15', 'murojaah', '91', NULL, '2026-07-22 21:03:08', '2026-07-22 21:03:08', NULL, '2026/2027', 'Ganjil'),
+('22', '7', '11', '2026-03-06 00:00:00', 'An-Naba''', '1', '5', '7', 'murojaah', '91', NULL, '2026-07-22 21:03:08', '2026-07-22 21:03:08', NULL, '2026/2027', 'Ganjil'),
+('23', '7', '3', '2026-03-12 00:00:00', 'Abasa', '1', '10', '8', 'murojaah', '87', NULL, '2026-07-22 21:03:08', '2026-07-22 21:03:08', NULL, '2026/2027', 'Ganjil'),
+('24', '8', '11', '2026-03-15 00:00:00', 'Abasa', '1', '10', '11', 'baru', '86', NULL, '2026-07-22 21:03:08', '2026-07-22 21:03:08', NULL, '2026/2027', 'Ganjil'),
+('25', '8', '3', '2026-03-03 00:00:00', 'An-Naba''', '1', '8', '9', 'murojaah', '94', NULL, '2026-07-22 21:03:08', '2026-07-22 21:03:08', NULL, '2026/2027', 'Ganjil'),
+('26', '8', '3', '2026-03-17 00:00:00', 'An-Naba''', '1', '5', '5', 'baru', '95', NULL, '2026-07-22 21:03:08', '2026-07-22 21:03:08', NULL, '2026/2027', 'Ganjil'),
+('27', '9', '5', '2026-03-17 00:00:00', 'An-Nazi''at', '1', '5', '13', 'murojaah', '88', NULL, '2026-07-22 21:03:08', '2026-07-22 21:03:08', NULL, '2026/2027', 'Ganjil'),
+('28', '9', '11', '2026-03-22 00:00:00', 'An-Naba''', '1', '6', '11', 'baru', '90', NULL, '2026-07-22 21:03:08', '2026-07-22 21:03:08', NULL, '2026/2027', 'Ganjil'),
+('29', '9', '10', '2026-03-07 00:00:00', 'Abasa', '1', '15', '15', 'baru', '93', NULL, '2026-07-22 21:03:08', '2026-07-22 21:03:08', NULL, '2026/2027', 'Ganjil'),
+('30', '10', '3', '2026-03-14 00:00:00', 'An-Nazi''at', '1', '5', '12', 'murojaah', '86', NULL, '2026-07-22 21:03:08', '2026-07-22 21:03:08', NULL, '2026/2027', 'Ganjil'),
+('31', '10', '4', '2026-03-17 00:00:00', 'Abasa', '1', '14', '8', 'murojaah', '96', NULL, '2026-07-22 21:03:08', '2026-07-22 21:03:08', NULL, '2026/2027', 'Ganjil'),
+('32', '10', '6', '2026-03-02 00:00:00', 'An-Naba''', '1', '12', '7', 'murojaah', '82', NULL, '2026-07-22 21:03:08', '2026-07-22 21:03:08', NULL, '2026/2027', 'Ganjil'),
+('33', '67', '12', '2026-07-08 00:00:00', 'An-Naas', '1', '6', '6', 'baru', '88', 'Setoran Tahfidz Demo.', '2026-07-22 21:05:01', '2026-07-22 21:05:01', '2026-07-27 00:00:00', '2026/2027', 'Ganjil'),
+('34', '67', '12', '2026-07-15 00:00:00', 'Al-Falaq', '1', '5', '5', 'baru', '90', 'Setoran Tahfidz Demo.', '2026-07-22 21:05:01', '2026-07-22 21:05:01', '2026-07-27 00:00:00', '2026/2027', 'Ganjil'),
+('35', '1', '4', '2026-03-21 00:00:00', 'An-Nazi''at', '1', '11', '7', 'baru', '86', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01', NULL, '2026/2027', 'Ganjil'),
+('36', '1', '8', '2026-03-26 00:00:00', 'Abasa', '1', '5', '12', 'murojaah', '81', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01', NULL, '2026/2027', 'Ganjil'),
+('37', '1', '7', '2026-03-09 00:00:00', 'An-Naba''', '1', '14', '7', 'baru', '83', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01', NULL, '2026/2027', 'Ganjil'),
+('38', '2', '7', '2026-03-08 00:00:00', 'An-Nazi''at', '1', '15', '9', 'baru', '98', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01', NULL, '2026/2027', 'Ganjil'),
+('39', '2', '4', '2026-03-14 00:00:00', 'An-Naba''', '1', '14', '10', 'baru', '84', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01', NULL, '2026/2027', 'Ganjil'),
+('40', '2', '11', '2026-03-15 00:00:00', 'An-Nazi''at', '1', '15', '15', 'murojaah', '96', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01', NULL, '2026/2027', 'Ganjil'),
+('41', '3', '8', '2026-03-02 00:00:00', 'An-Nazi''at', '1', '6', '12', 'baru', '100', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01', NULL, '2026/2027', 'Ganjil'),
+('42', '3', '11', '2026-03-23 00:00:00', 'Abasa', '1', '10', '11', 'murojaah', '96', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01', NULL, '2026/2027', 'Ganjil'),
+('43', '3', '4', '2026-03-21 00:00:00', 'Abasa', '1', '9', '7', 'baru', '81', NULL, '2026-07-22 21:05:01', '2026-07-22 21:05:01', NULL, '2026/2027', 'Ganjil'),
+('44', '4', '5', '2026-03-21 00:00:00', 'An-Naba''', '1', '5', '9', 'baru', '84', NULL, '2026-07-22 21:05:02', '2026-07-22 21:05:02', NULL, '2026/2027', 'Ganjil'),
+('45', '4', '6', '2026-03-13 00:00:00', 'Abasa', '1', '9', '9', 'baru', '97', NULL, '2026-07-22 21:05:02', '2026-07-22 21:05:02', NULL, '2026/2027', 'Ganjil'),
+('46', '4', '4', '2026-03-13 00:00:00', 'An-Nazi''at', '1', '15', '6', 'baru', '85', NULL, '2026-07-22 21:05:02', '2026-07-22 21:05:02', NULL, '2026/2027', 'Ganjil'),
+('47', '5', '2', '2026-03-17 00:00:00', 'Abasa', '1', '5', '5', 'murojaah', '83', NULL, '2026-07-22 21:05:02', '2026-07-22 21:05:02', NULL, '2026/2027', 'Ganjil'),
+('48', '5', '1', '2026-03-01 00:00:00', 'Abasa', '1', '11', '8', 'murojaah', '95', NULL, '2026-07-22 21:05:02', '2026-07-22 21:05:02', NULL, '2026/2027', 'Ganjil'),
+('49', '5', '12', '2026-03-09 00:00:00', 'An-Naba''', '1', '11', '15', 'baru', '85', NULL, '2026-07-22 21:05:02', '2026-07-22 21:05:02', NULL, '2026/2027', 'Ganjil'),
+('50', '6', '10', '2026-03-20 00:00:00', 'Abasa', '1', '5', '15', 'baru', '90', NULL, '2026-07-22 21:05:02', '2026-07-22 21:05:02', NULL, '2026/2027', 'Ganjil'),
+('51', '6', '3', '2026-03-18 00:00:00', 'An-Naba''', '1', '9', '10', 'murojaah', '82', NULL, '2026-07-22 21:05:02', '2026-07-22 21:05:02', NULL, '2026/2027', 'Ganjil'),
+('52', '6', '9', '2026-03-24 00:00:00', 'Abasa', '1', '5', '7', 'murojaah', '80', NULL, '2026-07-22 21:05:02', '2026-07-22 21:05:02', NULL, '2026/2027', 'Ganjil'),
+('53', '7', '12', '2026-03-04 00:00:00', 'An-Nazi''at', '1', '8', '11', 'baru', '100', NULL, '2026-07-22 21:05:02', '2026-07-22 21:05:02', NULL, '2026/2027', 'Ganjil'),
+('54', '7', '11', '2026-03-03 00:00:00', 'An-Naba''', '1', '6', '14', 'baru', '96', NULL, '2026-07-22 21:05:02', '2026-07-22 21:05:02', NULL, '2026/2027', 'Ganjil'),
+('55', '7', '6', '2026-03-20 00:00:00', 'An-Naba''', '1', '8', '10', 'murojaah', '89', NULL, '2026-07-22 21:05:02', '2026-07-22 21:05:02', NULL, '2026/2027', 'Ganjil'),
+('56', '8', '10', '2026-03-10 00:00:00', 'Abasa', '1', '9', '15', 'baru', '87', NULL, '2026-07-22 21:05:02', '2026-07-22 21:05:02', NULL, '2026/2027', 'Ganjil'),
+('57', '8', '12', '2026-03-06 00:00:00', 'An-Nazi''at', '1', '14', '6', 'baru', '83', NULL, '2026-07-22 21:05:02', '2026-07-22 21:05:02', NULL, '2026/2027', 'Ganjil'),
+('58', '8', '11', '2026-03-04 00:00:00', 'Abasa', '1', '8', '15', 'baru', '100', NULL, '2026-07-22 21:05:02', '2026-07-22 21:05:02', NULL, '2026/2027', 'Ganjil'),
+('59', '9', '9', '2026-03-13 00:00:00', 'Abasa', '1', '12', '10', 'murojaah', '90', NULL, '2026-07-22 21:05:02', '2026-07-22 21:05:02', NULL, '2026/2027', 'Ganjil'),
+('60', '9', '11', '2026-03-19 00:00:00', 'Abasa', '1', '12', '14', 'murojaah', '99', NULL, '2026-07-22 21:05:02', '2026-07-22 21:05:02', NULL, '2026/2027', 'Ganjil'),
+('61', '9', '2', '2026-03-05 00:00:00', 'Abasa', '1', '15', '14', 'baru', '85', NULL, '2026-07-22 21:05:02', '2026-07-22 21:05:02', NULL, '2026/2027', 'Ganjil'),
+('62', '10', '1', '2026-03-01 00:00:00', 'An-Nazi''at', '1', '5', '6', 'baru', '92', NULL, '2026-07-22 21:05:02', '2026-07-22 21:05:02', NULL, '2026/2027', 'Ganjil'),
+('63', '10', '1', '2026-03-13 00:00:00', 'An-Nazi''at', '1', '8', '15', 'baru', '80', NULL, '2026-07-22 21:05:02', '2026-07-22 21:05:02', NULL, '2026/2027', 'Ganjil'),
+('64', '10', '12', '2026-03-02 00:00:00', 'An-Nazi''at', '1', '7', '10', 'murojaah', '82', NULL, '2026-07-22 21:05:02', '2026-07-22 21:05:02', NULL, '2026/2027', 'Ganjil');
+
+DROP TABLE IF EXISTS `tahsin_setorans`;
+CREATE TABLE `tahsin_setorans` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `siswa_id` bigint unsigned NOT NULL,
+  `guru_id` bigint unsigned NULL,
+  `kelas_id` bigint unsigned NULL,
+  `tanggal` date NOT NULL,
+  `materi_tahsin` varchar(255) NOT NULL,
+  `jilid_halaman` varchar(255) NULL,
+  `nilai` int NULL,
+  `catatan` text NULL,
+  `status` varchar(255) NOT NULL DEFAULT 'proses',
+  `created_at` datetime NULL,
+  `updated_at` datetime NULL,
+  `tahun_ajaran` varchar(255) NOT NULL DEFAULT '2026/2027',
+  `semester` varchar(255) NOT NULL DEFAULT 'Ganjil',
+  PRIMARY KEY (`id`),
+  KEY `tahsin_setorans_semester_index` (`semester`),
+  KEY `tahsin_setorans_tahun_ajaran_index` (`tahun_ajaran`),
+  KEY `tahsin_setorans_guru_id_tanggal_index` (`guru_id`, `tanggal`),
+  KEY `tahsin_setorans_siswa_id_tanggal_index` (`siswa_id`, `tanggal`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT INTO `tahsin_setorans` (`id`, `siswa_id`, `guru_id`, `kelas_id`, `tanggal`, `materi_tahsin`, `jilid_halaman`, `nilai`, `catatan`, `status`, `created_at`, `updated_at`, `tahun_ajaran`, `semester`) VALUES
+('1', '67', '12', '6', '2026-07-16 00:00:00', 'Makharijul huruf Demo', 'Jilid 2 Halaman 16', '88', 'Tahsin Demo: kelancaran baik.', 'proses', '2026-07-22 21:03:06', '2026-07-22 21:03:06', '2026/2027', 'Ganjil'),
+('2', '67', '12', '6', '2026-07-16 00:00:00', 'Makharijul huruf Demo', 'Jilid 2 Halaman 16', '88', 'Tahsin Demo: kelancaran baik.', 'proses', '2026-07-22 21:05:01', '2026-07-22 21:05:01', '2026/2027', 'Ganjil');
+
+DROP TABLE IF EXISTS `tugas`;
+CREATE TABLE `tugas` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `judul` varchar(255) NOT NULL,
+  `deskripsi` text NULL,
+  `mapel_id` bigint unsigned NOT NULL,
+  `kelas_id` bigint unsigned NOT NULL,
+  `guru_id` bigint unsigned NOT NULL,
+  `tipe` varchar(255) NOT NULL DEFAULT 'tugas',
+  `tanggal_deadline` date NULL,
+  `file_path` varchar(255) NULL,
+  `created_at` datetime NULL,
+  `updated_at` datetime NULL,
+  `tahun_ajaran` varchar(255) NOT NULL DEFAULT '2026/2027',
+  `semester` varchar(255) NOT NULL DEFAULT 'Ganjil',
+  PRIMARY KEY (`id`),
+  KEY `tugas_semester_index` (`semester`),
+  KEY `tugas_tahun_ajaran_index` (`tahun_ajaran`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT INTO `tugas` (`id`, `judul`, `deskripsi`, `mapel_id`, `kelas_id`, `guru_id`, `tipe`, `tanggal_deadline`, `file_path`, `created_at`, `updated_at`, `tahun_ajaran`, `semester`) VALUES
+('1', 'Tugas Matematika Demo', 'Tugas Demo operasi hitung.', '1', '6', '12', 'tugas', '2026-07-31', NULL, '2026-07-22 21:03:06', '2026-07-22 21:03:06', '2026/2027', 'Ganjil'),
+('2', 'Tugas Praktek Sholat', NULL, '18', '2', '8', 'tugas', '2026-04-02', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', '2026/2027', 'Ganjil'),
+('3', 'PR Persamaan Linear', NULL, '10', '1', '6', 'tugas', '2026-04-05', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', '2026/2027', 'Ganjil'),
+('4', 'Laporan Pengamatan', NULL, '14', '2', '4', 'tugas', '2026-04-10', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', '2026/2027', 'Ganjil'),
+('5', 'Esai Liburan', NULL, '8', '3', '6', 'tugas', '2026-04-15', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', '2026/2027', 'Ganjil'),
+('6', 'Vocabulary Quiz', NULL, '33', '4', '10', 'tugas', '2026-04-12', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', '2026/2027', 'Ganjil'),
+('7', 'Ulangan Harian Bab 4', NULL, '16', '1', '5', 'ulangan', '2026-04-08', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', '2026/2027', 'Ganjil'),
+('8', 'UTS Genap', NULL, '1', '3', '7', 'ulangan', '2026-04-20', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', '2026/2027', 'Ganjil'),
+('9', 'Ulangan Harian Bab 3', NULL, '16', '2', '8', 'ulangan', '2026-03-15', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', '2026/2027', 'Ganjil');
+
+DROP TABLE IF EXISTS `users`;
+CREATE TABLE `users` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  `email` varchar(255) NOT NULL,
+  `email_verified_at` datetime NULL,
+  `password` varchar(255) NOT NULL,
+  `remember_token` varchar(255) NULL,
+  `created_at` datetime NULL,
+  `updated_at` datetime NULL,
+  `role` varchar(255) NOT NULL DEFAULT 'siswa_smp',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `users_email_unique` (`email`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT INTO `users` (`id`, `name`, `email`, `email_verified_at`, `password`, `remember_token`, `created_at`, `updated_at`, `role`) VALUES
+('1', 'Sahrial Pulungan, M.Pd', 'sahrial.pulungan.mpd@alazharjayaindonesia.sch.id', NULL, '$2y$12$clB6rDu9ZLSMnRXB2DoBg.QDCMwBbzNZslvrsDf7A4ZX82DgWsXTq', NULL, '2026-07-22 21:02:50', '2026-07-22 21:02:50', 'guru'),
+('2', 'Riva Riana, S.Pd', 'riva.riana.spd@alazharjayaindonesia.sch.id', NULL, '$2y$12$ROxEKsnWiDsJLtUins8Pde/lN3KJzq1GYDnGOlYWkyKTXPI8rjF3e', NULL, '2026-07-22 21:02:50', '2026-07-22 21:02:50', 'guru'),
+('3', 'Adinda Oktavhiani S.Pd', 'adinda.oktavhiani.spd@alazharjayaindonesia.sch.id', NULL, '$2y$12$M3bK3dtLHsc0lYmC1m3Cgev2250YmQ41cnUsj2/iIYsrWbZX4Xd3G', NULL, '2026-07-22 21:02:51', '2026-07-22 21:02:51', 'guru'),
+('4', 'Intan Kusuma Dera, S.Ag', 'intan.kusuma.dera.sag@alazharjayaindonesia.sch.id', NULL, '$2y$12$NXbmRWYE3NAwIlMLL0QTEOL2Gmam4lAjNcLLGo/BpRgkLKXsjQLwq', NULL, '2026-07-22 21:02:51', '2026-07-22 21:02:51', 'guru'),
+('5', 'Vika Wati Dzulciha, S.Ag', 'vika.wati.dzulciha.sag@alazharjayaindonesia.sch.id', NULL, '$2y$12$Eto/qPFBRU43smKwcOnsuuwW5EM1ryjhAPy9/ad9K4wVak0Ji8L6y', NULL, '2026-07-22 21:02:51', '2026-07-22 21:02:51', 'guru'),
+('6', 'Irnika Widiyan Dini, S.Li', 'irnika.widiyan.dini.sli@alazharjayaindonesia.sch.id', NULL, '$2y$12$52sZqqr9wm4RbMZJvD7xnu9j79xXrWtPoukmYEvUh1yGlefPS8G6m', NULL, '2026-07-22 21:02:51', '2026-07-22 21:02:51', 'guru'),
+('7', 'Ajeng Putyri Aryantika, S.Pd', 'ajeng.putyri.aryantika.spd@alazharjayaindonesia.sch.id', NULL, '$2y$12$UPpTxRsndo25n/KXynvAB.47TKeINV6cumyT0PNxDQq3vUX79vjwu', NULL, '2026-07-22 21:02:51', '2026-07-22 21:02:51', 'guru'),
+('8', 'Nurhayati, S.Ag', 'nurhayati.sag@alazharjayaindonesia.sch.id', NULL, '$2y$12$aY934ZhcwQ0U/0uyj12yP.6gLNWY3bthv4VTB3BNEzXPSB.3Ah1h.', NULL, '2026-07-22 21:02:52', '2026-07-22 21:02:52', 'guru'),
+('9', 'Sri Wanti Maulani, S.Pd', 'sri.wanti.maulani.spd@alazharjayaindonesia.sch.id', NULL, '$2y$12$LDV1dPdedZuM0F.LT/e.ju14BfGbdRofzixfHYPO4Vjpxf8717goG', NULL, '2026-07-22 21:02:52', '2026-07-22 21:02:52', 'guru'),
+('10', 'Khoirunnisa, S.Ag', 'khoirunnisa@alazharjayaindonesia.sch.id', NULL, '$2y$12$iA1FmYUmYW71Bo7QZUxy2eZtFwdWZjH/el2DkG5N5dTqvLWxQPQma', NULL, '2026-07-22 21:02:52', '2026-07-22 21:02:52', 'guru'),
+('11', 'Ai Sunariah, S.Pd', 'ai.sunariah.spd@alazharjayaindonesia.sch.id', NULL, '$2y$12$jhbEGJn1lIxnhO1AzXrVrebd73LXDDpTyvR/dmKBfg1YE0nJNCRHS', NULL, '2026-07-22 21:02:52', '2026-07-22 21:02:52', 'guru'),
+('12', 'Abdul Latif', 'abdul.latif@alazharjayaindonesia.sch.id', NULL, '$2y$12$NU09L9tFcvcq8iuN7Eson.LpFB1HQuMhckTqBVRDwPL.AkMNGPGhu', NULL, '2026-07-22 21:02:52', '2026-07-22 21:04:49', 'siswa_smp'),
+('13', 'Abid Abyan Tsany Solihansyah', 'abid.abyan.tsany.solihansyah@alazharjayaindonesia.sch.id', NULL, '$2y$12$/kvAadsHOHREovKgfq/WvO2mzD/8yMvjO5Jwfcl.53FW6WqAS4xja', NULL, '2026-07-22 21:02:53', '2026-07-22 21:04:49', 'siswa_smp'),
+('14', 'Aldeen Hadwan Shirazi', 'aldeen.hadwan.shirazi@alazharjayaindonesia.sch.id', NULL, '$2y$12$uMfsJM.4.lCpbQMwQWZ2m.w0LFe2deaAYPOHbAYcaudFWpq/uVAj.', NULL, '2026-07-22 21:02:53', '2026-07-22 21:04:49', 'siswa_smp'),
+('15', 'Chaidar Rafisqy Hermawan', 'chaidar.rafisqy.hermawan@alazharjayaindonesia.sch.id', NULL, '$2y$12$cZ.MPeW1Tf42Z6kzQQvrf.TP78wNVyIOG055CBTVL6iI3sOFC23ka', NULL, '2026-07-22 21:02:53', '2026-07-22 21:04:49', 'siswa_smp'),
+('16', 'Daffa Zaidan Pratama', 'daffa.zaidan.pratama@alazharjayaindonesia.sch.id', NULL, '$2y$12$U0hlM.cE8s8FFU9ICkk1yevs7SSSNytzPa7cJRiexlyINVDIvopEG', NULL, '2026-07-22 21:02:53', '2026-07-22 21:04:50', 'siswa_smp'),
+('17', 'Fauzi Abdu Rohman', 'fauzi.abdu.rohman@alazharjayaindonesia.sch.id', NULL, '$2y$12$qCmny04R7hwAQYiL.WtQ.ObNiQ8KSrJVKaBYzjctjiE8/AabldY5C', NULL, '2026-07-22 21:02:53', '2026-07-22 21:04:50', 'siswa_smp'),
+('18', 'Galang Hernandes', 'galang.hernandes@alazharjayaindonesia.sch.id', NULL, '$2y$12$jRyRYwwf1RqZ9O95HbJ2B.LKbLS9WAve5ZSjJlooj4ULA/kqVxJp.', NULL, '2026-07-22 21:02:53', '2026-07-22 21:04:50', 'siswa_smp'),
+('19', 'Hamzah Irfan Fadillah', 'hamzah.irfan.fadillah@alazharjayaindonesia.sch.id', NULL, '$2y$12$UAWGpfd7rpw.kff1b5W9ReL5O.eTC6cUqOAjrlH7yvMIefw5e4iny', NULL, '2026-07-22 21:02:54', '2026-07-22 21:04:50', 'siswa_smp'),
+('20', 'Kelvin Adel Pratama', 'kelvin.adel.pratama@alazharjayaindonesia.sch.id', NULL, '$2y$12$x3CJiMTIwntia24sgFvIZOqYTEeMgKlOPTumaCvh7uzOnxXUBoahO', NULL, '2026-07-22 21:02:54', '2026-07-22 21:04:50', 'siswa_smp'),
+('21', 'Maherdes Attaufiq Riziqlillah', 'maherdes.attaufiq.riziqlillah@alazharjayaindonesia.sch.id', NULL, '$2y$12$EFkGlB39goqyFoaJk9b6IuOu0jKlHXm/uqr2VEsdstF3Igs.jJv..', NULL, '2026-07-22 21:02:54', '2026-07-22 21:04:50', 'siswa_smp'),
+('22', 'Muhammad Albyan', 'muhammad.albyan@alazharjayaindonesia.sch.id', NULL, '$2y$12$kdO2R31UrjzaoAA4dz5n0.uwejRRQ6T7lGAcVxB3Ae.TZLOtZGuUy', NULL, '2026-07-22 21:02:54', '2026-07-22 21:04:51', 'siswa_smp'),
+('23', 'Muhammad Alhafidz', 'muhammad.alhafidz@alazharjayaindonesia.sch.id', NULL, '$2y$12$EsicXCbQYxpQes5TWVCC4eyGgipLf5BE/GFrfA/i3Dcx/ZDD15U6i', NULL, '2026-07-22 21:02:54', '2026-07-22 21:04:51', 'siswa_smp'),
+('24', 'Muhammad Aslam Zayyan', 'muhammad.aslam.zayyan@alazharjayaindonesia.sch.id', NULL, '$2y$12$LXCX45SQIBIQBsQ4H3CGWu9QWAfykxZTdkY8u8Y/cNgJ8t8AflcNC', NULL, '2026-07-22 21:02:54', '2026-07-22 21:04:51', 'siswa_smp'),
+('25', 'Rizky Maulana As Shidiq', 'rizky.maulana.as.shidiq@alazharjayaindonesia.sch.id', NULL, '$2y$12$cd.lTCmboCkoi9E3sndXBu783JC9MUjD0LtlS60o3k0FGUoQizJii', NULL, '2026-07-22 21:02:55', '2026-07-22 21:04:51', 'siswa_smp'),
+('26', 'Muhammad Azzam Nufail', 'muhammad.azzam.nufail@alazharjayaindonesia.sch.id', NULL, '$2y$12$N.pLuzjC3jHXU2urNph/8O4QP4prZdINgig8xDeRBEI3WotLH0Bhm', NULL, '2026-07-22 21:02:55', '2026-07-22 21:04:51', 'siswa_smp'),
+('27', 'Muhammad Daffa Al Ghifari', 'muhammad.daffa.al.ghifari@alazharjayaindonesia.sch.id', NULL, '$2y$12$Bg8DrBIoX1ppNzmgLyFU/eLNKteCpRCAPzqvT1.dm1FnykmTAxjfO', NULL, '2026-07-22 21:02:55', '2026-07-22 21:04:51', 'siswa_smp'),
+('28', 'Muhammad Eldafi Satya Irawan', 'muhammad.eldafi.satya.irawan@alazharjayaindonesia.sch.id', NULL, '$2y$12$i89630Y8Ei46PAzLDMOVnO3FE3JiW.JUACvhBmhclk8vRnsz8NP0K', NULL, '2026-07-22 21:02:55', '2026-07-22 21:04:52', 'siswa_smp'),
+('29', 'Muhammad Falah Pratama Mulya', 'muhammad.falah.pratama.mulya@alazharjayaindonesia.sch.id', NULL, '$2y$12$8cr0.shpn77i.ejFCIe6e.z/nZqQPVQPYPp8E1SOoXOatZoujflbS', NULL, '2026-07-22 21:02:55', '2026-07-22 21:04:52', 'siswa_smp'),
+('30', 'Muhammad Maher', 'muhammad.maher@alazharjayaindonesia.sch.id', NULL, '$2y$12$XjpRbWBNnssy/3JNonhgQO.cyE/TN1RDIL9GgCgbZIf6peiPd2EWq', NULL, '2026-07-22 21:02:56', '2026-07-22 21:04:52', 'siswa_smp'),
+('31', 'Muhammad Quincy Satyamulya', 'muhammad.quincy.satyamulya@alazharjayaindonesia.sch.id', NULL, '$2y$12$FnnxvwavL5iplCD8T.er9u1C/5JY0NY2o29W7Lf1fngPGPvGtVtQG', NULL, '2026-07-22 21:02:56', '2026-07-22 21:04:52', 'siswa_smp'),
+('32', 'Muhammad Rakha Solihansyah', 'muhammad.rakha.solihansyah@alazharjayaindonesia.sch.id', NULL, '$2y$12$76RxkLb.H1KnPAGZEljIkeYcy4017kaKzrbYjnmX1jraKS2EnMhri', NULL, '2026-07-22 21:02:56', '2026-07-22 21:04:52', 'siswa_smp'),
+('33', 'Muhammad Wafi Alkiram', 'muhammad.wafi.alkiram@alazharjayaindonesia.sch.id', NULL, '$2y$12$MPBO2uGnv34DOFTz5NtMfOZPIZerfFncFoo.q0WJtvktowkROAXcG', NULL, '2026-07-22 21:02:56', '2026-07-22 21:04:53', 'siswa_smp'),
+('34', 'Naufal Djaky Ardani', 'naufal.djaky.ardani@alazharjayaindonesia.sch.id', NULL, '$2y$12$ESnTvWxUkjKg9cMY9j5f9.DT5Kel45glHXEVQ.7cVBAFPLbEofWnq', NULL, '2026-07-22 21:02:56', '2026-07-22 21:04:53', 'siswa_smp'),
+('35', 'Pandu Bagus Damar Wiyono', 'pandu.bagus.damar.wiyono@alazharjayaindonesia.sch.id', NULL, '$2y$12$sU7ymXOqkW2gA/oDNkOUeuuzYQ.5joJYF59X8Ggf3DRugrsDrBsDm', NULL, '2026-07-22 21:02:56', '2026-07-22 21:04:53', 'siswa_smp'),
+('36', 'Tsabit Wafi Musyaffa', 'tsabit.wafi.musyaffa@alazharjayaindonesia.sch.id', NULL, '$2y$12$gKpkKSHp0PePGf.UloF8N.qCCOXMjnyDbGNyBaOwo/f58OKhdORXm', NULL, '2026-07-22 21:02:57', '2026-07-22 21:04:53', 'siswa_smp'),
+('37', 'Zahran Farid Firdaus', 'zahran.farid.firdaus@alazharjayaindonesia.sch.id', NULL, '$2y$12$SB7mSKaJ2j8l7gMD.trtEetxPe8TTUYOJpxfNCs0RpYbaiW0nr9YS', NULL, '2026-07-22 21:02:57', '2026-07-22 21:04:53', 'siswa_smp'),
+('38', 'Zein Maulana Muaffin', 'zein.maulana.muaffin@alazharjayaindonesia.sch.id', NULL, '$2y$12$MeXQ92ipgRHgQBvU6P7ycuCZvkG09tyejRmtnLjP9dqQOvAu1djdG', NULL, '2026-07-22 21:02:57', '2026-07-22 21:04:53', 'siswa_smp'),
+('39', 'Alviandra Chesta Radityatama', 'alviandra.chesta.radityatama@alazharjayaindonesia.sch.id', NULL, '$2y$12$O3PBVJte9H.evEhrpDyQiOHe4pfPu5PeFdacVSKJ09qdfIHjEZ5c.', NULL, '2026-07-22 21:02:57', '2026-07-22 21:04:54', 'siswa_smp'),
+('40', 'Argia Raya Adz Dzikra', 'argia.raya.adz.dzikra@alazharjayaindonesia.sch.id', NULL, '$2y$12$yyikPxA.vmeDeJXtNx31gu3jB1sgAOij1a2LyTMImG/OmSp8LhkS2', NULL, '2026-07-22 21:02:57', '2026-07-22 21:04:54', 'siswa_smp'),
+('41', 'Muhammad Hafidz Alfahrezi', 'muhammad.hafidz.alfahrezi@alazharjayaindonesia.sch.id', NULL, '$2y$12$KiBoVteWUbjH74RtfZtQleT1uQOu5sJyGRtvTN5yCEiKj8tQ5mOcO', NULL, '2026-07-22 21:02:57', '2026-07-22 21:04:54', 'siswa_smp'),
+('42', 'Muhammad Al Farizy Setyanto', 'muhammad.al.farizy.setyanto@alazharjayaindonesia.sch.id', NULL, '$2y$12$U8RiGhRKTAp3VG91IP6TM.GcAAkF1s9rN5bWaKJl.sAtsijHgE8PW', NULL, '2026-07-22 21:02:58', '2026-07-22 21:04:54', 'siswa_smp'),
+('43', 'Muhammad Al Fatih', 'muhammad.al.fatih@alazharjayaindonesia.sch.id', NULL, '$2y$12$Nr0uIFuTj29ErfHmtUetGO/rgCqWTrlXlVoy6mtRZTfqhPl/ITpQ2', NULL, '2026-07-22 21:02:58', '2026-07-22 21:04:54', 'siswa_smp'),
+('44', 'Muhammad Fadlan Adelmar', 'muhammad.fadlan.adelmar@alazharjayaindonesia.sch.id', NULL, '$2y$12$hdXNEKxfpu1SCJcaH8yzT.cEowy507voD6Rk8ek5c2wu3fM0rijv6', NULL, '2026-07-22 21:02:58', '2026-07-22 21:04:54', 'siswa_smp'),
+('45', 'Reval Rama Sulistiyo', 'reval.rama.sulistiyo@alazharjayaindonesia.sch.id', NULL, '$2y$12$JZ73CasLYhqko/.tOze2cuzT1KSwQKeflrTVHnzDmmMDjEFrp5ZTu', NULL, '2026-07-22 21:02:58', '2026-07-22 21:04:55', 'siswa_smp'),
+('46', 'Aila Zahwa Aqilah', 'aila.zahwa.aqilah@alazharjayaindonesia.sch.id', NULL, '$2y$12$YXLz9qSkeHDqinhfDLuwSOfl7uQjEKykbwOLLXxtiolJT621xiLRi', NULL, '2026-07-22 21:02:58', '2026-07-22 21:04:55', 'siswa_smp'),
+('47', 'Aisyah Rahma Haniya', 'aisyah.rahma.haniya@alazharjayaindonesia.sch.id', NULL, '$2y$12$xKbwwq6wssneztT4QcwBp.zrzq0v2EuFCBpZAxhYd568F.XamzifO', NULL, '2026-07-22 21:02:59', '2026-07-22 21:04:55', 'siswa_smp'),
+('48', 'Anindita Valencia Aurora', 'anindita.valencia.aurora@alazharjayaindonesia.sch.id', NULL, '$2y$12$5EIoDXRe7Bltz7CEjNHscet0DjebJIZMOomrbm0HLXRXAier61J/G', NULL, '2026-07-22 21:02:59', '2026-07-22 21:04:55', 'siswa_smp'),
+('49', 'Atsilah Azka Ramadhani', 'atsilah.azka.ramadhani@alazharjayaindonesia.sch.id', NULL, '$2y$12$68VC8RAVnoaw1BxPtXP/1Ou16yfF1Ek5Wi5EAfINfQyfQ3ailyZdW', NULL, '2026-07-22 21:02:59', '2026-07-22 21:04:55', 'siswa_smp'),
+('50', 'Dara Medina Putri', 'dara.medina.putri@alazharjayaindonesia.sch.id', NULL, '$2y$12$k/6bo0MOSX039pfheknOQO5UND5mC7XCgaSsPHT4cES4xUmOPSwR6', NULL, '2026-07-22 21:02:59', '2026-07-22 21:04:56', 'siswa_smp'),
+('51', 'Elsa Sri Isyana', 'elsa.sri.isyana@alazharjayaindonesia.sch.id', NULL, '$2y$12$IyWb9Si6egXJGfdOGGSIuuQGDQC7rmsxilaBTcO7m0haL72hf9hnW', NULL, '2026-07-22 21:02:59', '2026-07-22 21:04:56', 'siswa_smp'),
+('52', 'Fadhilah Ramadhani', 'fadhilah.ramadhani@alazharjayaindonesia.sch.id', NULL, '$2y$12$Lneq9V2F5Cc8YUzrcnXurO03ArU4TNYXRRSd2cumXwUrOEXEkIMAS', NULL, '2026-07-22 21:02:59', '2026-07-22 21:04:56', 'siswa_smp'),
+('53', 'Fakhirah Khansa Anditasyah', 'fakhirah.khansa.anditasyah@alazharjayaindonesia.sch.id', NULL, '$2y$12$EjweYYLaSkRvKx..PRYADeTRuPiL.hmfBDLCoPBcz7f8zubyVEmh.', NULL, '2026-07-22 21:03:00', '2026-07-22 21:04:56', 'siswa_smp'),
+('54', 'Fauziah Adawiyah', 'fauziah.adawiyah@alazharjayaindonesia.sch.id', NULL, '$2y$12$XCiVwTuqDAkIDPCsRKJ6zO1U7jpJWyFf.1sTxpJFqrWhBfhqvBzQC', NULL, '2026-07-22 21:03:00', '2026-07-22 21:04:56', 'siswa_smp'),
+('55', 'Gadis Bening Arsandi', 'gadis.bening.arsandi@alazharjayaindonesia.sch.id', NULL, '$2y$12$gm5NE3I8x5HnFDB9Bfod9Oni/bFs5BjzZDS7rTi8Yeqk779u3ZR5e', NULL, '2026-07-22 21:03:00', '2026-07-22 21:04:56', 'siswa_smp'),
+('56', 'Gian Naifa Shofa', 'gian.naifa.shofa@alazharjayaindonesia.sch.id', NULL, '$2y$12$7.oSyy1SRNAr4UTvEInSwezWcYgZQ7SJK3rTPQlF1MPgttkGCZA9W', NULL, '2026-07-22 21:03:00', '2026-07-22 21:04:57', 'siswa_smp'),
+('57', 'Jihan Makaila Fakhirah', 'jihan.makaila.fakhirah@alazharjayaindonesia.sch.id', NULL, '$2y$12$vQAQxdK8vmcQLDp8/g4yyuf9yxy6HJ6XOgsupziTItJA3LdvyBZqm', NULL, '2026-07-22 21:03:00', '2026-07-22 21:04:57', 'siswa_smp'),
+('58', 'Jillan Azra Hakimah', 'jillan.azra.hakimah@alazharjayaindonesia.sch.id', NULL, '$2y$12$EhV9F/NYmQbx5AmfvLaqNOEql5b30isrpNkeMd7QPiA4bSRlz3mf6', NULL, '2026-07-22 21:03:00', '2026-07-22 21:04:57', 'siswa_smp'),
+('59', 'Kalula Ayesha Alkanza', 'kalula.ayesha.alkanza@alazharjayaindonesia.sch.id', NULL, '$2y$12$4NwZbsYVeLsDTGXPS/e8zucMpsZO0NnrtBvwdA.apTdh4NjmAvW1G', NULL, '2026-07-22 21:03:01', '2026-07-22 21:04:57', 'siswa_smp'),
+('60', 'Kayyasah Sholiha', 'kayyasah.sholiha@alazharjayaindonesia.sch.id', NULL, '$2y$12$hH3u3oW/QICFzhVvZNUtZOlEzTDlUfLIWQq7.AoibpNKahltx93k6', NULL, '2026-07-22 21:03:01', '2026-07-22 21:04:57', 'siswa_smp'),
+('61', 'Khayla Almira Maritza H', 'khayla.almira.maritza.h@alazharjayaindonesia.sch.id', NULL, '$2y$12$d2gQOQOaPd4UhHqsXtVz2OKHtrnk0iZ8CaiQ8FkdfbOEbBGODpGzK', NULL, '2026-07-22 21:03:01', '2026-07-22 21:04:57', 'siswa_smp'),
+('62', 'Muhdatus Sa''idah', 'muhdatus.saidah@alazharjayaindonesia.sch.id', NULL, '$2y$12$G8vN674JOvNVMm5GZUpEJ.6Eg1eLBUnz8fKteOLZD9cLVgNeLqrXK', NULL, '2026-07-22 21:03:01', '2026-07-22 21:04:58', 'siswa_smp'),
+('63', 'Nadia Aqila Shanum', 'nadia.aqila.shanum@alazharjayaindonesia.sch.id', NULL, '$2y$12$uj6aWBh.qqk5VCnRX7onjOrZ56JQ3cBXKkT/lBio.mlEFSJ/dLsyS', NULL, '2026-07-22 21:03:01', '2026-07-22 21:04:58', 'siswa_smp'),
+('64', 'Naila Syahira Mumtazah', 'naila.syahira.mumtazah@alazharjayaindonesia.sch.id', NULL, '$2y$12$BqS3kVHrL2st7Pf0j4URYeQoV3Osqdc2R5xC.V95VhZQtqMPEDG.m', NULL, '2026-07-22 21:03:02', '2026-07-22 21:04:58', 'siswa_smp'),
+('65', 'Nasywa Maulida', 'nasywa.maulida@alazharjayaindonesia.sch.id', NULL, '$2y$12$1dUIJJA47ua64xnWI/0/P.qpmT3zcfiss7zFW27Aj2/zdvcx6GolG', NULL, '2026-07-22 21:03:02', '2026-07-22 21:04:58', 'siswa_smp'),
+('66', 'Nurul Hanis Nahilah', 'nurul.hanis.nahilah@alazharjayaindonesia.sch.id', NULL, '$2y$12$BojwWoYiJFWp2IsQ6tbYn.Lnkqr8R3xeWJzFZx4BrS9D7.iZoMZoK', NULL, '2026-07-22 21:03:02', '2026-07-22 21:04:58', 'siswa_smp'),
+('67', 'Nurul Kasyfatul Mahjubiyyah', 'nurul.kasyfatul.mahjubiyyah@alazharjayaindonesia.sch.id', NULL, '$2y$12$mazxjv5SJDSQ8UYeE//KVe47b/Wjm98hc12ExTvULUl4appqcb8j.', NULL, '2026-07-22 21:03:02', '2026-07-22 21:04:59', 'siswa_smp'),
+('68', 'Putri Yara', 'putri.yara@alazharjayaindonesia.sch.id', NULL, '$2y$12$48HC/6398IeatCCdoI3kMOjhRrIItjJIyQpFgSceLxv4dUMx.rqZK', NULL, '2026-07-22 21:03:02', '2026-07-22 21:04:59', 'siswa_smp'),
+('69', 'Ribkha Pramesti Wijaya', 'ribkha.pramesti.wijaya@alazharjayaindonesia.sch.id', NULL, '$2y$12$C/7KHzE4UI6GmIqU81.f8OHium.jM.PkJ/Kv4Rh9kULDYICcGBNXK', NULL, '2026-07-22 21:03:02', '2026-07-22 21:04:59', 'siswa_smp'),
+('70', 'Syaila Unatsa Putri', 'syaila.unatsa.putri@alazharjayaindonesia.sch.id', NULL, '$2y$12$WmK01BimuPu2F.gNO4BwEeUyjYoc8M7XrdGoeDCbnVrN21Nr6NNhi', NULL, '2026-07-22 21:03:03', '2026-07-22 21:04:59', 'siswa_smp'),
+('71', 'Syakira Sausan Khairunnisa', 'syakira.sausan.khairunnisa@alazharjayaindonesia.sch.id', NULL, '$2y$12$XWSWmrLd1GmkjvQWArufn.3oNAGFL5FvuPeXv9QcUV/CZ3oQqPQ/m', NULL, '2026-07-22 21:03:03', '2026-07-22 21:04:59', 'siswa_smp'),
+('72', 'Violine Atha Al-Husna', 'violine.atha.al-husna@alazharjayaindonesia.sch.id', NULL, '$2y$12$MkF./ZJFXFFH.IgXR.XYs.TaP1ZbdDuMYVLFTCVZTOk4aPVxFnlfK', NULL, '2026-07-22 21:03:03', '2026-07-22 21:04:59', 'siswa_smp'),
+('73', 'Aqilah Naurah', 'aqilah.naurah@alazharjayaindonesia.sch.id', NULL, '$2y$12$kPPRv95ozfK2yE/jT/nCm.R67g/eViOkZdhVzISOyCrr9BkjmU8qG', NULL, '2026-07-22 21:03:03', '2026-07-22 21:05:00', 'siswa_smp'),
+('74', 'Sahla Azka Hafizah', 'sahla.azka.hafizah@alazharjayaindonesia.sch.id', NULL, '$2y$12$o4qnh9FbX2ybORvn.f21cuRzuBcXp0bTBfqyVQeZskbbo5Z.17hVG', NULL, '2026-07-22 21:03:03', '2026-07-22 21:05:00', 'siswa_smp'),
+('75', 'Hanna Mufidah', 'hanna.mufidah@alazharjayaindonesia.sch.id', NULL, '$2y$12$5EoACOlqYFNtgdzfuj8KmuLPbDtuvDxG6l2esjvode7VMlqZMyi3u', NULL, '2026-07-22 21:03:03', '2026-07-22 21:05:00', 'siswa_smp'),
+('76', 'Khanza Izzatunnisa', 'khanza.izzatunnisa@alazharjayaindonesia.sch.id', NULL, '$2y$12$vXeJCv.dSzqX33yf5v3tjudTG4TvGo.3.P.ua1Nb.zOjPkhx9cotG', NULL, '2026-07-22 21:03:04', '2026-07-22 21:05:00', 'siswa_smp'),
+('77', 'Ziya Zivana Zubi', 'ziya.zivana.zubi@alazharjayaindonesia.sch.id', NULL, '$2y$12$8THS9wYhlgKiobxuTyJJK.6Ajr/z7X7Ch/yQf5WRXiXapoWBkgmTG', NULL, '2026-07-22 21:03:04', '2026-07-22 21:05:00', 'siswa_smp'),
+('78', 'Guru Demo SMPIT', 'guru.demo@alazharjayaindonesia.sch.id', NULL, '$2y$12$3jk27SXjGFOthHAdi3RJduct60KN9iPOqayUJykhXfspi3T04Ikw2', NULL, '2026-07-22 21:03:05', '2026-07-22 21:03:05', 'guru'),
+('79', 'Ahmad Fikri Demo', 'siswa.demo@alazharjayaindonesia.sch.id', NULL, '$2y$12$CjJ8kKVCthtmvRUSAy48l.Awki4nYueqqlzgJTG9fVfD4uVn5Si9S', NULL, '2026-07-22 21:03:05', '2026-07-22 21:03:05', 'siswa_smp'),
+('80', 'Orang Tua Ahmad Fikri Demo', 'ortu.demo@alazharjayaindonesia.sch.id', NULL, '$2y$12$ov.AF95CSTbBYdMFU4LSJ.GOdCSirNKNNawr4KTwV9SjT.CIfED8i', NULL, '2026-07-22 21:03:05', '2026-07-22 21:03:05', 'orang_tua'),
+('81', 'Ibu Sari Rahmawati', 'sari.rohmah@email.com', NULL, '$2y$12$XLszsQ6ad3/hvIUWgTyAoeJDM6cZLeJ4SfyRucUUQc.gIADrLzHn6', NULL, '2026-07-22 21:03:06', '2026-07-22 21:03:06', 'orang_tua'),
+('82', 'Admin Sekolah', 'admin@alazharjayaindonesia.sch.id', NULL, '$2y$12$SYh0QkrGRkE72uHsi11uTOa0gQa1wUnMim3FDQYpF38hq8NI/jIkK', NULL, '2026-07-22 21:03:06', '2026-07-22 21:03:06', 'admin'),
+('83', 'Kepala Sekolah', 'kepala@alazharjayaindonesia.sch.id', NULL, '$2y$12$ohubW28SxUrFfhie0kZOreYUeyXtiUvdQdAzmflFZCamZ5S/dEIE6', NULL, '2026-07-22 21:03:07', '2026-07-22 21:03:07', 'kepala_sekolah');
+
+DROP TABLE IF EXISTS `workbook_jawabans`;
+CREATE TABLE `workbook_jawabans` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `workbook_soal_id` bigint unsigned NOT NULL,
+  `siswa_id` bigint unsigned NOT NULL,
+  `jawaban` text NULL,
+  `nilai` decimal(10,2) NULL,
+  `created_at` datetime NULL,
+  `updated_at` datetime NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `workbook_jawabans_workbook_soal_id_siswa_id_unique` (`workbook_soal_id`, `siswa_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT INTO `workbook_jawabans` (`id`, `workbook_soal_id`, `siswa_id`, `jawaban`, `nilai`, `created_at`, `updated_at`) VALUES
+('1', '1', '67', 'b', '100', '2026-07-22 21:03:06', '2026-07-22 21:03:06');
+
+DROP TABLE IF EXISTS `workbook_soals`;
+CREATE TABLE `workbook_soals` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `workbook_id` bigint unsigned NOT NULL,
+  `nomor` int NOT NULL,
+  `soal` text NOT NULL,
+  `tipe` varchar(255) NOT NULL DEFAULT 'pg',
+  `pilihan_a` text NULL,
+  `pilihan_b` text NULL,
+  `pilihan_c` text NULL,
+  `pilihan_d` text NULL,
+  `jawaban_benar` varchar(255) NULL,
+  `bobot` int NOT NULL DEFAULT '1',
+  `created_at` datetime NULL,
+  `updated_at` datetime NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT INTO `workbook_soals` (`id`, `workbook_id`, `nomor`, `soal`, `tipe`, `pilihan_a`, `pilihan_b`, `pilihan_c`, `pilihan_d`, `jawaban_benar`, `bobot`, `created_at`, `updated_at`) VALUES
+('1', '1', '1', 'Berapakah 12 + 8?', 'pg', '18', '20', '22', '24', 'b', '1', '2026-07-22 21:03:06', '2026-07-22 21:03:06'),
+('2', '2', '1', 'Berapakah hasil dari 25 × 4?', 'pg', '80', '100', '120', '90', 'b', '1', '2026-07-22 21:03:08', '2026-07-22 21:03:08'),
+('3', '2', '2', 'Sebutkan rumus luas persegi panjang!', 'essay', NULL, NULL, NULL, NULL, NULL, '2', '2026-07-22 21:03:08', '2026-07-22 21:03:08'),
+('4', '3', '1', 'Apa sinonim dari kata "rajin"?', 'pg', 'Malas', 'Tekun', 'Cepat', 'Lambat', 'b', '1', '2026-07-22 21:03:08', '2026-07-22 21:03:08');
+
+DROP TABLE IF EXISTS `workbooks`;
+CREATE TABLE `workbooks` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `judul` varchar(255) NOT NULL,
+  `deskripsi` text NULL,
+  `mapel_id` bigint unsigned NOT NULL,
+  `kelas_id` bigint unsigned NULL,
+  `guru_id` bigint unsigned NOT NULL,
+  `tipe` varchar(255) NOT NULL DEFAULT 'penugasan_di_rumah',
+  `created_at` datetime NULL,
+  `updated_at` datetime NULL,
+  `tahun_ajaran` varchar(255) NOT NULL DEFAULT '2026/2027',
+  `semester` varchar(255) NOT NULL DEFAULT 'Ganjil',
+  PRIMARY KEY (`id`),
+  KEY `workbooks_semester_index` (`semester`),
+  KEY `workbooks_tahun_ajaran_index` (`tahun_ajaran`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT INTO `workbooks` (`id`, `judul`, `deskripsi`, `mapel_id`, `kelas_id`, `guru_id`, `tipe`, `created_at`, `updated_at`, `tahun_ajaran`, `semester`) VALUES
+('1', 'Workbook Demo Matematika', 'Workbook Demo untuk siswa dummy.', '1', '6', '12', 'penugasan_di_rumah', '2026-07-22 21:03:06', '2026-07-22 21:03:06', '2026/2027', 'Ganjil'),
+('2', 'Latihan Soal Matematika Bab 5', NULL, '5', '3', '8', 'penugasan_di_rumah', '2026-07-22 21:03:08', '2026-07-22 21:03:08', '2026/2027', 'Ganjil'),
+('3', 'PR Bahasa Indonesia', NULL, '1', '4', '2', 'tugas_pengganti', '2026-07-22 21:03:08', '2026-07-22 21:03:08', '2026/2027', 'Ganjil');
+
+SET FOREIGN_KEY_CHECKS=1;

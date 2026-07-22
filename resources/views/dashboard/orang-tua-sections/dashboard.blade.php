@@ -34,7 +34,7 @@
         <div class="pb-avatar" style="background:{{ ['var(--teal)','var(--blue)','var(--purple)','var(--orange)','var(--pink)'][$loop->index % 5] }}">{{ strtoupper(substr($a->nama, 0, 2)) }}</div>
         <div class="pb-info">
             <h2>{{ $a->nama }}</h2>
-            <p>Kelas {{ $a->kelas->nama_kelas ?? 'N/A' }} &mdash; {{ str_contains($a->kelas->nama_kelas ?? '', 'SD') ? 'SDIT' : 'SMPIT' }} {{ setting('school_name') }}</p>
+            <p>Kelas {{ $a->kelas->nama_kelas ?? 'N/A' }} &mdash; SMPIT {{ setting('school_name') }}</p>
             <div class="pb-meta">
                 <span><i class="fas fa-user-tie"></i> Wali Kelas: {{ $waliKelas->nama ?? '-' }}</span>
                 <span><i class="fas fa-id-card"></i> NIS: {{ $a->nis }}</span>
