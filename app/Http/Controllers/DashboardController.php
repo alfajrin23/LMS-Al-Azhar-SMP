@@ -56,6 +56,21 @@ class DashboardController extends Controller
             $isKelas9 = $this->isKelas9($kelas);
             $nilaiKti = $isKelas9 ? \App\Models\NilaiKti::query()->where('siswa_id', $siswa->id)->first() : null;
             $ktiBimbingans = $isKelas9 ? \App\Models\KtiBimbingan::query()->where('siswa_id', $siswa->id)->orderBy('created_at', 'desc')->get() : collect();
+            $jadwalMapelIds = Jadwal::query()->where('kelas_id', $kelas?->id)->pluck('mapel_id');
+            $nilaiMapelIds = Nilai::query()->where('siswa_id', $siswa->id)->pluck('mapel_id')->unique();
+            $materiMapelIds = \App\Models\Materi::query()
+                ->where('status', 'approved')
+                ->where(function ($q) use ($siswa) {
+                    $q->where('kelas_id', $siswa?->kelas_id)->orWhereNull('kelas_id');
+                })
+                ->pluck('mapel_id')
+                ->unique();
+            $visibleMapelIds = $jadwalMapelIds
+                ->merge($nilaiMapelIds)
+                ->merge($materiMapelIds)
+                ->filter()
+                ->unique()
+                ->values();
 
             $data = [
                 'user' => $user,
@@ -70,19 +85,7 @@ class DashboardController extends Controller
                     ->keyBy('jenis_rapor'),
                 'mapels' => Mapel::query()
                     ->whereNotIn('nama_mapel', ['Istirahat', 'Dzuhur Time', 'Ashar Time', 'Upacara / Flash', 'Dhuha Time', 'Upacara / Pentas Seni', 'Qailullah', 'Sholat dan Makan', 'Pulang / Penjemputan Orang Tua', 'Snack Time', 'Transisi / Pindah ke Kelas', 'Shalat Ashar', 'Kegiatan Pramuka'])
-                    ->where(function($q) use ($kelas, $siswa) {
-                        $jadwalMapels = Jadwal::query()->where('kelas_id', $kelas?->id)->pluck('mapel_id');
-                        if ($jadwalMapels->isNotEmpty()) {
-                            $q->whereIn('id', $jadwalMapels);
-                        } else {
-                            $nilaiMapels = \App\Models\Nilai::query()->where('siswa_id', $siswa->id)->pluck('mapel_id')->unique();
-                            if ($nilaiMapels->isNotEmpty()) {
-                                $q->whereIn('id', $nilaiMapels);
-                            } else {
-                                $q->whereRaw('1 = 0');
-                            }
-                        }
-                    })
+                    ->whereIn('id', $visibleMapelIds)
                     ->get(),
                 'jadwalHariIni' => Jadwal::query()->where('kelas_id', $kelas?->id)
                     ->where('hari', now()->locale('id')->dayName)

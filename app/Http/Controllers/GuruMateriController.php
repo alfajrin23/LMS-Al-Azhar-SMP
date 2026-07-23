@@ -5,17 +5,12 @@ namespace App\Http\Controllers;
 use App\Models\Guru;
 use App\Models\Materi;
 use App\Models\MateriApprovalHistory;
+use App\Support\SmpLearningDocumentInventory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class GuruMateriController extends Controller
 {
-    private const CATEGORIES = [
-        'kompetensi_inti',
-        'kompetensi_dasar',
-        'alur_tahapan_pembelajaran',
-    ];
-
     public function store(Request $request)
     {
         if ($request->user()->role !== 'guru') {
@@ -202,7 +197,7 @@ class GuruMateriController extends Controller
     {
         return $request->validate([
             'judul' => 'required|string|max:255',
-            'kategori' => 'required|in:'.implode(',', self::CATEGORIES),
+            'kategori' => 'required|in:'.implode(',', array_keys(SmpLearningDocumentInventory::categoryLabels())),
             'kode' => 'nullable|string|max:80',
             'deskripsi' => 'nullable|string|max:4000',
             'isi' => 'nullable|string',

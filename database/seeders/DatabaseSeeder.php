@@ -54,6 +54,9 @@ class DatabaseSeeder extends Seeder
             ['email' => 'kepala@alazharjayaindonesia.sch.id'],
             ['name' => 'Kepala Sekolah', 'password' => Hash::make('password123'), 'role' => 'kepala_sekolah']
         );
+        $this->call([
+            SmpLearningDocumentSeeder::class,
+        ]);
         $siswas = \App\Models\Siswa::all();
         $mapels = \App\Models\Mapel::whereNotIn('nama_mapel', ['Istirahat', 'Dzuhur Time', 'Ashar Time', 'Upacara / Flash', 'Upacara / PAS Mantap', 'Dhuha Time', 'Apel, Dhuha & Muroja\'ah', 'Upacara / Pentas Seni', 'Qailullah', 'Sholat dan Makan', 'Pulang / Penjemputan Orang Tua', 'Snack Time', 'Transisi / Pindah ke Kelas', 'Shalat Ashar', 'Shalat Ashar dan Dzikir', 'Kegiatan Pramuka', 'Ekskul'])->get();
         $kelas = \App\Models\Kelas::all();

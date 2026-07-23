@@ -15,15 +15,15 @@ class GuruSeeder extends Seeder
         $gurus = [
             'Sahrial Pulungan, M.Pd' => ['Karya Tulis Ilmiah', 'Karya Tulis'],
             'Riva Riana, S.Pd' => ['Teknologi Digital', 'Ilmu Pengetahuan Alam', 'PJOK'],
-            'Adinda Oktavhiani S.Pd' => ['Bahasa Arab', 'Bahasa Indonesia', 'Baca Tulis Quran'],
+            'Adinda Oktavhiani S.Pd' => ['Bahasa Arab', 'Bahasa Indonesia', 'Baca Tulis Quran', 'Al Quran Hadits'],
             'Intan Kusuma Dera, S.Ag' => ['Tahfidzul Qur\'an'],
             'Vika Wati Dzulciha, S.Ag' => ['Project Based Learning'],
             'Irnika Widiyan Dini, S.Li' => ['Bahasa Inggris'],
             'Ajeng Putyri Aryantika, S.Pd' => ['Matematika'],
-            'Nurhayati, S.Ag' => ['Aqidah', 'Pendidikan Agama Islam', 'Fiqh'],
-            'Sri Wanti Maulani, S.Pd' => [],
+            'Nurhayati, S.Ag' => ['Aqidah', 'Aqidah/Akhlak', 'Pendidikan Agama Islam', 'Fiqh'],
+            'Sri Wanti Maulani, S.Pd' => ['Ilmu Pengetahuan Sosial', 'Bina Pribadi Islam', 'Pramuka'],
             'Khoirunnisa, S.Ag' => [],
-            'Ai Sunariah, S.Pd' => [],
+            'Ai Sunariah, S.Pd' => ['Pendidikan Kewarganegaraan', 'Seni Rupa', 'Seni Budaya dan Prakarya'],
         ];
         $sdGuru = Guru::query()->where('nama', 'Guru Pendamping SD')->first();
         if ($sdGuru) {

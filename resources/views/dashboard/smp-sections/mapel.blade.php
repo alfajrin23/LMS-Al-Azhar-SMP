@@ -1,4 +1,15 @@
-@php $cardColors = ['green', 'teal', 'blue', 'orange light', 'purple light', 'cyan light', 'pink light']; @endphp
+@php
+    $cardColors = ['green', 'teal', 'blue', 'orange light', 'purple light', 'cyan light', 'pink light'];
+    $categories = \App\Support\SmpLearningDocumentInventory::categoryLabels();
+    $fileIcon = fn($path) => match (true) {
+        str_ends_with(strtolower($path ?? ''), '.pdf') => 'fa-file-pdf',
+        str_ends_with(strtolower($path ?? ''), '.doc') || str_ends_with(strtolower($path ?? ''), '.docx') => 'fa-file-word',
+        str_ends_with(strtolower($path ?? ''), '.xls') || str_ends_with(strtolower($path ?? ''), '.xlsx') => 'fa-file-excel',
+        str_ends_with(strtolower($path ?? ''), '.ppt') || str_ends_with(strtolower($path ?? ''), '.pptx') => 'fa-file-powerpoint',
+        str_ends_with(strtolower($path ?? ''), '.zip') || str_ends_with(strtolower($path ?? ''), '.rar') => 'fa-file-archive',
+        default => 'fa-file',
+    };
+@endphp
 <div class="content-header">
     <h1>Mata Pelajaran <span>SMPIT {{ setting('school_name') }}</span></h1>
     <div class="header-right">
@@ -26,11 +37,11 @@
                 <li style="display:flex;flex-direction:column;gap:2px">
                         <div style="display:flex;flex-direction:column;gap:2px">
                             <span style="font-size:13px;font-weight:600">
-                                <i class="fas fa-file-pdf" style="color:var(--red);margin-right:4px"></i>
+                                <i class="fas {{ $fileIcon($mat->file_path) }}" style="color:var(--red);margin-right:4px"></i>
                                 <a href="{{ route('materi.download', $mat->id) }}" target="_blank" style="text-decoration:none;color:var(--blue)">{{ $mat->judul }}</a>
                             </span>
                             <div style="font-size: 10px; color: var(--gray-400); margin-left: 18px;">
-                                <i class="fas fa-info-circle"></i> Klik nama materi untuk mengunduh
+                                <i class="fas fa-info-circle"></i> {{ $categories[$mat->kategori] ?? $mat->kategori }} - {{ $mat->semester ?? '-' }} {{ $mat->tahun_ajaran ?? '' }}
                             </div>
                         </div>
                     @if($mat->deskripsi)

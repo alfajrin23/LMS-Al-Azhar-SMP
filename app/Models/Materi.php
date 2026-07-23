@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Support\SmpLearningDocumentInventory;
 use Illuminate\Database\Eloquent\Model;
 
 class Materi extends Model
@@ -50,11 +51,7 @@ class Materi extends Model
         $hasMapel = !empty($this->mapel_id);
         $hasKelas = !empty($this->kelas_id);
         $hasDeskripsi = !empty($this->deskripsi) && strlen(trim($this->deskripsi)) >= 20;
-        $hasKategori = in_array($this->kategori, [
-            'kompetensi_inti',
-            'kompetensi_dasar',
-            'alur_tahapan_pembelajaran',
-        ], true);
+        $hasKategori = array_key_exists($this->kategori, SmpLearningDocumentInventory::categoryLabels());
 
         return [
             'judul' => $hasJudul,

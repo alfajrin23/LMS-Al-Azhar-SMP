@@ -2,11 +2,8 @@
     $materiList = $materiList ?? collect();
     $mapelList = $materiMapelList ?? collect();
     $kelasList = $materiKelasList ?? collect();
-    $categories = [
-        'kompetensi_inti' => 'Kompetensi Inti',
-        'kompetensi_dasar' => 'Kompetensi Dasar',
-        'alur_tahapan_pembelajaran' => 'Alur Tahapan Pembelajaran',
-    ];
+    $categories = \App\Support\SmpLearningDocumentInventory::categoryLabels();
+    $defaultCategory = array_key_first($categories);
     $statusMeta = [
         'draft' => ['label' => 'Draft', 'class' => 'gray'],
         'pending' => ['label' => 'Menunggu Approval', 'class' => 'orange'],
@@ -25,13 +22,13 @@
 @endphp
 
 <div x-data="{
-    activeCategory: 'kompetensi_inti',
+    activeCategory: '{{ $defaultCategory }}',
     historyId: null,
     isEdit: false,
     actionUrl: '{{ route('guru.materi.store') }}',
     form: {
         judul: '',
-        kategori: 'kompetensi_inti',
+        kategori: '{{ $defaultCategory }}',
         kode: '',
         mapel_id: '{{ $mapelList->first()?->id }}',
         kelas_id: '{{ $kelasList->first()?->id }}',
@@ -45,7 +42,7 @@
         this.actionUrl = '/guru/materi/' + item.id + '/update';
         this.form = {
             judul: item.judul || '',
-            kategori: item.kategori || 'kompetensi_inti',
+            kategori: item.kategori || '{{ $defaultCategory }}',
             kode: item.kode || '',
             mapel_id: item.mapel_id || '',
             kelas_id: item.kelas_id || '',
@@ -75,8 +72,8 @@
 }">
     <div class="content-header">
         <div>
-            <h1>Bahan Ajar</h1>
-            <p style="font-size:14px;color:var(--gray-400);margin-top:2px">Kompetensi Inti, Kompetensi Dasar, dan Alur Tahapan Pembelajaran</p>
+            <h1>Dokumen Pembelajaran</h1>
+            <p style="font-size:14px;color:var(--gray-400);margin-top:2px">Materi, modul, CP/ATP, LKPD, program semester, dan dokumen pendukung mapel</p>
         </div>
         <div class="header-right">
             <div class="avatar blue">{{ strtoupper(substr($guru->nama, 0, 1)) }}</div>

@@ -1,9 +1,5 @@
 @php
-    $categories = [
-        'kompetensi_inti' => 'Kompetensi Inti',
-        'kompetensi_dasar' => 'Kompetensi Dasar',
-        'alur_tahapan_pembelajaran' => 'Alur Tahapan Pembelajaran',
-    ];
+    $categories = \App\Support\SmpLearningDocumentInventory::categoryLabels();
     $statusMeta = [
         'pending' => ['label' => 'Menunggu Review', 'class' => 'orange'],
         'approved' => ['label' => 'Disetujui', 'class' => 'green'],
